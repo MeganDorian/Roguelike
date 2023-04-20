@@ -1,17 +1,17 @@
-package org.itmo.mse.ui;
+package org.itmo.mse.ui.windows;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.BasicTextImage;
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.graphics.TextImage;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import org.itmo.mse.ui.Action;
 import org.itmo.mse.utils.FileUtils;
 
 /**
@@ -26,15 +26,27 @@ public class MainWindow extends Window {
     
     private final String start = "press enter to start game";
     
-    private final TextGraphics textGraphics = screen.newTextGraphics();
+    private final String screenResize =
+        "please resize your screen if you can't see this text in " + "full";
     
     /**
      * Prints game logo
      */
-    public MainWindow() throws IOException {
-        screen.startScreen();
+    public MainWindow() throws IOException, InterruptedException {
         screen.clear();
+        checkScreenSize();
         printLogo();
+    }
+    
+    private void checkScreenSize() throws IOException, InterruptedException {
+        TerminalPosition center = new TerminalPosition(0, 0);
+        while (terminal.getTerminalSize().getColumns() < size.getColumns() ||
+               terminal.getTerminalSize().getRows() < size.getRows()) {
+            eraseStringAtPosition(center, screenResize.length());
+            Thread.sleep(1000);
+            printStringAtPosition(screenResize, center);
+            Thread.sleep(1000);
+        }
     }
     
     /**
@@ -44,9 +56,9 @@ public class MainWindow extends Window {
      * wait_to_press_enter if nothing pressed or any other key pressed
      */
     public Action enterPressed() throws IOException, InterruptedException {
-        erasePressEnterLine();
+        eraseStringAtPosition(pressLineStartPosition, start.length());
         Thread.sleep(1000);
-        printPressEnterLine();
+        printStringAtPosition(start, pressLineStartPosition);
         Thread.sleep(1000);
         KeyStroke input = screen.pollInput();
         if (input != null) {
@@ -72,7 +84,7 @@ public class MainWindow extends Window {
             TextCharacter.fromCharacter(' ')[0]);
         
         screen.newTextGraphics().drawImage(new TerminalPosition(column, row), image);
-        printPressEnterLine();
+        printStringAtPosition(start, pressLineStartPosition);
         screen.refresh();
     }
     
@@ -101,16 +113,5 @@ public class MainWindow extends Window {
         pressLineStartPosition =
             new TerminalPosition((size.getColumns() - start.length()) / 2, imageHeight + 5);
         return image;
-    }
-    
-    private void printPressEnterLine() throws IOException {
-        textGraphics.putString(pressLineStartPosition, start);
-        screen.refresh();
-    }
-    
-    private void erasePressEnterLine() throws IOException {
-        textGraphics.drawLine(pressLineStartPosition,
-                              pressLineStartPosition.withRelativeColumn(start.length() - 1), ' ');
-        screen.refresh();
     }
 }

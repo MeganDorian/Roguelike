@@ -1,21 +1,27 @@
 package org.itmo.mse;
 
 import java.io.IOException;
+import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.ui.Action;
-import org.itmo.mse.ui.MainWindow;
+import org.itmo.mse.ui.windows.GameWindow;
+import org.itmo.mse.ui.windows.MainWindow;
 
 public class Main {
     public static void main(String[] args) {
         try {
             MainWindow mainWindow = new MainWindow();
-            Action isEnterPressed;
+            Action action;
             do {
-                isEnterPressed = mainWindow.enterPressed();
-                if (isEnterPressed == Action.EXIT) {
+                action = mainWindow.enterPressed();
+                if (action == Action.EXIT) {
                     return;
                 }
-            } while (isEnterPressed != Action.PRESSED_ENTER);
-        } catch (IOException | InterruptedException e) {
+            } while (action != Action.PRESSED_ENTER);
+            GameWindow gameWindow = new GameWindow();
+            do {
+                action = gameWindow.play();
+            } while (action != Action.EXIT);
+        } catch (IOException | InterruptedException | IncorrectMapFormatException e) {
             throw new RuntimeException(e);
         }
     }
