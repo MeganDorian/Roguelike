@@ -11,13 +11,18 @@ public abstract class Window {
     
     protected TerminalScreen screen;
     
-    protected static final TerminalSize size = new TerminalSize(130, 40);
+    protected TerminalSize size = new TerminalSize(150, 40);
     
     protected Window() throws IOException {
         if (terminal == null) {
             DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
             try {
-                terminal = defaultTerminalFactory.setInitialTerminalSize(size).createTerminal();
+                if(System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                    terminal = defaultTerminalFactory.setInitialTerminalSize(size).createTerminal();
+                } else {
+                    terminal = defaultTerminalFactory.createTerminal();
+                    size = terminal.getTerminalSize();
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
