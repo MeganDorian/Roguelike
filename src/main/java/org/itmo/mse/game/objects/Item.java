@@ -5,6 +5,6 @@ import org.itmo.mse.utils.SpecialCharacters;
 
 public class Item extends Object {
     public Item(TerminalPosition start, TerminalPosition end) {
-        super(start, end, SpecialCharacters.getTHING());
+        super(start, end, SpecialCharacters.THING);
     }
 }

@@ -25,7 +25,7 @@ public class Map extends Object {
     
     private Map(TerminalPosition start, TerminalPosition end, List<Wall> walls, List<Mob> mobs,
                 List<Item> items, TerminalPosition exit) {
-        super(start, end, SpecialCharacters.getWALL());
+        super(start, end, SpecialCharacters.WALL);
         width = end.getColumn();
         height = start.getRow();
         this.walls = walls;
