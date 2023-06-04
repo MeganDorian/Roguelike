@@ -26,9 +26,6 @@ public class MainWindow extends Window {
     
     private final String start = "press enter to start game";
     
-    private final String screenResize =
-        "please resize your screen if you can't see this text in " + "full";
-    
     /**
      * Prints game logo
      */
@@ -50,6 +47,7 @@ public class MainWindow extends Window {
     
     private void checkScreenSize() throws IOException, InterruptedException {
         TerminalPosition center = new TerminalPosition(0, 0);
+        String screenResize = "please resize your screen if you can't see this text in full";
         while (terminal.getTerminalSize().getColumns() < size.getColumns() ||
                terminal.getTerminalSize().getRows() < size.getRows()) {
             eraseStringAtPosition(center, screenResize.length());
@@ -86,12 +84,12 @@ public class MainWindow extends Window {
     private void printLogo() throws IOException {
         TextImage image = createLogoAsImage();
         
-        int column = (int) (PADDING_BOTTOM * size.getColumns());
-        int row = (int) (PADDING_START * size.getRows());
+        int column = (int) (PADDING_BOTTOM * getSize().getColumns());
+        int row = (int) (PADDING_START * getSize().getRows());
         
-        image = image.resize(
-            new TerminalSize(size.getColumns() - 2 * column, size.getRows() - 2 * row - 1),
-            TextCharacter.fromCharacter(' ')[0]);
+        image = image.resize(new TerminalSize(getSize().getColumns() - 2 * column,
+                                              getSize().getRows() - 2 * row - 1),
+                             TextCharacter.fromCharacter(' ')[0]);
         
         screen.newTextGraphics().drawImage(new TerminalPosition(column, row), image);
         printStringAtPosition(start, pressLineStartPosition);
@@ -121,7 +119,7 @@ public class MainWindow extends Window {
         }
         
         pressLineStartPosition =
-            new TerminalPosition((size.getColumns() - start.length()) / 2, imageHeight + 5);
+            new TerminalPosition((getSize().getColumns() - start.length()) / 2, imageHeight + 5);
         return image;
     }
 }

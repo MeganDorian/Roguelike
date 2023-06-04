@@ -2,44 +2,40 @@ package org.itmo.mse.utils;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
-import lombok.Getter;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass
-public class SpecialCharacters {
-    @Getter
-    private static final TextCharacter WALL =
+public interface SpecialCharacters {
+    TextCharacter DELIMITER_HORIZONTAL =
+        TextCharacter.fromCharacter('-', TextColor.ANSI.YELLOW, TextColor.ANSI.DEFAULT)[0];
+    TextCharacter DELIMITER =
+        TextCharacter.fromCharacter('.', TextColor.ANSI.YELLOW, TextColor.ANSI.DEFAULT)[0];
+    TextCharacter WALL =
         TextCharacter.fromCharacter('@', TextColor.ANSI.CYAN, TextColor.ANSI.DEFAULT)[0];
-    @Getter
-    private final TextCharacter SPACE =
+    TextCharacter SPACE =
         TextCharacter.fromCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT)[0];
-    @Getter
-    private final TextCharacter USER =
+    TextCharacter USER =
         TextCharacter.fromCharacter('+', TextColor.ANSI.GREEN, TextColor.ANSI.DEFAULT)[0];
-    @Getter
-    private final TextCharacter MOB =
+    TextCharacter MOB =
         TextCharacter.fromCharacter('#', TextColor.ANSI.RED, TextColor.ANSI.DEFAULT)[0];
-    @Getter
-    private final TextCharacter THING =
+    TextCharacter THING =
         TextCharacter.fromCharacter('?', TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.DEFAULT)[0];
     
-    public char getWallChar() {
+    static char getWallChar() {
         return WALL.getCharacterString().charAt(0);
     }
     
-    public char getSpaceChar() {
+    static char getSpaceChar() {
         return SPACE.getCharacterString().charAt(0);
     }
     
-    public char getUserChar() {
+    static char getUserChar() {
         return USER.getCharacterString().charAt(0);
     }
     
-    public char getMobChar() {
+    static char getMobChar() {
         return MOB.getCharacterString().charAt(0);
     }
     
-    public char getThingChar() {
+    static char getThingChar() {
         return THING.getCharacterString().charAt(0);
     }
 }

@@ -5,6 +5,6 @@ import org.itmo.mse.utils.SpecialCharacters;
 
 public class Mob extends Object {
     public Mob(TerminalPosition start, TerminalPosition end) {
-        super(start, end, SpecialCharacters.getMOB());
+        super(start, end, SpecialCharacters.MOB);
     }
 }

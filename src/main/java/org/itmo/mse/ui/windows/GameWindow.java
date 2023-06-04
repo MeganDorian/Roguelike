@@ -9,18 +9,16 @@ import org.itmo.mse.ui.Action;
 import org.itmo.mse.utils.map.MapLoader;
 
 public class GameWindow extends Window {
-    private final Game game;
+    private final Game game = new Game();
     
     public GameWindow() throws IOException, IncorrectMapFormatException {
-        game = new Game();
         screen.clear();
         screen.refresh();
-        printLevel(1);
+        printLevel();
     }
     
-    private void printLevel(int level) throws IOException, IncorrectMapFormatException {
-        textGraphics.putString(1, 1, "LEVEL: " + level);
-        if (level == 1) {
+    private void printLevel() throws IOException, IncorrectMapFormatException {
+        if (game.getCurrentLevel() == 1) {
             // load tutorial level from file
             loadLevelFromFile("first_lvl", true);
         } else {
@@ -28,6 +26,8 @@ public class GameWindow extends Window {
         }
         printObject(game.getLevelMap());
         printObject(game.getPlayer());
+        printHelp();
+        printPlayerInfo(game);
         screen.refresh();
     }
     
