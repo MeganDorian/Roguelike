@@ -38,6 +38,16 @@ public class MainWindow extends Window {
         printLogo();
     }
     
+    public void waitToPressEnter() throws IOException, InterruptedException {
+        Action action;
+        do {
+            action = enterPressed();
+            if (action == Action.EXIT) {
+                return;
+            }
+        } while (action != Action.PRESSED_ENTER);
+    }
+    
     private void checkScreenSize() throws IOException, InterruptedException {
         TerminalPosition center = new TerminalPosition(0, 0);
         while (terminal.getTerminalSize().getColumns() < size.getColumns() ||
@@ -55,7 +65,7 @@ public class MainWindow extends Window {
      * @return exit if escape key pressed <br> pressed_enter if enter key pressed <br>
      * wait_to_press_enter if nothing pressed or any other key pressed
      */
-    public Action enterPressed() throws IOException, InterruptedException {
+    private Action enterPressed() throws IOException, InterruptedException {
         eraseStringAtPosition(pressLineStartPosition, start.length());
         Thread.sleep(1000);
         printStringAtPosition(start, pressLineStartPosition);
