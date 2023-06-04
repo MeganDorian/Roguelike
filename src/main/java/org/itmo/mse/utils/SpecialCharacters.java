@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class SpecialCharacters {
     @Getter
-    private final TextCharacter WALL =
+    private static final TextCharacter WALL =
         TextCharacter.fromCharacter('@', TextColor.ANSI.CYAN, TextColor.ANSI.DEFAULT)[0];
     @Getter
     private final TextCharacter SPACE =
@@ -19,6 +19,9 @@ public class SpecialCharacters {
     @Getter
     private final TextCharacter MOB =
         TextCharacter.fromCharacter('#', TextColor.ANSI.RED, TextColor.ANSI.DEFAULT)[0];
+    @Getter
+    private final TextCharacter THING =
+        TextCharacter.fromCharacter('?', TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.DEFAULT)[0];
     
     public char getWallChar() {
         return WALL.getCharacterString().charAt(0);
@@ -34,5 +37,9 @@ public class SpecialCharacters {
     
     public char getMobChar() {
         return MOB.getCharacterString().charAt(0);
+    }
+    
+    public char getThingChar() {
+        return THING.getCharacterString().charAt(0);
     }
 }

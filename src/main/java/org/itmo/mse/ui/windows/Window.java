@@ -5,15 +5,14 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
+import org.itmo.mse.ui.Printer;
 
-public abstract class Window {
+public abstract class Window extends Printer {
     
     protected static final int columnSize = 150;
     protected static final int rowsSize = 40;
     
     protected static final Terminal terminal;
-    
-    protected static final TerminalScreen screen;
     
     protected static final TerminalSize size = new TerminalSize(columnSize, rowsSize);
     
