@@ -1,6 +1,7 @@
 package org.itmo.mse.utils.map;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalRectangle;
 import java.util.HashMap;
 import lombok.Getter;
 
@@ -31,9 +32,10 @@ public class WallsLoader {
         return false;
     }
     
-    public void getWalls(TerminalPosition position, int i, int height) {
-        if (!addVerticalWall(position, i) && !addHorizontalWall(position, height)) {
-            walls.put(position, position);
+    public void getWalls(TerminalRectangle position, int i, int height) {
+        if (!addVerticalWall(position.position, i) &&
+            !addHorizontalWall(position.position, height)) {
+            walls.put(position.position, position.position);
         }
     }
 }

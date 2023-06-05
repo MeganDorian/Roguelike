@@ -1,5 +1,8 @@
 package org.itmo.mse.ui.windows;
 
+import static org.itmo.mse.constants.Proportions.paddingBottom;
+import static org.itmo.mse.constants.Proportions.paddingStart;
+
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
@@ -19,9 +22,6 @@ import org.itmo.mse.utils.FileUtils;
  */
 
 public class MainWindow extends Window {
-    
-    private final static double PADDING_BOTTOM = 0.1;
-    private final static double PADDING_START = 0.05;
     
     private TerminalPosition pressLineStartPosition;
     
@@ -81,8 +81,8 @@ public class MainWindow extends Window {
     private void printLogo() throws IOException {
         TextImage image = createLogoAsImage();
         
-        int column = (int) (PADDING_BOTTOM * getSize().getColumns());
-        int row = (int) (PADDING_START * getSize().getRows());
+        int column = (int) (paddingBottom * getSize().getColumns());
+        int row = (int) (paddingStart * getSize().getRows());
         
         image = image.resize(new TerminalSize(getSize().getColumns() - 2 * column,
                                               getSize().getRows() - 2 * row - 1),

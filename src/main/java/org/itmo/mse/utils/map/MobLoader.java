@@ -1,6 +1,6 @@
 package org.itmo.mse.utils.map;
 
-import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalRectangle;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -11,8 +11,8 @@ public class MobLoader {
     @Getter
     private final List<Mob> mobs = new ArrayList<>();
     
-    public void getMobs(TerminalPosition position) {
+    public void getMobs(TerminalRectangle position) {
         // if there going to be different mobs
-        mobs.add(new Mob(position, position));
+        mobs.add(new Mob(position));
     }
 }

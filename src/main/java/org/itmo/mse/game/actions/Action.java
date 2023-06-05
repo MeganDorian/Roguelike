@@ -8,8 +8,4 @@ public interface Action {
     Game game = new Game();
     
     void execute() throws IncorrectMapFormatException, IOException;
-    
-    default Game getGame() {
-        return game;
-    }
 }

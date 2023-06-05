@@ -1,6 +1,6 @@
 package org.itmo.mse.utils.map;
 
-import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalRectangle;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -11,7 +11,7 @@ public class ItemsLoader {
     @Getter
     private final List<Item> items = new ArrayList<>();
     
-    public void getItems(TerminalPosition position) {
+    public void getItems(TerminalRectangle position) {
         // if there going to be different things
         items.add(new Item(position));
     }

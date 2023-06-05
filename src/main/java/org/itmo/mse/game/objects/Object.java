@@ -1,7 +1,7 @@
 package org.itmo.mse.game.objects;
 
 
-import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import lombok.AllArgsConstructor;
@@ -12,13 +12,11 @@ import lombok.Setter;
 @Getter
 public abstract class Object {
     @Setter
-    private TerminalPosition start;
-    @Setter
-    private TerminalPosition end;
+    private TerminalRectangle position;
     
     private final TextCharacter character;
     
     public void print(TextGraphics graphics) {
-        graphics.drawLine(getStart(), getEnd(), getCharacter());
+        graphics.drawRectangle(position.position, position.size, getCharacter());
     }
 }

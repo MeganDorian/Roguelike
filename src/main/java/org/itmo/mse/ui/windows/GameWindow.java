@@ -1,6 +1,7 @@
 package org.itmo.mse.ui.windows;
 
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.Game;
@@ -43,10 +44,14 @@ public class GameWindow extends Window {
             if (input == null) {
                 continue;
             }
-            switch (input.getKeyType()) {
-                case Escape:
-                    terminal.close();
-                    return;
+            KeyType pressedKey = input.getKeyType();
+            if (pressedKey == KeyType.Escape) {
+                terminal.close();
+                return;
+                
+            } else if (pressedKey == KeyType.ArrowDown || pressedKey == KeyType.ArrowUp ||
+                       pressedKey == KeyType.ArrowLeft || pressedKey == KeyType.ArrowRight) {
+                
             }
             
         }

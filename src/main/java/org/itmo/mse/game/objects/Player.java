@@ -1,6 +1,6 @@
 package org.itmo.mse.game.objects;
 
-import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalRectangle;
 import lombok.Getter;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.game.objects.items.MedicalAid;
@@ -19,12 +19,12 @@ public class Player extends Object {
     
     private Backpack backpack = new Backpack();
     
-    public Player(TerminalPosition start, TerminalPosition end) {
-        super(start, end, SpecialCharacters.USER);
+    public Player(TerminalRectangle position) {
+        super(position, SpecialCharacters.USER);
         
         // TODO generate base backpack
         for (int i = 0; i < 9; i++) {
-            backpack.getItems().add(new MedicalAid(start));
+            backpack.getItems().add(new MedicalAid(position));
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.itmo.mse.game.objects.map;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import java.util.List;
 import lombok.Getter;
@@ -11,9 +12,9 @@ import org.itmo.mse.game.objects.items.Item;
 
 @Getter
 public class Map extends Object {
-    private final int width;
-    
-    private final int height;
+//    private final int width;
+//
+//    private final int height;
     
     private final List<Wall> walls;
     
@@ -23,11 +24,9 @@ public class Map extends Object {
     
     private final TerminalPosition exit;
     
-    private Map(TerminalPosition start, TerminalPosition end, List<Wall> walls, List<Mob> mobs,
-                List<Item> items, TerminalPosition exit) {
-        super(start, end, SpecialCharacters.WALL);
-        width = end.getColumn();
-        height = start.getRow();
+    private Map(TerminalRectangle border, List<Wall> walls, List<Mob> mobs, List<Item> items,
+                TerminalPosition exit) {
+        super(border, SpecialCharacters.WALL);
         this.walls = walls;
         this.mobs = mobs;
         this.items = items;
@@ -46,9 +45,7 @@ public class Map extends Object {
     }
     
     public static class MapBuilder {
-        private TerminalPosition start;
-        
-        private TerminalPosition end;
+        private TerminalRectangle position;
         
         private List<Wall> walls;
         private List<Mob> mobs;
@@ -72,13 +69,8 @@ public class Map extends Object {
             return this;
         }
         
-        public MapBuilder start(TerminalPosition start) {
-            this.start = start;
-            return this;
-        }
-        
-        public MapBuilder end(TerminalPosition end) {
-            this.end = end;
+        public MapBuilder border(TerminalRectangle position) {
+            this.position = position;
             return this;
         }
         
@@ -88,7 +80,7 @@ public class Map extends Object {
         }
         
         public Map build() {
-            return new Map(start, end, walls, mobs, items, exit);
+            return new Map(position, walls, mobs, items, exit);
         }
     }
 }
