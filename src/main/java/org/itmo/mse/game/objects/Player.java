@@ -21,6 +21,8 @@ public class Player extends Object {
     
     public Player(TerminalPosition start, TerminalPosition end) {
         super(start, end, SpecialCharacters.USER);
+        
+        // TODO generate base backpack
         for (int i = 0; i < 9; i++) {
             backpack.getItems().add(new MedicalAid(start));
         }

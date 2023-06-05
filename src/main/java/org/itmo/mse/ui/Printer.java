@@ -54,7 +54,8 @@ public abstract class Printer {
     protected void printHelp() throws IOException {
         List<String> help =
             List.of(ARROW_DOWN + " " + ARROW_UP + " " + ARROW_LEFT + " " + ARROW_RIGHT + " : move",
-                    "I : open/close backpack", "E : interact", "ESC : exit game");
+                    "I : open/close backpack", "E : interact", "SPACE : put on item",
+                    "ESC : " + "exit game");
         int column = 1;
         int row = getSize().getRows() - (int) (getSize().getRows() * helpHeight) + 1;
         
