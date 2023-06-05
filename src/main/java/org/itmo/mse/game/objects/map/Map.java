@@ -4,10 +4,10 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import java.util.List;
 import lombok.Getter;
-import org.itmo.mse.game.objects.Item;
+import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.game.objects.Mob;
 import org.itmo.mse.game.objects.Object;
-import org.itmo.mse.utils.SpecialCharacters;
+import org.itmo.mse.game.objects.items.Item;
 
 @Getter
 public class Map extends Object {

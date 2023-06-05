@@ -9,7 +9,7 @@ import org.itmo.mse.game.objects.map.Map;
 @Getter
 public class Game {
     
-    private int currentLevel = 1;
+    private int dungeonLevel = 1;
     
     @Setter
     private Map levelMap;

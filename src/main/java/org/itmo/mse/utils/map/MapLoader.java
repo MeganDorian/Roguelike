@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
+import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.objects.Player;
 import org.itmo.mse.game.objects.map.Map;
 import org.itmo.mse.game.objects.map.Wall;
 import org.itmo.mse.utils.FileUtils;
-import org.itmo.mse.utils.SpecialCharacters;
 
 /**
  * Loads map from file

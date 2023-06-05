@@ -18,7 +18,7 @@ public class GameWindow extends Window {
     }
     
     private void printLevel() throws IOException, IncorrectMapFormatException {
-        if (game.getCurrentLevel() == 1) {
+        if (game.getDungeonLevel() == 1) {
             // load tutorial level from file
             loadLevelFromFile("first_lvl", true);
         } else {
@@ -45,10 +45,12 @@ public class GameWindow extends Window {
     
     private Action processLevel() throws IOException {
         KeyStroke input = screen.pollInput();
-        
-        if (input != null && input.getKeyType() == KeyType.Escape) {
+        if (input != null) {
+            if (input.getKeyType() == KeyType.Escape) {
 //            return showExitPopup();
+            }
         }
+        
         return Action.WAIT_TO_PRESS_ENTER;
     }
 
