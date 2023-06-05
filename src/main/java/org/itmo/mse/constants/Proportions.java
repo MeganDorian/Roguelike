@@ -13,4 +13,7 @@ public interface Proportions {
     double itemWidth = 0.3;
     
     double itemHeight = 0.25;
+    
+    double paddingBottom = 0.1;
+    double paddingStart = 0.05;
 }
