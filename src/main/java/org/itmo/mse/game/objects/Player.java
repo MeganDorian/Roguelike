@@ -1,9 +1,14 @@
 package org.itmo.mse.game.objects;
 
+import static org.itmo.mse.constants.SpecialCharacters.MEDICAL_AID;
+
 import com.googlecode.lanterna.TerminalRectangle;
+import java.util.List;
 import lombok.Getter;
+import org.itmo.mse.constants.ItemType;
+import org.itmo.mse.constants.ObjectDescription;
+import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.constants.SpecialCharacters;
-import org.itmo.mse.game.objects.items.MedicalAid;
 
 @Getter
 public class Player extends Object {
@@ -13,18 +18,26 @@ public class Player extends Object {
     
     private int health = 10;
     
-    private int attack = 0;
+    private int weapon = 0;
     
     private int armor = 1;
     
     private Backpack backpack = new Backpack();
     
     public Player(TerminalRectangle position) {
-        super(position, SpecialCharacters.USER);
+        super(position, SpecialCharacters.USER, ObjectNames.player);
         
         // TODO generate base backpack
         for (int i = 0; i < 9; i++) {
-            backpack.getItems().add(new MedicalAid(position));
+            backpack.getItems().add(
+                new Item(position, MEDICAL_AID, ObjectNames.usualAids.get(2), ItemType.USUAL,
+                         ObjectDescription.usualAid));
         }
+    }
+    
+    @Override
+    public List<String> getInfo() {
+        return List.of(getName(), "", "LVL: " + level, "XP: " + experience, "HP: " + health,
+                       "ATTACK: " + weapon, "ARMOR: " + armor);
     }
 }

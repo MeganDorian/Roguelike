@@ -1,10 +1,15 @@
 package org.itmo.mse.utils.map;
 
+import static org.itmo.mse.constants.SpecialCharacters.MEDICAL_AID;
+
 import com.googlecode.lanterna.TerminalRectangle;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import org.itmo.mse.game.objects.items.Item;
+import org.itmo.mse.constants.ItemType;
+import org.itmo.mse.constants.ObjectDescription;
+import org.itmo.mse.constants.ObjectNames;
+import org.itmo.mse.game.objects.Item;
 
 public class ItemsLoader {
     
@@ -13,6 +18,7 @@ public class ItemsLoader {
     
     public void getItems(TerminalRectangle position) {
         // if there going to be different things
-        items.add(new Item(position));
+        items.add(new Item(position, MEDICAL_AID, ObjectNames.usualAids.get(2), ItemType.USUAL,
+                           ObjectDescription.usualAid));
     }
 }

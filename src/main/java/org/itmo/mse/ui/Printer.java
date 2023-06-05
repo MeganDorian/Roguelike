@@ -19,7 +19,6 @@ import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.game.Game;
 import org.itmo.mse.game.objects.Object;
-import org.itmo.mse.game.objects.Player;
 
 
 public abstract class Printer {
@@ -73,11 +72,7 @@ public abstract class Printer {
     
     private void printPlayerStats(Game game, int column) throws IOException {
         int row = 1;
-        Player player = game.getPlayer();
-        List<String> playerInfo =
-            List.of("Student", "", "LVL: " + player.getLevel(), "XP: " + player.getExperience(),
-                    "HP: " + player.getHealth(), "ATTACK: " + player.getAttack(),
-                    "ARMOR: " + player.getArmor());
+        List<String> playerInfo = game.getPlayer().getInfo();
         textGraphics.putString(column + 1, row, "DUNGEON LEVEL: " + game.getDungeonLevel());
         row++;
         
