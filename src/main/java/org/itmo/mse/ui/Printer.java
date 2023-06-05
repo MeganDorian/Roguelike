@@ -1,5 +1,13 @@
 package org.itmo.mse.ui;
 
+import static com.googlecode.lanterna.Symbols.ARROW_DOWN;
+import static com.googlecode.lanterna.Symbols.ARROW_LEFT;
+import static com.googlecode.lanterna.Symbols.ARROW_RIGHT;
+import static com.googlecode.lanterna.Symbols.ARROW_UP;
+import static org.itmo.mse.constants.Proportions.helpHeight;
+import static org.itmo.mse.constants.Proportions.playerBlockHeight;
+import static org.itmo.mse.constants.Proportions.playerBlockWidth;
+
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -7,9 +15,12 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 import java.util.List;
+import org.itmo.mse.constants.Proportions;
+import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.game.Game;
 import org.itmo.mse.game.objects.Object;
-import org.itmo.mse.utils.SpecialCharacters;
+import org.itmo.mse.game.objects.Player;
+
 
 public abstract class Printer {
     
@@ -18,6 +29,11 @@ public abstract class Printer {
     protected static TerminalScreen screen;
     
     protected final TextGraphics textGraphics = screen.newTextGraphics();
+    
+    protected final BackpackPrinter backpackPrinter = new BackpackPrinter(textGraphics);
+    
+    protected Printer() throws IOException {
+    }
     
     public void printObject(Object object) throws IOException {
         object.print(textGraphics);
@@ -35,26 +51,38 @@ public abstract class Printer {
         screen.refresh();
     }
     
-    protected void printHelp() {
-    
+    protected void printHelp() throws IOException {
+        List<String> help =
+            List.of(ARROW_DOWN + " " + ARROW_UP + " " + ARROW_LEFT + " " + ARROW_RIGHT + " : move",
+                    "I : open/close backpack", "E : interact", "ESC : exit game");
+        int column = 1;
+        int row = getSize().getRows() - (int) (getSize().getRows() * helpHeight) + 1;
+        
+        for (String h : help) {
+            textGraphics.putString(new TerminalPosition(column, row), h);
+            row += 2;
+        }
     }
     
-    protected void printPlayerInfo(Game game) throws IOException {
+    public void printPlayerInfo(Game game) throws IOException {
         int column = (int) (getSize().getColumns() * Proportions.mapWidth);
-        int row = 1;
-        printPlayerStats(game, column, row);
+        printPlayerStats(game, column);
+        backpackPrinter.printBackpack(game, column);
     }
     
-    private void printPlayerStats(Game game, int column, int row) throws IOException {
-        List<String> playerInfo = List.of("Player", "", "LVL: " + game.getPlayer().getLevel(),
-                                          "XP: " + game.getPlayer().getExperience(),
-                                          "HP: " + game.getPlayer().getHealth(),
-                                          "ATTACK: " + game.getPlayer().getDamage(),
-                                          "ARMOR: " + game.getPlayer().getArmor());
-        textGraphics.putString(column + 1, row, "DUNGEON LEVEL: " + game.getCurrentLevel());
+    private void printPlayerStats(Game game, int column) throws IOException {
+        int row = 1;
+        Player player = game.getPlayer();
+        List<String> playerInfo =
+            List.of("Student", "", "LVL: " + player.getLevel(), "XP: " + player.getExperience(),
+                    "HP: " + player.getHealth(), "ATTACK: " + player.getAttack(),
+                    "ARMOR: " + player.getArmor());
+        textGraphics.putString(column + 1, row, "DUNGEON LEVEL: " + game.getDungeonLevel());
         row++;
         
-        printPlayerInfoBorder(column, row, getSize().getColumns() - 1, row + playerInfo.size() + 1);
+        textGraphics.drawRectangle(new TerminalPosition(column, row), new TerminalSize(
+            (int) (getSize().getColumns() * playerBlockWidth),
+            (int) (getSize().getRows() * playerBlockHeight) - 1), SpecialCharacters.DELIMITER);
         
         for (String info : playerInfo) {
             row++;
@@ -62,14 +90,7 @@ public abstract class Printer {
         }
     }
     
-    private void printPlayerInfoBorder(int x1, int y1, int x2, int y2) {
-        textGraphics.drawLine(x1, y1, x2, y1, SpecialCharacters.DELIMITER);
-        textGraphics.drawLine(x1, y1, x1, y2, SpecialCharacters.DELIMITER);
-        textGraphics.drawLine(x2, y1, x2, y2, SpecialCharacters.DELIMITER);
-        textGraphics.drawLine(x1, y2, x2, y2, SpecialCharacters.DELIMITER);
-    }
-    
-    protected TerminalSize getSize() throws IOException {
+    protected static TerminalSize getSize() throws IOException {
         return terminal.getTerminalSize();
     }
 }

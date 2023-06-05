@@ -4,7 +4,7 @@ import com.googlecode.lanterna.TerminalPosition;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import org.itmo.mse.game.objects.Item;
+import org.itmo.mse.game.objects.items.Item;
 
 public class ItemsLoader {
     
@@ -13,6 +13,6 @@ public class ItemsLoader {
     
     public void getItems(TerminalPosition position) {
         // if there going to be different things
-        items.add(new Item(position, position));
+        items.add(new Item(position));
     }
 }
