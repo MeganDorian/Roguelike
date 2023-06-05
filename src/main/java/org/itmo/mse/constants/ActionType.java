@@ -1,10 +1,10 @@
-package org.itmo.mse.ui;
+package org.itmo.mse.constants;
 
 
 /**
  * Actions performed by key pressed
  */
-public enum Action {
+public enum ActionType {
     
     /**
      * User pressed escape
