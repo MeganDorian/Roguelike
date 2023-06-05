@@ -1,0 +1,29 @@
+package org.itmo.mse.constants;
+
+import java.util.List;
+
+public interface ObjectNames {
+    String wall = "Wall";
+    String map = "Map";
+    String item = "Item";
+    String player = "Student";
+    String mob = "Enemy";
+    List<String> usualAids = List.of("Watch film aid", "Coffee aid", "Reschedule the deadline aid");
+    List<String> legendaryAids =
+        List.of("Extra holidays aid", "Energy drink aid", "9 hours sleep aid");
+    
+    List<String> usualLightArmor =
+        List.of("Conspectus armor", "Scholarship armor", "IDE License armor");
+    List<String> usualMediumArmor = List.of("Lecture recordings armor", "Sponsor scholarship armor",
+                                            "Answers to the control work armor");
+    List<String> legendaryArmor =
+        List.of("Automatic pass for exam armor", "Job armor", "Answers exam tickets armor");
+    
+    List<String> usualLightWeapon =
+        List.of("Book with theory weapon", "Computer mouse weapon", "Pencil weapon");
+    List<String> usualMediumWeapon =
+        List.of("Book collection of tasks weapon", "Lunch snack for all day weapon",
+                "Charger for laptop weapon");
+    List<String> legendaryWeapon =
+        List.of("Backpack with notebooks weapon", "Shawarma weapon", "Laptop weapon");
+}

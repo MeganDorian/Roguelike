@@ -5,10 +5,11 @@ import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import java.util.List;
 import lombok.Getter;
+import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.constants.SpecialCharacters;
+import org.itmo.mse.game.objects.Item;
 import org.itmo.mse.game.objects.Mob;
 import org.itmo.mse.game.objects.Object;
-import org.itmo.mse.game.objects.items.Item;
 
 @Getter
 public class Map extends Object {
@@ -26,7 +27,7 @@ public class Map extends Object {
     
     private Map(TerminalRectangle border, List<Wall> walls, List<Mob> mobs, List<Item> items,
                 TerminalPosition exit) {
-        super(border, SpecialCharacters.WALL);
+        super(border, SpecialCharacters.WALL, ObjectNames.map);
         this.walls = walls;
         this.mobs = mobs;
         this.items = items;

@@ -1,6 +1,8 @@
 package org.itmo.mse.game.actions;
 
+import com.googlecode.lanterna.graphics.TextGraphics;
 import java.io.IOException;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
@@ -15,8 +17,10 @@ public class StartGame implements Action {
     private GameWindow gameWindow;
     
     @Override
-    public void execute() throws IncorrectMapFormatException, IOException {
-        gameWindow = new GameWindow(game);
+    public List<String> execute(TextGraphics graphics) throws IncorrectMapFormatException, IOException {
+        Move move = new Move();
+        gameWindow = new GameWindow(move, game);
         gameWindow.play();
+        return null;
     }
 }

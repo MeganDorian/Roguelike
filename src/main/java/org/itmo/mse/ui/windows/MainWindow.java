@@ -48,7 +48,7 @@ public class MainWindow extends Window {
             }
             switch (input.getKeyType()) {
                 case Enter:
-                    startGame.execute();
+                    startGame.execute(textGraphics);
                 case Escape:
                     terminal.close();
                     return;

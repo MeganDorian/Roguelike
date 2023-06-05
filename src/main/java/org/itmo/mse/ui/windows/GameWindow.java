@@ -3,8 +3,10 @@ package org.itmo.mse.ui.windows;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
+import java.util.List;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.Game;
+import org.itmo.mse.game.actions.Move;
 import org.itmo.mse.utils.map.MapLoader;
 
 public class GameWindow extends Window {
@@ -12,7 +14,10 @@ public class GameWindow extends Window {
     
     private final BackpackBlock backpack = new BackpackBlock();
     
-    public GameWindow(Game game) throws IOException, IncorrectMapFormatException {
+    private final Move move;
+    
+    public GameWindow(Move move, Game game) throws IOException, IncorrectMapFormatException {
+        this.move = move;
         this.game = game;
         screen.clear();
         screen.refresh();
@@ -38,7 +43,7 @@ public class GameWindow extends Window {
         game.setLevelMap(MapLoader.loadFromFile(fileName, isFirst, game.getPlayer()));
     }
     
-    public void play() throws IOException {
+    public void play() throws IOException, IncorrectMapFormatException {
         while (true) {
             KeyStroke input = screen.pollInput();
             if (input == null) {
@@ -51,7 +56,10 @@ public class GameWindow extends Window {
                 
             } else if (pressedKey == KeyType.ArrowDown || pressedKey == KeyType.ArrowUp ||
                        pressedKey == KeyType.ArrowLeft || pressedKey == KeyType.ArrowRight) {
-                
+                move.setDirection(pressedKey);
+                List<String> nearestObject = move.execute(textGraphics);
+                //print nearest object info
+                printObject(game.getPlayer());
             }
             
         }
