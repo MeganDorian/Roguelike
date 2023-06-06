@@ -36,7 +36,7 @@ public abstract class Printer {
     protected Printer() throws IOException {
     }
     
-    public void printObject(Object object) throws IOException {
+    protected void printObject(Object object) throws IOException {
         object.print(textGraphics);
         screen.refresh();
     }
@@ -66,7 +66,7 @@ public abstract class Printer {
         }
     }
     
-    public void printPlayerInfo(Game game) throws IOException {
+    protected void printPlayerInfo(Game game) throws IOException {
         int column = (int) (getSize().getColumns() * Proportions.mapWidth);
         printPlayerStats(game, column);
         backpackPrinter.printBackpack(game);

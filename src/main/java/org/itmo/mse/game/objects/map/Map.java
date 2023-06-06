@@ -13,9 +13,6 @@ import org.itmo.mse.game.objects.Object;
 
 @Getter
 public class Map extends Object {
-//    private final int width;
-//
-//    private final int height;
     
     private final List<Wall> walls;
     
@@ -24,14 +21,16 @@ public class Map extends Object {
     private final List<Item> items;
     
     private final TerminalPosition exit;
+    private final TerminalPosition start;
     
     private Map(TerminalRectangle border, List<Wall> walls, List<Mob> mobs, List<Item> items,
-                TerminalPosition exit) {
+                TerminalPosition exit, TerminalPosition start) {
         super(border, SpecialCharacters.WALL, ObjectNames.map);
         this.walls = walls;
         this.mobs = mobs;
         this.items = items;
         this.exit = exit;
+        this.start = start;
     }
     
     public static MapBuilder builder() {
@@ -54,6 +53,8 @@ public class Map extends Object {
         private List<Item> items;
         
         private TerminalPosition exit;
+        
+        private TerminalPosition start;
         
         public MapBuilder walls(List<Wall> walls) {
             this.walls = walls;
@@ -80,8 +81,13 @@ public class Map extends Object {
             return this;
         }
         
+        public MapBuilder start(TerminalPosition start) {
+            this.start = start;
+            return this;
+        }
+        
         public Map build() {
-            return new Map(position, walls, mobs, items, exit);
+            return new Map(position, walls, mobs, items, exit, start);
         }
     }
 }

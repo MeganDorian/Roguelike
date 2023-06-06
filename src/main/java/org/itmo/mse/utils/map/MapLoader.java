@@ -26,6 +26,7 @@ public class MapLoader {
     private int width;
     
     private TerminalPosition exitPosition;
+    private TerminalPosition startPosition;
     
     private TerminalRectangle playerPosition;
     
@@ -34,6 +35,18 @@ public class MapLoader {
     private final ItemsLoader itemLoader = new ItemsLoader();
     
     private final MobLoader mobLoader = new MobLoader();
+    
+    private TerminalPosition checkExitStartPosition(String line, int indexToSearch,
+                                                    TerminalPosition position, String error)
+        throws IncorrectMapFormatException {
+        if (line.charAt(indexToSearch - 1) == SpecialCharacters.getSpaceChar()) {
+            if (position != null) {
+                throw new IncorrectMapFormatException(error);
+            }
+            return new TerminalPosition(indexToSearch, height);
+        }
+        return position;
+    }
     
     private void getExitPosition(String line) throws IncorrectMapFormatException {
         if (line.charAt(width - 1) == SpecialCharacters.getSpaceChar()) {
@@ -68,7 +81,10 @@ public class MapLoader {
     }
     
     private void processLine(String line) throws IncorrectMapFormatException {
-        getExitPosition(line);
+        exitPosition =
+            checkExitStartPosition(line, width, exitPosition, "It can't be two exits on map");
+        startPosition =
+            checkExitStartPosition(line, 1, startPosition, "It can't be two starts on map");
         getPlayerPosition(line);
         
         searchForObjectsOnMap(line);
@@ -101,8 +117,8 @@ public class MapLoader {
         
         player.setPosition(playerPosition);
         
-        TerminalRectangle start = new TerminalRectangle(0, 0, width, height);
-        return Map.builder().exit(exitPosition).border(start)
+        TerminalRectangle mapBorder = new TerminalRectangle(0, 0, width, height);
+        return Map.builder().start(startPosition).exit(exitPosition).border(mapBorder)
                   .walls(wallsLoader.getWalls().entrySet().stream().map(entry -> {
                       TerminalPosition wallStart = entry.getValue();
                       TerminalPosition wallEnd = entry.getKey();
