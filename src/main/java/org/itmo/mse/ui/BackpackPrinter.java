@@ -9,6 +9,7 @@ import static org.itmo.mse.ui.Printer.getSize;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +38,9 @@ public class BackpackPrinter {
     private int itemHeight;
     private int itemWidth;
     
+    @Getter
+    private int backpackItemsCountInRow = 0;
+    
     public BackpackPrinter(TextGraphics graphics) throws IOException {
         textGraphics = graphics;
         width = (int) (getSize().getColumns() * playerBlockWidth);
@@ -52,27 +56,39 @@ public class BackpackPrinter {
     public void printBackpack(Game game) throws IOException {
         textGraphics.drawRectangle(new TerminalPosition(column, row),
                                    new TerminalSize(width, height), SpecialCharacters.DELIMITER);
-        printBackpackCells();
-        printBackpackItems(game);
+        printBackpackCells(game);
     }
     
-    private void printBackpackCells() throws IOException {
+    public void printSelectBackpackItem(int item, TextCharacter color) {
+        textGraphics.fillRectangle(new TerminalPosition(column, row),
+                                   new TerminalSize(width,
+                                                    height - infoBlock.height),
+                                   SpecialCharacters.SPACE);
+        TerminalRectangle selectedItem = backpackCells.get(item);
+        textGraphics.fillRectangle(selectedItem.position, selectedItem.size, color);
+    }
+    
+    private void printBackpackCells(Game game) throws IOException {
         int itemColumn = column;
         int currRow = row;
         for (int i = 0; i < backpackSize; i++) {
             if (backpackCells.size() < backpackSize) {
-                backpackCells.add(new TerminalRectangle(itemColumn, currRow, itemWidth, itemHeight));
+                backpackCells.add(
+                    new TerminalRectangle(itemColumn, currRow, itemWidth, itemHeight));
             }
             textGraphics.drawRectangle(new TerminalPosition(itemColumn, currRow),
                                        new TerminalSize(itemWidth, itemHeight),
                                        SpecialCharacters.DELIMITER);
             if (itemColumn + itemWidth < getSize().getColumns()) {
                 itemColumn += itemWidth;
+                backpackItemsCountInRow++;
             } else {
                 itemColumn = column;
                 currRow += itemHeight;
+                backpackItemsCountInRow = backpackSize / backpackItemsCountInRow;
             }
         }
+        printBackpackItems(game);
     }
     
     private void printBackpackItems(Game game) {

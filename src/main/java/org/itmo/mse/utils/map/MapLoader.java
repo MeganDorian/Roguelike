@@ -30,11 +30,20 @@ public class MapLoader {
     
     private TerminalRectangle playerPosition;
     
-    private final WallsLoader wallsLoader = new WallsLoader();
+    private WallsLoader wallsLoader;
     
-    private final ItemsLoader itemLoader = new ItemsLoader();
+    private ItemsLoader itemLoader;
     
-    private final MobLoader mobLoader = new MobLoader();
+    private MobLoader mobLoader;
+    
+    private void reset() {
+        exitPosition = null;
+        startPosition = null;
+        playerPosition = null;
+        wallsLoader = new WallsLoader();
+        itemLoader = new ItemsLoader();
+        mobLoader = new MobLoader();
+    }
     
     private TerminalPosition checkExitStartPosition(String line, int indexToSearch,
                                                     TerminalPosition position, String error)
@@ -46,15 +55,6 @@ public class MapLoader {
             return new TerminalPosition(indexToSearch, height);
         }
         return position;
-    }
-    
-    private void getExitPosition(String line) throws IncorrectMapFormatException {
-        if (line.charAt(width - 1) == SpecialCharacters.getSpaceChar()) {
-            if (exitPosition != null) {
-                throw new IncorrectMapFormatException("It can't be two exits on map");
-            }
-            exitPosition = new TerminalPosition(width, height);
-        }
     }
     
     private void getPlayerPosition(String line) throws IncorrectMapFormatException {
@@ -113,6 +113,7 @@ public class MapLoader {
     
     public Map loadFromFile(String fileName, boolean isFirst, Player player)
         throws IOException, IncorrectMapFormatException {
+        reset();
         readMap(fileName, isFirst);
         
         player.setPosition(playerPosition);

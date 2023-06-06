@@ -1,9 +1,11 @@
 package org.itmo.mse.ui.windows;
 
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
 import java.util.List;
+import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.Game;
 import org.itmo.mse.game.actions.Action;
@@ -13,17 +15,17 @@ import org.itmo.mse.utils.map.MapLoader;
 public class GameWindow extends Window {
     private final Game game;
     
-    private final BackpackBlock backpack = new BackpackBlock();
-    
     private final Move move;
     
     private final Action interact;
+    private final Action backpackAction;
     
-    public GameWindow(Move move, Game game, Action interact)
+    public GameWindow(Move move, Game game, Action interact, Action backpackAction)
         throws IOException, IncorrectMapFormatException {
         this.move = move;
         this.game = game;
         this.interact = interact;
+        this.backpackAction = backpackAction;
         screen.clear();
         screen.refresh();
         printLevel();
@@ -40,6 +42,8 @@ public class GameWindow extends Window {
         printObject(game.getPlayer());
         printHelp();
         printPlayerInfo(game);
+        backpackPrinter.printBackpack(game);
+        game.setBackpackItemsInRow(backpackPrinter.getBackpackItemsCountInRow());
         screen.refresh();
     }
     
@@ -58,21 +62,28 @@ public class GameWindow extends Window {
             if (pressedKey == KeyType.Escape) {
                 terminal.close();
                 return;
-                
             } else if (pressedKey == KeyType.ArrowDown || pressedKey == KeyType.ArrowUp ||
                        pressedKey == KeyType.ArrowLeft || pressedKey == KeyType.ArrowRight) {
                 move.setDirection(pressedKey);
                 List<String> nearestObject = move.execute(textGraphics);
-                //print nearest object info
                 printObjectInfo(nearestObject);
                 printObject(game.getPlayer());
-            } else if (input.getCharacter() != null && input.getCharacter().equals('e')) {
-                List<String> pickedUpItem = interact.execute(textGraphics);
-                printObjectInfo(pickedUpItem);
-                backpackPrinter.printBackpack(game);
-                screen.refresh();
+            } else if (input.getCharacter() != null) {
+                if (input.getCharacter().equals('e')) {
+                    List<String> pickedUpItem = interact.execute(textGraphics);
+                    printObjectInfo(pickedUpItem);
+                    backpackPrinter.printBackpack(game);
+                } else if (input.getCharacter().equals('i')) {
+                    List<String> selectedItem = backpackAction.execute(textGraphics);
+                    printObjectInfo(selectedItem);
+                }
             }
-            
+            TextCharacter color =
+                game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
+            int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItem();
+            backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
+            backpackPrinter.printBackpack(game);
+            screen.refresh();
         }
     }
 }

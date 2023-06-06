@@ -10,4 +10,5 @@ public interface Action {
     Game game = new Game();
     
     List<String> execute(TextGraphics graphics) throws IncorrectMapFormatException, IOException;
+
 }

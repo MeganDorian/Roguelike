@@ -9,7 +9,9 @@ import com.googlecode.lanterna.TextColor;
 
 public interface SpecialCharacters {
     TextCharacter DELIMITER =
-        TextCharacter.fromCharacter('.', TextColor.ANSI.YELLOW, TextColor.ANSI.DEFAULT)[0];
+        TextCharacter.fromCharacter('-', TextColor.ANSI.YELLOW, TextColor.ANSI.DEFAULT)[0];
+    TextCharacter SELECTED_ITEM =
+        TextCharacter.fromCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.WHITE)[0];
     TextCharacter WALL =
         TextCharacter.fromCharacter('@', TextColor.ANSI.WHITE, TextColor.ANSI.DEFAULT)[0];
     TextCharacter SPACE =

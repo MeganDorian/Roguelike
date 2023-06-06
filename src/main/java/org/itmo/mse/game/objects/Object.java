@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.itmo.mse.constants.SpecialCharacters;
 
 @AllArgsConstructor
 @Getter
@@ -25,6 +26,7 @@ public abstract class Object {
      * @param graphics to draw object
      */
     public void print(TextGraphics graphics) {
+        graphics.fillRectangle(position.position, position.size, SpecialCharacters.SPACE);
         graphics.drawRectangle(position.position, position.size, character);
     }
     

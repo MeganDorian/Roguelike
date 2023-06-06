@@ -21,7 +21,8 @@ public class StartGame implements Action {
         throws IncorrectMapFormatException, IOException {
         Move move = new Move();
         Action interact = new Interact();
-        gameWindow = new GameWindow(move, game, interact);
+        Action backpackAction = new BackpackAction();
+        gameWindow = new GameWindow(move, game, interact, backpackAction);
         gameWindow.play();
         return null;
     }

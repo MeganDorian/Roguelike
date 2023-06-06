@@ -24,7 +24,7 @@ public class Item extends Object {
     
     @Override
     public List<String> getInfo() {
-        return List.of(getName(), description);
+        return List.of(getName(), description, itemCharacteristic.name());
     }
     
     

@@ -12,8 +12,14 @@ public class Move implements Action {
     
     @Override
     public List<String> execute(TextGraphics graphics) {
-        TerminalRectangle oldPosition = game.getPlayer().getPosition();
-        graphics.drawRectangle(oldPosition.position, oldPosition.size, ' ');
-        return game.updatePlayerPosition(direction, graphics);
+        if (!game.isBackpackOpened()) {
+            TerminalRectangle oldPosition = game.getPlayer().getPosition();
+            graphics.drawRectangle(oldPosition.position, oldPosition.size, ' ');
+            return game.updatePlayerPosition(direction, graphics);
+        } else {
+            game.setSelectedItemInBackpack(direction);
+            return game.getPlayer().getBackpack()
+                       .get(game.getPlayer().getBackpack().getSelectedItem()).getInfo();
+        }
     }
 }
