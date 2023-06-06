@@ -5,9 +5,10 @@ import java.util.List;
 public interface ObjectNames {
     String wall = "Wall";
     String map = "Map";
-    String item = "Item";
     String player = "Student";
-    String mob = "Enemy";
+    List<String> aggressiveMobs = List.of("Deadline", "Contest", "Session");
+    List<String> passiveMob = List.of("Coursework", "Graduate Work", "Research work");
+    List<String> cowardlyMob = List.of("C++ homework", "Internship", "Bug in code");
     List<String> usualAids = List.of("Watch film aid", "Coffee aid", "Reschedule the deadline aid");
     List<String> legendaryAids =
         List.of("Extra holidays aid", "Energy drink aid", "9 hours sleep aid");
