@@ -58,12 +58,16 @@ public abstract class Printer {
     protected void printHelp() throws IOException {
         List<String> help =
             List.of(ARROW_DOWN + " " + ARROW_UP + " " + ARROW_LEFT + " " + ARROW_RIGHT + " : move",
-                    "I : open/close backpack", "E : interact", "SPACE : put on item",
-                    "ESC : " + "exit game");
+                    "I : open/close backpack", "E : interact", "X : drop item", "ESC : exit game");
         int column = 1;
         int row = getSize().getRows() - (int) (getSize().getRows() * helpHeight) + 1;
         
         for (String h : help) {
+            if (row >= getSize().getRows()) {
+                row = getSize().getRows() - (int) (getSize().getRows() * helpHeight) + 1;
+                int longestHelpString = help.stream().mapToInt(String::length).max().getAsInt() + 5;
+                column += longestHelpString;
+            }
             textGraphics.putString(new TerminalPosition(column, row), h);
             row += 2;
         }

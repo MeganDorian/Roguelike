@@ -17,8 +17,12 @@ public class PlayerPrinter {
     
     private final TextGraphics textGraphics;
     
-    protected PlayerPrinter(TextGraphics textGraphics) {
+    private TerminalSize playerBlockSize;
+    
+    protected PlayerPrinter(TextGraphics textGraphics) throws IOException {
         this.textGraphics = textGraphics;
+        playerBlockSize = new TerminalSize((int) (getSize().getColumns() * playerBlockWidth),
+                                           (int) (getSize().getRows() * playerBlockHeight) - 1);
     }
     
     public void printPlayerInfo(Game game, int startRow) throws IOException {
@@ -26,14 +30,15 @@ public class PlayerPrinter {
         printPlayerStats(game, column, startRow);
     }
     
-    private void printPlayerStats(Game game, int column, int startRow) throws IOException {
+    private void printPlayerStats(Game game, int column, int startRow) {
+        textGraphics.fillRectangle(new TerminalPosition(column, startRow), playerBlockSize,
+                                   SpecialCharacters.SPACE);
         List<String> playerInfo = game.getPlayer().getInfo();
         textGraphics.putString(column + 1, startRow, "DUNGEON LEVEL: " + game.getDungeonLevel());
         int row = 2;
         
-        textGraphics.drawRectangle(new TerminalPosition(column, row), new TerminalSize(
-            (int) (getSize().getColumns() * playerBlockWidth),
-            (int) (getSize().getRows() * playerBlockHeight) - 1), SpecialCharacters.DELIMITER);
+        textGraphics.drawRectangle(new TerminalPosition(column, row), playerBlockSize,
+                                   SpecialCharacters.DELIMITER);
         
         for (String info : playerInfo) {
             row++;

@@ -6,6 +6,10 @@ public interface ObjectNames {
     String wall = "Wall";
     String map = "Map";
     String player = "Student";
+    
+    String emptyHands = "Empty hands";
+    
+    String noArmor = "No armor";
     List<String> aggressiveMobs = List.of("Deadline", "Contest", "Session");
     List<String> passiveMob = List.of("Coursework", "Graduate Work", "Research work");
     List<String> cowardlyMob = List.of("C++ homework", "Internship", "Bug in code");
