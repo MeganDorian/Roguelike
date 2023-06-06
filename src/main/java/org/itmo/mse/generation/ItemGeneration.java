@@ -6,7 +6,6 @@ import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
 import java.util.List;
-import java.util.Random;
 import org.itmo.mse.constants.ItemCharacteristic;
 import org.itmo.mse.constants.ItemType;
 import org.itmo.mse.constants.ObjectDescription;
@@ -16,9 +15,7 @@ import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectItemType;
 import org.itmo.mse.game.objects.Item;
 
-public class ItemGeneration {
-    
-    static Random rand = new Random();
+public class ItemGeneration extends Generation {
     
     /**
      * Generates item parameters of a given type
@@ -28,7 +25,7 @@ public class ItemGeneration {
      * @throws IncorrectItemType -- if generation for the type passed is not specified
      */
     public static Item generateItem(ItemType type) throws IncorrectItemType {
-        TerminalRectangle position = MapGeneration.generatePosition();
+        TerminalRectangle position = generatePosition();
         TextCharacter character;
         List<String> allNames;
         ItemCharacteristic characteristic;
@@ -89,4 +86,22 @@ public class ItemGeneration {
         return new Item(position, character, allNames.get(rand.nextInt(allNames.size())),
             characteristic, type, description);
     }
+    
+    /**
+     * Generates item parameters
+     *
+     * @return random item
+     * @throws IncorrectItemType -- if generation for the type passed is not specified
+     */
+    public static Item generateItem() throws IncorrectItemType {
+        int generateTypeItem = rand.nextInt(100);
+        if(generateTypeItem < Proportions.aids * 100) {
+            return generateItem(ItemType.MEDICAL_AID);
+        } else if (generateTypeItem < (Proportions.aids + Proportions.armor) * 100) {
+            return generateItem(ItemType.ARMOR);
+        } else {
+            return generateItem(ItemType.WEAPON);
+        }
+    }
+    
 }

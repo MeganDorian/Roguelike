@@ -1,15 +1,12 @@
 package org.itmo.mse.utils.map;
 
-import static org.itmo.mse.constants.SpecialCharacters.MEDICAL_AID;
+import static org.itmo.mse.generation.ItemGeneration.generateItem;
 
 import com.googlecode.lanterna.TerminalRectangle;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import org.itmo.mse.constants.ItemCharacteristic;
-import org.itmo.mse.constants.ItemType;
-import org.itmo.mse.constants.ObjectDescription;
-import org.itmo.mse.constants.ObjectNames;
+import org.itmo.mse.exceptions.IncorrectItemType;
 import org.itmo.mse.game.objects.Item;
 
 public class ItemsLoader {
@@ -18,9 +15,13 @@ public class ItemsLoader {
     private final List<Item> items = new ArrayList<>();
     
     public void getItems(TerminalRectangle position) {
-        // if there going to be different things
-        items.add(
-            new Item(position, MEDICAL_AID, ObjectNames.usualAids.get(2), ItemCharacteristic.USUAL,
-                     ItemType.MEDICAL_AID, ObjectDescription.usualAid));
+        //so far so good for the default map
+        try {
+            Item item = generateItem();
+            item.setPosition(position);
+            items.add(item);
+        } catch (IncorrectItemType ex) {
+            //not doing anything
+        }
     }
 }

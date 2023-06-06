@@ -16,8 +16,18 @@ public interface Proportions {
     
     double paddingBottom = 0.1;
     double paddingStart = 0.05;
-    
     int backpackSize = 9;
-    
     double legendaryItem = 0.05;
+    double cowardlyMob = 0.33;
+    double passiveMob = 0.33;
+    int defaultExperienceCowardlyMob = 3;
+    int defaultExperiencePassiveMob = 5;
+    int defaultExperienceAggressiveMob = 10;
+    int lowerMobDamage = 1;
+    int upperMobDamage = 2;
+    int lowerMobHealthy = 1;
+    int upperMobHealthy = 3;
+    double weapon = 0.2;
+    double aids = 0.4;
+    double armor = 0.4;
 }
