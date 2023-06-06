@@ -16,4 +16,6 @@ public interface Proportions {
     
     double paddingBottom = 0.1;
     double paddingStart = 0.05;
+    
+    int backpackSize = 9;
 }

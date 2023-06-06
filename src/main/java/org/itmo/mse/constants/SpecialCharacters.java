@@ -14,7 +14,7 @@ public interface SpecialCharacters {
         TextCharacter.fromCharacter('@', TextColor.ANSI.WHITE, TextColor.ANSI.DEFAULT)[0];
     TextCharacter SPACE =
         TextCharacter.fromCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT)[0];
-    TextCharacter USER =
+    TextCharacter PLAYER =
         TextCharacter.fromCharacter('+', TextColor.ANSI.GREEN, TextColor.ANSI.DEFAULT)[0];
     TextCharacter MOB =
         TextCharacter.fromCharacter('#', TextColor.ANSI.RED, TextColor.ANSI.DEFAULT)[0];
@@ -24,7 +24,7 @@ public interface SpecialCharacters {
         TextCharacter.fromCharacter(HEART, TextColor.ANSI.RED_BRIGHT, TextColor.ANSI.DEFAULT)[0];
     TextCharacter ARMOR =
         TextCharacter.fromCharacter(DIAMOND, TextColor.ANSI.MAGENTA, TextColor.ANSI.DEFAULT)[0];
-    TextCharacter ATTACK = TextCharacter.fromCharacter(DOUBLE_LINE_CROSS, TextColor.ANSI.CYAN,
+    TextCharacter WEAPON = TextCharacter.fromCharacter(DOUBLE_LINE_CROSS, TextColor.ANSI.CYAN,
                                                        TextColor.ANSI.DEFAULT)[0];
     
     static char getWallChar() {
@@ -36,14 +36,14 @@ public interface SpecialCharacters {
     }
     
     static char getUserChar() {
-        return USER.getCharacterString().charAt(0);
+        return PLAYER.getCharacterString().charAt(0);
     }
     
     static char getMobChar() {
         return MOB.getCharacterString().charAt(0);
     }
     
-    static char getThingChar() {
+    static char getItemChar() {
         return ITEM.getCharacterString().charAt(0);
     }
 }

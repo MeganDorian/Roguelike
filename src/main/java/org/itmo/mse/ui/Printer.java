@@ -22,6 +22,7 @@ import org.itmo.mse.game.objects.Object;
 
 
 public abstract class Printer {
+    private int startRow = 1;
     
     protected static Terminal terminal;
     
@@ -67,14 +68,13 @@ public abstract class Printer {
     public void printPlayerInfo(Game game) throws IOException {
         int column = (int) (getSize().getColumns() * Proportions.mapWidth);
         printPlayerStats(game, column);
-        backpackPrinter.printBackpack(game, column);
+        backpackPrinter.printBackpack(game);
     }
     
     private void printPlayerStats(Game game, int column) throws IOException {
-        int row = 1;
         List<String> playerInfo = game.getPlayer().getInfo();
-        textGraphics.putString(column + 1, row, "DUNGEON LEVEL: " + game.getDungeonLevel());
-        row++;
+        textGraphics.putString(column + 1, startRow, "DUNGEON LEVEL: " + game.getDungeonLevel());
+        int row = 2;
         
         textGraphics.drawRectangle(new TerminalPosition(column, row), new TerminalSize(
             (int) (getSize().getColumns() * playerBlockWidth),
@@ -84,6 +84,19 @@ public abstract class Printer {
             row++;
             textGraphics.putString(column + 2, row, info);
         }
+    }
+    
+    /**
+     * Prints object info under the backpack in the right
+     */
+    protected void printObjectInfo(List<String> info) throws IOException {
+        TerminalPosition infoBlockPosition =
+            backpackPrinter.getInfoBlockPosition().withRelativeColumn(1).withRelativeRow(1);
+        for (String i : info) {
+            textGraphics.putString(infoBlockPosition, i);
+            infoBlockPosition = infoBlockPosition.withRelativeRow(1);
+        }
+        screen.refresh();
     }
     
     protected static TerminalSize getSize() throws IOException {
