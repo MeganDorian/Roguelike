@@ -14,11 +14,21 @@ import org.itmo.mse.game.objects.map.Wall;
 @UtilityClass
 public class Checker {
     
+    /**
+     * Checks whether there object (mob, item) at the position
+     *
+     * @return object at this position * if found
+     */
     public Optional<? extends Object> isObjectAtPosition(TerminalRectangle position,
                                                          List<? extends Object> objects) {
         return objects.stream().filter(item -> checkIsIntersect(item, position)).findFirst();
     }
     
+    /**
+     * Checks is there wall at the position
+     *
+     * @return true if there wall
+     */
     public boolean isWallNearby(TerminalRectangle position, List<Wall> walls) {
         return walls.stream().anyMatch(wall -> Checker.checkIsIntersect(wall, position));
     }

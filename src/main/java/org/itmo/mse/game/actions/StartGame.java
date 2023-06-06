@@ -22,7 +22,8 @@ public class StartGame implements Action {
         Move move = new Move();
         Action interact = new Interact();
         Action backpackAction = new BackpackAction();
-        gameWindow = new GameWindow(move, game, interact, backpackAction);
+        Action dropItem = new Drop();
+        gameWindow = new GameWindow(move, game, interact, backpackAction, dropItem);
         gameWindow.play();
         return null;
     }
