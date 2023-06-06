@@ -41,7 +41,7 @@ public class GameWindow extends Window {
         printObject(game.getLevelMap());
         printObject(game.getPlayer());
         printHelp();
-        printPlayerInfo(game);
+        playerPrinter.printPlayerInfo(game, startRow);
         backpackPrinter.printBackpack(game);
         game.setBackpackItemsInRow(backpackPrinter.getBackpackItemsCountInRow());
         screen.refresh();
