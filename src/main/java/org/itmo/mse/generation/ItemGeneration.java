@@ -6,7 +6,6 @@ import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
 import java.util.List;
-import java.util.Random;
 import org.itmo.mse.constants.ItemCharacteristic;
 import org.itmo.mse.constants.ItemType;
 import org.itmo.mse.constants.ObjectDescription;
@@ -87,4 +86,22 @@ public class ItemGeneration extends Generation {
         return new Item(position, character, allNames.get(rand.nextInt(allNames.size())),
             characteristic, type, description);
     }
+    
+    /**
+     * Generates item parameters
+     *
+     * @return random item
+     * @throws IncorrectItemType -- if generation for the type passed is not specified
+     */
+    public static Item generateItem() throws IncorrectItemType {
+        int generateTypeItem = rand.nextInt(100);
+        if(generateTypeItem < Proportions.aids * 100) {
+            return generateItem(ItemType.MEDICAL_AID);
+        } else if (generateTypeItem < (Proportions.aids + Proportions.armor) * 100) {
+            return generateItem(ItemType.ARMOR);
+        } else {
+            return generateItem(ItemType.WEAPON);
+        }
+    }
+    
 }
