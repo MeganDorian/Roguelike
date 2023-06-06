@@ -7,6 +7,6 @@ import java.util.List;
 public class Interact implements Action {
     @Override
     public List<String> execute(TextGraphics graphics) throws IOException {
-        return game.pickUpItemNearby();
+        return game.pickupItem();
     }
 }
