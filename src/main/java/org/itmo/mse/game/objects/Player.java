@@ -1,15 +1,14 @@
 package org.itmo.mse.game.objects;
 
-import static org.itmo.mse.constants.SpecialCharacters.MEDICAL_AID;
+import static org.itmo.mse.generation.ItemGeneration.generateItem;
 
 import com.googlecode.lanterna.TerminalRectangle;
 import java.util.List;
 import lombok.Getter;
-import org.itmo.mse.constants.ItemCharacteristic;
 import org.itmo.mse.constants.ItemType;
-import org.itmo.mse.constants.ObjectDescription;
 import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.constants.SpecialCharacters;
+import org.itmo.mse.exceptions.IncorrectItemType;
 
 @Getter
 public class Player extends Object {
@@ -27,13 +26,12 @@ public class Player extends Object {
     
     public Player(TerminalRectangle position) {
         super(position, SpecialCharacters.PLAYER, ObjectNames.player);
-        
-        // TODO generate base backpack
-        for (int i = 0; i < 2; i++) {
-            backpack.getItems().add(
-                new Item(position, MEDICAL_AID, ObjectNames.usualAids.get(2),
-                         ItemCharacteristic.USUAL, ItemType.MEDICAL_AID,
-                         ObjectDescription.usualAid));
+        try {
+            backpack.getItems().add(generateItem(ItemType.WEAPON));
+            backpack.getItems().add(generateItem(ItemType.ARMOR));
+            backpack.getItems().add(generateItem(ItemType.MEDICAL_AID));
+        } catch (IncorrectItemType ex) {
+            //TODO display a generation error message or just leave an empty rucksack?
         }
     }
     

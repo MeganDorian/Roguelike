@@ -5,8 +5,8 @@ public interface ObjectDescription {
     String legendaryAid = "Restores " + ObjectEffect.legendaryAid * 100 + "% of health";
     String usualLightWeapon = "Increases attack by " + ObjectEffect.light;
     String usualMediumWeapon = "Increases attack by " + ObjectEffect.medium;
-    String usualHardWeapon = "Increases attack by " + ObjectEffect.hard;
+    String legendaryHardWeapon = "Increases attack by " + ObjectEffect.hard;
     String usualLightArmor = "Increases armor by " + ObjectEffect.light;
     String usualMediumArmor = "Increases armor by " + ObjectEffect.medium;
-    String usualHardArmor = "Increases armor by " + ObjectEffect.hard;
+    String legendaryHardArmor = "Increases armor by " + ObjectEffect.hard;
 }
