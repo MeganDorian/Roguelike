@@ -12,6 +12,7 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.game.Game;
@@ -22,26 +23,38 @@ public class BackpackPrinter {
     private final TextGraphics textGraphics;
     
     private final List<TerminalRectangle> backpackCells = new ArrayList<>();
-    private final int width;
-    private final int height;
+    private int width;
+    private int height;
+    
+    private int column;
+    
+    private int row;
+    
+    @Getter
+    private TerminalPosition infoBlockPosition;
+    
+    private int itemHeight;
+    private int itemWidth;
     
     public BackpackPrinter(TextGraphics graphics) throws IOException {
         textGraphics = graphics;
         width = (int) (getSize().getColumns() * playerBlockWidth);
         height = (int) (getSize().getRows() * backpackHeight) - 1;
+        column = (int) (getSize().getColumns() * Proportions.mapWidth);
+        row = (int) (getSize().getRows() * playerBlockHeight + 1);
+        itemHeight = (int) (height * Proportions.itemHeight);
+        itemWidth = (int) (width * Proportions.itemWidth) + 1;
+        infoBlockPosition = new TerminalPosition(column, row + itemHeight * 3);
     }
     
-    public void printBackpack(Game game, int column) throws IOException {
-        int row = (int) (getSize().getRows() * playerBlockHeight + 1);
+    public void printBackpack(Game game) throws IOException {
         textGraphics.drawRectangle(new TerminalPosition(column, row),
                                    new TerminalSize(width, height), SpecialCharacters.DELIMITER);
-        printBackpackCells(game, column, row);
+        printBackpackCells(game);
         printBackpackItems(game);
     }
     
-    private void printBackpackCells(Game game, int column, int row) throws IOException {
-        int itemHeight = (int) (height * Proportions.itemHeight);
-        int itemWidth = (int) (width * Proportions.itemWidth) + 1;
+    private void printBackpackCells(Game game) throws IOException {
         int itemColumn = column;
         Backpack backpack = game.getPlayer().getBackpack();
         for (int i = 0; i < backpack.size(); i++) {

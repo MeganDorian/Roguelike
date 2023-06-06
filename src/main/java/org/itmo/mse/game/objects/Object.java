@@ -25,7 +25,7 @@ public abstract class Object {
      * @param graphics to draw object
      */
     public void print(TextGraphics graphics) {
-        graphics.drawRectangle(position.position, position.size, getCharacter());
+        graphics.drawRectangle(position.position, position.size, character);
     }
     
     public List<String> getInfo() {

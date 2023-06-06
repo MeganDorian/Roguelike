@@ -31,7 +31,7 @@ public class MapLoader {
     
     private final WallsLoader wallsLoader = new WallsLoader();
     
-    private final ItemsLoader ITEMS_LOADER = new ItemsLoader();
+    private final ItemsLoader itemLoader = new ItemsLoader();
     
     private final MobLoader mobLoader = new MobLoader();
     
@@ -61,8 +61,8 @@ public class MapLoader {
                 wallsLoader.getWalls(position, i, height);
             } else if (line.charAt(i) == SpecialCharacters.getMobChar()) {
                 mobLoader.getMobs(position);
-            } else if (line.charAt(i) == SpecialCharacters.getThingChar()) {
-                ITEMS_LOADER.getItems(position);
+            } else if (line.charAt(i) == SpecialCharacters.getItemChar()) {
+                itemLoader.getItems(position);
             }
         }
     }
@@ -111,7 +111,7 @@ public class MapLoader {
                       return new Wall(
                           new TerminalRectangle(wallStart.getColumn(), wallStart.getRow(), width,
                                                 height));
-                  }).collect(Collectors.toList())).things(ITEMS_LOADER.getItems())
+                  }).collect(Collectors.toList())).things(itemLoader.getItems())
                   .mobs(mobLoader.getMobs()).build();
     }
 }

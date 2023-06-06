@@ -34,27 +34,8 @@ public class Game {
      */
     public List<String> updatePlayerPosition(KeyType direction) {
         List<String> info = null;
-        TerminalRectangle newPosition;
         TerminalRectangle playerPosition = player.getPosition();
-        switch (direction) {
-            case ArrowUp:
-                newPosition = new TerminalRectangle(playerPosition.x, playerPosition.y - 1,
-                                                    playerPosition.width, playerPosition.height);
-                break;
-            case ArrowDown:
-                newPosition = new TerminalRectangle(playerPosition.x, playerPosition.y + 1,
-                                                    playerPosition.width, playerPosition.height);
-                break;
-            case ArrowLeft:
-                newPosition = new TerminalRectangle(playerPosition.x - 1, playerPosition.y,
-                                                    playerPosition.width, playerPosition.height);
-                break;
-            default:
-                newPosition = new TerminalRectangle(playerPosition.x + 1, playerPosition.y,
-                                                    playerPosition.width, playerPosition.height);
-                break;
-        }
-        
+        TerminalRectangle newPosition = getNextPosition(direction, playerPosition);
         if (isWallNearby(newPosition)) {
             newPosition = playerPosition;
         }
@@ -113,5 +94,25 @@ public class Game {
         TerminalRectangle wallPosition = object.getPosition();
         return position.x >= wallPosition.x && position.x <= wallPosition.xAndWidth - 1 &&
                position.y >= wallPosition.y && position.y <= wallPosition.yAndHeight - 1;
+    }
+    
+    /**
+     * Returns next position according to the direction
+     */
+    private TerminalRectangle getNextPosition(KeyType direction, TerminalRectangle position) {
+        switch (direction) {
+            case ArrowUp:
+                return new TerminalRectangle(position.x, position.y - 1, position.width,
+                                             position.height);
+            case ArrowDown:
+                return new TerminalRectangle(position.x, position.y + 1, position.width,
+                                             position.height);
+            case ArrowLeft:
+                return new TerminalRectangle(position.x - 1, position.y, position.width,
+                                             position.height);
+            default:
+                return new TerminalRectangle(position.x + 1, position.y, position.width,
+                                             position.height);
+        }
     }
 }
