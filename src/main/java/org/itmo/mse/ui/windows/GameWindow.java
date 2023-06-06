@@ -83,6 +83,7 @@ public class GameWindow extends Window {
             int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItem();
             backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
             backpackPrinter.printBackpack(game);
+            playerPrinter.printPlayerInfo(game, startRow);
             screen.refresh();
         }
     }

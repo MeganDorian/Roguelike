@@ -1,5 +1,6 @@
 package org.itmo.mse.game;
 
+import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
 import static org.itmo.mse.constants.Proportions.backpackSize;
 
 import com.googlecode.lanterna.TerminalRectangle;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
+import org.itmo.mse.constants.ObjectEffect;
+import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.game.objects.Item;
 import org.itmo.mse.game.objects.Mob;
 import org.itmo.mse.game.objects.Object;
@@ -138,5 +141,91 @@ public class Game {
             selectedItem += backpackItemsInRow;
         }
         player.getBackpack().setSelectedItem(selectedItem);
+    }
+    
+    /**
+     * Applies selected item in the backpack
+     */
+    public void applySelectedItem() {
+        int selectedItem = player.getBackpack().getSelectedItem();
+        Item item = player.getBackpack().get(selectedItem);
+        switch (item.getItemType()) {
+            case MEDICAL_AID:
+                applyMedicalAid(item, selectedItem);
+                break;
+            case ARMOR:
+                applyArmor(item, selectedItem);
+                break;
+            case WEAPON:
+                applyWeapon(item, selectedItem);
+                break;
+        }
+        player.getBackpack().setSelectedItem(Math.max(0, selectedItem - 1));
+    }
+    
+    /**
+     * Applies medical aid selected in the backpack according to the medical aid type
+     */
+    private void applyMedicalAid(Item item, int selectedItem) {
+        int addHealth = (int) (player.getMaxHealth() *
+                               (item.getItemCharacteristic() == USUAL ? ObjectEffect.usualAid :
+                                ObjectEffect.legendaryAid)) + player.getHealth();
+        player.setHealth(Math.min(addHealth, player.getMaxHealth()));
+        player.getBackpack().getItems().remove(item);
+    }
+    
+    
+    /**
+     * If equipped armor class == armor to put on class, then armor will be stacked with the
+     * equipped one <br> otherwise equipped armor will be stored in the backpack and replaced
+     * with the armor to put
+     */
+    private void applyArmor(Item item, int selectedItem) {
+        int addArmor;
+        Item equippedArmor = player.getArmor();
+        if (item.getItemClass() == equippedArmor.getItemClass()) {
+            addArmor = equippedArmor.getValue() + increaseValueBasedOnItemClass(item);
+            equippedArmor.setValue(addArmor);
+            player.getBackpack().getItems().remove(item);
+            player.setArmor(equippedArmor);
+        } else {
+            player.getBackpack().getItems().remove(item);
+            if (!equippedArmor.getName().equals(ObjectNames.noArmor)) {
+                player.getBackpack().getItems().add(selectedItem, equippedArmor);
+            }
+            player.setArmor(item);
+        }
+    }
+    
+    /**
+     * If equipped weapon class == weapon to put on class, then weapon will be stacked with the
+     * equipped one <br> otherwise equipped weapon will be stored in the backpack (if it's not the
+     * empty player hands) and replaced with the weapon to put
+     */
+    private void applyWeapon(Item item, int selectedItem) {
+        int addWeapon;
+        Item equippedWeapon = player.getWeapon();
+        if (item.getItemClass() == equippedWeapon.getItemClass()) {
+            addWeapon = increaseValueBasedOnItemClass(item);
+            if (!equippedWeapon.getName().equals(ObjectNames.emptyHands)) {
+                addWeapon += equippedWeapon.getValue();
+            }
+            player.getBackpack().getItems().remove(item);
+            player.getWeapon().setValue(addWeapon);
+        } else {
+            player.getBackpack().getItems().remove(item);
+            if (!equippedWeapon.getName().equals(ObjectNames.emptyHands)) {
+                player.getBackpack().getItems().add(selectedItem, equippedWeapon);
+            }
+            player.setWeapon(item);
+        }
+    }
+    
+    private int increaseValueBasedOnItemClass(Item item) {
+        return switch (item.getItemClass()) {
+            case LIGHT -> ObjectEffect.light;
+            case MEDIUM -> ObjectEffect.medium;
+            case HEAVY -> ObjectEffect.heavy;
+        };
     }
 }

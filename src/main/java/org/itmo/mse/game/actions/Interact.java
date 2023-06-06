@@ -1,6 +1,7 @@
 package org.itmo.mse.game.actions;
 
 import com.googlecode.lanterna.graphics.TextGraphics;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Interact implements Action {
@@ -9,7 +10,13 @@ public class Interact implements Action {
         if (!game.isBackpackOpened()) {
             return game.pickupItem();
         } else {
-            return List.of();
+            List<String> info = new ArrayList<>();
+            info.add("You used:");
+            info.addAll(
+                game.getPlayer().getBackpack().get(game.getPlayer().getBackpack().getSelectedItem())
+                    .getInfo());
+            game.applySelectedItem();
+            return info;
         }
     }
 }
