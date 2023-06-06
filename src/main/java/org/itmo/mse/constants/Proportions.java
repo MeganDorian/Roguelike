@@ -18,4 +18,6 @@ public interface Proportions {
     double paddingStart = 0.05;
     
     int backpackSize = 9;
+    
+    double legendaryItem = 0.05;
 }
