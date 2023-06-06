@@ -5,8 +5,6 @@ import static com.googlecode.lanterna.Symbols.ARROW_LEFT;
 import static com.googlecode.lanterna.Symbols.ARROW_RIGHT;
 import static com.googlecode.lanterna.Symbols.ARROW_UP;
 import static org.itmo.mse.constants.Proportions.helpHeight;
-import static org.itmo.mse.constants.Proportions.playerBlockHeight;
-import static org.itmo.mse.constants.Proportions.playerBlockWidth;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalRectangle;
@@ -16,14 +14,12 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 import java.util.List;
-import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
-import org.itmo.mse.game.Game;
 import org.itmo.mse.game.objects.Object;
 
 
 public abstract class Printer {
-    private final int startRow = 1;
+    protected final int startRow = 1;
     
     protected static Terminal terminal;
     
@@ -31,10 +27,14 @@ public abstract class Printer {
     
     protected static TextGraphics textGraphics = null;
     
-    protected final BackpackPrinter backpackPrinter = new BackpackPrinter(textGraphics);
+    protected final BackpackPrinter backpackPrinter;
+    
+    protected final PlayerPrinter playerPrinter;
     
     protected Printer() throws IOException {
         textGraphics = screen.newTextGraphics();
+        backpackPrinter = new BackpackPrinter(textGraphics);
+        playerPrinter = new PlayerPrinter(textGraphics);
     }
     
     
@@ -69,25 +69,6 @@ public abstract class Printer {
         }
     }
     
-    protected void printPlayerInfo(Game game) throws IOException {
-        int column = (int) (getSize().getColumns() * Proportions.mapWidth);
-        printPlayerStats(game, column);
-    }
-    
-    private void printPlayerStats(Game game, int column) throws IOException {
-        List<String> playerInfo = game.getPlayer().getInfo();
-        textGraphics.putString(column + 1, startRow, "DUNGEON LEVEL: " + game.getDungeonLevel());
-        int row = 2;
-        
-        textGraphics.drawRectangle(new TerminalPosition(column, row), new TerminalSize(
-            (int) (getSize().getColumns() * playerBlockWidth),
-            (int) (getSize().getRows() * playerBlockHeight) - 1), SpecialCharacters.DELIMITER);
-        
-        for (String info : playerInfo) {
-            row++;
-            textGraphics.putString(column + 2, row, info);
-        }
-    }
     
     /**
      * Prints object info under the backpack in the right
