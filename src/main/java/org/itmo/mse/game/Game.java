@@ -40,14 +40,33 @@ public class Game {
             newPosition = playerPosition;
         }
         
+        // is there item nearby
         Optional<Item> itemOnNewPosition = isItemNearby(newPosition);
         if (itemOnNewPosition.isPresent()) {
             newPosition = playerPosition;
             info = itemOnNewPosition.get().getInfo();
         }
         
+        // is newPosition == map start
+        if (isStart(newPosition)) {
+            newPosition = playerPosition;
+        }
+        
+        if (isExit(newPosition)) {
+            // TODO level ended action
+            newPosition = playerPosition;
+        }
+        
         player.setPosition(newPosition);
         return info;
+    }
+    
+    private boolean isStart(TerminalRectangle position) {
+        return position.position.equals(levelMap.getStart());
+    }
+    
+    private boolean isExit(TerminalRectangle position) {
+        return position.position.equals(levelMap.getExit());
     }
     
     private boolean isWallNearby(TerminalRectangle position) {
