@@ -30,6 +30,6 @@ public class Mob extends Object {
     
     @Override
     public List<String> getInfo() {
-        return List.of();
+        return List.of(getName(),"ATTACK: " + damage, "HP: " + health, "XP: " + experience);
     }
 }

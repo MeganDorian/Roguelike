@@ -17,7 +17,7 @@ public class PlayerPrinter {
     
     private final TextGraphics textGraphics;
     
-    protected PlayerPrinter(TextGraphics textGraphics) throws IOException {
+    protected PlayerPrinter(TextGraphics textGraphics) {
         this.textGraphics = textGraphics;
     }
     

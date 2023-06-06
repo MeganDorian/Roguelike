@@ -18,12 +18,12 @@ public interface ObjectNames {
     List<String> usualMediumArmor = List.of("Lecture recordings armor", "Sponsor scholarship armor",
                                             "Answers to the control work armor");
     List<String> legendaryArmor =
-        List.of("Automatic pass for exam armor", "Job armor", "Answers exam tickets armor");
+        List.of("Automatic exam pass armor", "Job armor", "Exam ticket answers armor");
     
     List<String> usualLightWeapon =
         List.of("Book with theory weapon", "Computer mouse weapon", "Pencil weapon");
     List<String> usualMediumWeapon =
-        List.of("Book collection of tasks weapon", "Lunch snack for all day weapon",
+        List.of("Book with tasks weapon", "Lunch snack weapon",
                 "Charger for laptop weapon");
     List<String> legendaryWeapon =
         List.of("Backpack with notebooks weapon", "Shawarma weapon", "Laptop weapon");
