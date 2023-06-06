@@ -33,7 +33,7 @@ public class Game {
      * @param direction to move
      */
     public List<String> updatePlayerPosition(KeyType direction) {
-        List<String> info = null;
+        List<String> info = List.of();
         TerminalRectangle playerPosition = player.getPosition();
         TerminalRectangle newPosition = getNextPosition(direction, playerPosition);
         if (isWallNearby(newPosition)) {

@@ -9,6 +9,7 @@ import static org.itmo.mse.constants.Proportions.playerBlockHeight;
 import static org.itmo.mse.constants.Proportions.playerBlockWidth;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.TerminalScreen;
@@ -90,8 +91,12 @@ public abstract class Printer {
      * Prints object info under the backpack in the right
      */
     protected void printObjectInfo(List<String> info) throws IOException {
+        TerminalRectangle infoBlock = backpackPrinter.getInfoBlock();
         TerminalPosition infoBlockPosition =
-            backpackPrinter.getInfoBlockPosition().withRelativeColumn(1).withRelativeRow(1);
+            infoBlock.position.withRelativeColumn(1).withRelativeRow(1);
+        textGraphics.fillRectangle(infoBlockPosition,
+                                   infoBlock.size.withRelativeRows(-2).withRelativeColumns(-2),
+                                   SpecialCharacters.SPACE);
         for (String i : info) {
             textGraphics.putString(infoBlockPosition, i);
             infoBlockPosition = infoBlockPosition.withRelativeRow(1);

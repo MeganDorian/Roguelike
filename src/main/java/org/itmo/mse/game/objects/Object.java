@@ -29,6 +29,6 @@ public abstract class Object {
     }
     
     public List<String> getInfo() {
-        return null;
+        return List.of();
     }
 }

@@ -59,9 +59,7 @@ public class GameWindow extends Window {
                 move.setDirection(pressedKey);
                 List<String> nearestObject = move.execute(textGraphics);
                 //print nearest object info
-                if (nearestObject != null) {
-                    printObjectInfo(nearestObject);
-                }
+                printObjectInfo(nearestObject);
                 printObject(game.getPlayer());
             }
             
