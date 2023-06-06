@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.Game;
+import org.itmo.mse.game.actions.Action;
 import org.itmo.mse.game.actions.Move;
 import org.itmo.mse.utils.map.MapLoader;
 
@@ -16,9 +17,13 @@ public class GameWindow extends Window {
     
     private final Move move;
     
-    public GameWindow(Move move, Game game) throws IOException, IncorrectMapFormatException {
+    private final Action interact;
+    
+    public GameWindow(Move move, Game game, Action interact)
+        throws IOException, IncorrectMapFormatException {
         this.move = move;
         this.game = game;
+        this.interact = interact;
         screen.clear();
         screen.refresh();
         printLevel();
@@ -61,6 +66,11 @@ public class GameWindow extends Window {
                 //print nearest object info
                 printObjectInfo(nearestObject);
                 printObject(game.getPlayer());
+            } else if (input.getCharacter() != null && input.getCharacter().equals('e')) {
+                List<String> pickedUpItem = interact.execute(textGraphics);
+                printObjectInfo(pickedUpItem);
+                backpackPrinter.printBackpack(game);
+                screen.refresh();
             }
             
         }

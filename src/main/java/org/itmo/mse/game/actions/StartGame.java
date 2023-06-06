@@ -17,9 +17,11 @@ public class StartGame implements Action {
     private GameWindow gameWindow;
     
     @Override
-    public List<String> execute(TextGraphics graphics) throws IncorrectMapFormatException, IOException {
+    public List<String> execute(TextGraphics graphics)
+        throws IncorrectMapFormatException, IOException {
         Move move = new Move();
-        gameWindow = new GameWindow(move, game);
+        Action interact = new Interact();
+        gameWindow = new GameWindow(move, game, interact);
         gameWindow.play();
         return null;
     }

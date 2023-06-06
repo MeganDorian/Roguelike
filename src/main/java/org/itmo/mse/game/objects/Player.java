@@ -1,6 +1,5 @@
 package org.itmo.mse.game.objects;
 
-import static org.itmo.mse.constants.Proportions.backpackSize;
 import static org.itmo.mse.constants.SpecialCharacters.MEDICAL_AID;
 
 import com.googlecode.lanterna.TerminalRectangle;
@@ -30,7 +29,7 @@ public class Player extends Object {
         super(position, SpecialCharacters.PLAYER, ObjectNames.player);
         
         // TODO generate base backpack
-        for (int i = 0; i < backpackSize; i++) {
+        for (int i = 0; i < 2; i++) {
             backpack.getItems().add(
                 new Item(position, MEDICAL_AID, ObjectNames.usualAids.get(2),
                          ItemCharacteristic.USUAL, ItemType.MEDICAL_AID,

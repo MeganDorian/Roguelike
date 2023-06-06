@@ -29,12 +29,14 @@ public abstract class Printer {
     
     protected static TerminalScreen screen;
     
-    protected final TextGraphics textGraphics = screen.newTextGraphics();
+    protected static TextGraphics textGraphics = null;
     
     protected final BackpackPrinter backpackPrinter = new BackpackPrinter(textGraphics);
     
     protected Printer() throws IOException {
+        textGraphics = screen.newTextGraphics();
     }
+    
     
     protected void printObject(Object object) throws IOException {
         object.print(textGraphics);
@@ -47,8 +49,9 @@ public abstract class Printer {
         screen.refresh();
     }
     
-    protected void eraseStringAtPosition(TerminalPosition position, int length) throws IOException {
-        textGraphics.drawLine(position, position.withRelativeColumn(length - 1), ' ');
+    public static void eraseAtPosition(TerminalPosition position, int length) throws IOException {
+        textGraphics.drawLine(position, position.withRelativeColumn(length - 1),
+                              SpecialCharacters.SPACE);
         screen.refresh();
     }
     
