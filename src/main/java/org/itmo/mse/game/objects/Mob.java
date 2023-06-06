@@ -6,6 +6,9 @@ import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.constants.SpecialCharacters;
 
 public class Mob extends Object {
+    
+    private TerminalRectangle visionRange;
+    
     public Mob(TerminalRectangle position) {
         super(position, SpecialCharacters.MOB, ObjectNames.mob);
     }

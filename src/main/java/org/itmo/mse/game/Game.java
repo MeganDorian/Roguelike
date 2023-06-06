@@ -54,6 +54,7 @@ public class Game {
         
         if (isExit(newPosition)) {
             // TODO level ended action
+            dungeonLevel++;
             newPosition = playerPosition;
         }
         
