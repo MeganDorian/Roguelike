@@ -1,6 +1,5 @@
 package org.itmo.mse.constants;
 
 public enum ItemType {
-    USUAL,
-    LEGENDARY
+    MEDICAL_AID, ARMOR, WEAPON
 }
