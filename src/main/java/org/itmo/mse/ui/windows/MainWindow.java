@@ -61,7 +61,7 @@ public class MainWindow extends Window {
         String screenResize = "please resize your screen if you can't see this text in full";
         while (terminal.getTerminalSize().getColumns() < size.getColumns() ||
                terminal.getTerminalSize().getRows() < size.getRows()) {
-            eraseStringAtPosition(center, screenResize.length());
+            eraseAtPosition(center, screenResize.length());
             Thread.sleep(1000);
             printStringAtPosition(screenResize, center);
             Thread.sleep(1000);
@@ -72,7 +72,7 @@ public class MainWindow extends Window {
      * Imitates blinking of line {@link #start}
      */
     private void enterPressed() throws IOException, InterruptedException {
-        eraseStringAtPosition(pressLineStartPosition, start.length());
+        eraseAtPosition(pressLineStartPosition, start.length());
         Thread.sleep(1000);
         printStringAtPosition(start, pressLineStartPosition);
         Thread.sleep(1000);

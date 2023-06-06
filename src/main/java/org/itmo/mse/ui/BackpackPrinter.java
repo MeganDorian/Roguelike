@@ -1,6 +1,7 @@
 package org.itmo.mse.ui;
 
 import static org.itmo.mse.constants.Proportions.backpackHeight;
+import static org.itmo.mse.constants.Proportions.backpackSize;
 import static org.itmo.mse.constants.Proportions.playerBlockHeight;
 import static org.itmo.mse.constants.Proportions.playerBlockWidth;
 import static org.itmo.mse.ui.Printer.getSize;
@@ -51,23 +52,25 @@ public class BackpackPrinter {
     public void printBackpack(Game game) throws IOException {
         textGraphics.drawRectangle(new TerminalPosition(column, row),
                                    new TerminalSize(width, height), SpecialCharacters.DELIMITER);
-        printBackpackCells(game);
+        printBackpackCells();
         printBackpackItems(game);
     }
     
-    private void printBackpackCells(Game game) throws IOException {
+    private void printBackpackCells() throws IOException {
         int itemColumn = column;
-        Backpack backpack = game.getPlayer().getBackpack();
-        for (int i = 0; i < backpack.size(); i++) {
-            backpackCells.add(new TerminalRectangle(itemColumn, row, itemWidth, itemHeight));
-            textGraphics.drawRectangle(new TerminalPosition(itemColumn, row),
+        int currRow = row;
+        for (int i = 0; i < backpackSize; i++) {
+            if (backpackCells.size() < backpackSize) {
+                backpackCells.add(new TerminalRectangle(itemColumn, currRow, itemWidth, itemHeight));
+            }
+            textGraphics.drawRectangle(new TerminalPosition(itemColumn, currRow),
                                        new TerminalSize(itemWidth, itemHeight),
                                        SpecialCharacters.DELIMITER);
             if (itemColumn + itemWidth < getSize().getColumns()) {
                 itemColumn += itemWidth;
             } else {
                 itemColumn = column;
-                row += itemHeight;
+                currRow += itemHeight;
             }
         }
     }

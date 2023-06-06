@@ -1,7 +1,11 @@
 package org.itmo.mse.game;
 
+import static org.itmo.mse.constants.Proportions.backpackSize;
+
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.input.KeyType;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.Getter;
@@ -11,6 +15,7 @@ import org.itmo.mse.game.objects.Mob;
 import org.itmo.mse.game.objects.Object;
 import org.itmo.mse.game.objects.Player;
 import org.itmo.mse.game.objects.map.Map;
+import org.itmo.mse.ui.Printer;
 
 @Getter
 public class Game {
@@ -79,35 +84,58 @@ public class Game {
                        .findFirst();
     }
     
+    public List<String> pickUpItemNearby() throws IOException {
+        Optional<Item> nearestItem = getNearestItem(player.getPosition());
+        if (nearestItem.isPresent()) {
+            // store it in backpack if its enough space in it
+            if (player.getBackpack().size() == backpackSize) {
+                return List.of("Your backpack is full!");
+            }
+            
+            Item item = nearestItem.get();
+            levelMap.getItems().remove(item);
+            player.getBackpack().getItems().add(item);
+            Printer.eraseAtPosition(item.getPosition().position, 1);
+            List<String> pickedItemInfo = new ArrayList<>();
+            pickedItemInfo.add("You picked up :");
+            pickedItemInfo.addAll(item.getInfo());
+            return pickedItemInfo;
+        }
+        return List.of();
+    }
+    
+    private Optional<Item> getNearestItem(TerminalRectangle position) {
+        return levelMap.getItems().stream().filter(item -> {
+            TerminalRectangle right =
+                new TerminalRectangle(position.x + 1, position.y, position.width, position.height);
+            TerminalRectangle left =
+                new TerminalRectangle(position.x - 1, position.y, position.width, position.height);
+            TerminalRectangle down =
+                new TerminalRectangle(position.x, position.y + 1, position.width, position.height);
+            TerminalRectangle up =
+                new TerminalRectangle(position.x, position.y - 1, position.width, position.height);
+            TerminalRectangle rightDown =
+                new TerminalRectangle(position.x + 1, position.y + 1, position.width,
+                                      position.height);
+            TerminalRectangle rightUp =
+                new TerminalRectangle(position.x + 1, position.y - 1, position.width,
+                                      position.height);
+            TerminalRectangle leftDown =
+                new TerminalRectangle(position.x - 1, position.y + 1, position.width,
+                                      position.height);
+            TerminalRectangle leftUp =
+                new TerminalRectangle(position.x - 1, position.y - 1, position.width,
+                                      position.height);
+            return checkIsIntersect(item, right) || checkIsIntersect(item, down) ||
+                   checkIsIntersect(item, left) || checkIsIntersect(item, up) ||
+                   checkIsIntersect(item, rightDown) || checkIsIntersect(item, rightUp) ||
+                   checkIsIntersect(item, leftDown) || checkIsIntersect(item, leftUp);
+        }).findFirst();
+    }
+    
     private Optional<Item> isItemNearby(TerminalRectangle position) {
         return levelMap.getItems().stream().filter(item -> checkIsIntersect(item, position))
                        .findFirst();
-//        return levelMap.getItems().stream().filter(item -> {
-//            TerminalRectangle right =
-//                new TerminalRectangle(position.x + 1, position.y, position.width, position.height);
-//            TerminalRectangle left =
-//                new TerminalRectangle(position.x - 1, position.y, position.width, position.height);
-//            TerminalRectangle down =
-//                new TerminalRectangle(position.x, position.y + 1, position.width, position.height);
-//            TerminalRectangle up =
-//                new TerminalRectangle(position.x, position.y - 1, position.width, position.height);
-//            TerminalRectangle rightDown =
-//                new TerminalRectangle(position.x + 1, position.y + 1, position.width,
-//                                      position.height);
-//            TerminalRectangle rightUp =
-//                new TerminalRectangle(position.x + 1, position.y - 1, position.width,
-//                                      position.height);
-//            TerminalRectangle leftDown =
-//                new TerminalRectangle(position.x - 1, position.y + 1, position.width,
-//                                      position.height);
-//            TerminalRectangle leftUp =
-//                new TerminalRectangle(position.x - 1, position.y - 1, position.width,
-//                                      position.height);
-//            return checkIsIntersect(item, right) || checkIsIntersect(item, down) ||
-//                   checkIsIntersect(item, left) || checkIsIntersect(item, up) ||
-//                   checkIsIntersect(item, rightDown) || checkIsIntersect(item, rightUp) ||
-//                   checkIsIntersect(item, leftDown) || checkIsIntersect(item, leftUp);
-//        }).findFirst();
     }
     
     private boolean checkIsIntersect(Object object, TerminalRectangle position) {
