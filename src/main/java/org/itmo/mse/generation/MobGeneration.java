@@ -1,4 +1,4 @@
 package org.itmo.mse.generation;
 
-public class MobGeneration {
+public class MobGeneration extends Generation {
 }

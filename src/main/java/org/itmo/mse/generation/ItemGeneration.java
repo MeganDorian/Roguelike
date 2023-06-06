@@ -16,9 +16,7 @@ import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectItemType;
 import org.itmo.mse.game.objects.Item;
 
-public class ItemGeneration {
-    
-    static Random rand = new Random();
+public class ItemGeneration extends Generation {
     
     /**
      * Generates item parameters of a given type
@@ -28,7 +26,7 @@ public class ItemGeneration {
      * @throws IncorrectItemType -- if generation for the type passed is not specified
      */
     public static Item generateItem(ItemType type) throws IncorrectItemType {
-        TerminalRectangle position = MapGeneration.generatePosition();
+        TerminalRectangle position = generatePosition();
         TextCharacter character;
         List<String> allNames;
         ItemCharacteristic characteristic;
