@@ -9,6 +9,7 @@ import com.googlecode.lanterna.input.KeyType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 import org.itmo.mse.constants.ObjectEffect;
@@ -150,15 +151,9 @@ public class Game {
         int selectedItem = player.getBackpack().getSelectedItem();
         Item item = player.getBackpack().get(selectedItem);
         switch (item.getItemType()) {
-            case MEDICAL_AID:
-                applyMedicalAid(item, selectedItem);
-                break;
-            case ARMOR:
-                applyArmor(item, selectedItem);
-                break;
-            case WEAPON:
-                applyWeapon(item, selectedItem);
-                break;
+            case MEDICAL_AID -> applyMedicalAid(item);
+            case ARMOR -> applyArmor(item, selectedItem);
+            case WEAPON -> applyWeapon(item, selectedItem);
         }
         player.getBackpack().setSelectedItem(Math.max(0, selectedItem - 1));
     }
@@ -166,7 +161,7 @@ public class Game {
     /**
      * Applies medical aid selected in the backpack according to the medical aid type
      */
-    private void applyMedicalAid(Item item, int selectedItem) {
+    private void applyMedicalAid(Item item) {
         int addHealth = (int) (player.getMaxHealth() *
                                (item.getItemCharacteristic() == USUAL ? ObjectEffect.usualAid :
                                 ObjectEffect.legendaryAid)) + player.getHealth();
@@ -177,8 +172,8 @@ public class Game {
     
     /**
      * If equipped armor class == armor to put on class, then armor will be stacked with the
-     * equipped one <br> otherwise equipped armor will be stored in the backpack and replaced
-     * with the armor to put
+     * equipped one <br> otherwise equipped armor will be stored in the backpack and replaced with
+     * the armor to put
      */
     private void applyArmor(Item item, int selectedItem) {
         int addArmor;
@@ -228,4 +223,49 @@ public class Game {
             case HEAVY -> ObjectEffect.heavy;
         };
     }
+    
+    public void dropItemFromBackpack() {
+        int selectedItem = player.getBackpack().getSelectedItem();
+        Item item = player.getBackpack().get(selectedItem);
+        player.getBackpack().getItems().remove(item);
+        TerminalRectangle freePosition = getNearestFreePlace().get();
+        item.setPosition(freePosition);
+        if (freePosition.equals(player.getPosition())) {
+            objectUnderPlayer = item;
+        }
+        levelMap.getItems().add(item);
+        player.getBackpack().setSelectedItem(Math.max(0, selectedItem - 1));
+    }
+    
+    /**
+     * Searches for the nearest free position around the player. If there no free place, return
+     * player position
+     *
+     * @return the first free position where no wall, no item or mob placed
+     */
+    private Optional<TerminalRectangle> getNearestFreePlace() {
+        TerminalRectangle playerPosition = player.getPosition();
+        return Stream.of(playerPosition,
+                         new TerminalRectangle(playerPosition.x + 1, playerPosition.y,
+                                               playerPosition.width, playerPosition.height),
+                         new TerminalRectangle(playerPosition.x - 1, playerPosition.y,
+                                               playerPosition.width, playerPosition.height),
+                         new TerminalRectangle(playerPosition.x, playerPosition.y - 1,
+                                               playerPosition.width, playerPosition.height),
+                         new TerminalRectangle(playerPosition.x, playerPosition.y + 1,
+                                               playerPosition.width, playerPosition.height),
+                         new TerminalRectangle(playerPosition.x + 1, playerPosition.y + 1,
+                                               playerPosition.width, playerPosition.height),
+                         new TerminalRectangle(playerPosition.x + 1, playerPosition.y - 1,
+                                               playerPosition.width, playerPosition.height),
+                         new TerminalRectangle(playerPosition.x - 1, playerPosition.y + 1,
+                                               playerPosition.width, playerPosition.height),
+                         new TerminalRectangle(playerPosition.x - 1, playerPosition.y - 1,
+                                               playerPosition.width, playerPosition.height)).filter(
+                         position -> !Checker.isWallNearby(position, levelMap.getWalls()) &&
+                                     Checker.isObjectAtPosition(position, levelMap.getItems()).isEmpty() &&
+                                     Checker.isObjectAtPosition(position, levelMap.getMobs()).isEmpty())
+                     .findFirst().or(() -> Optional.of(playerPosition));
+    }
+    
 }

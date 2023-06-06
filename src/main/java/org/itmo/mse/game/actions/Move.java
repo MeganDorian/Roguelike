@@ -18,8 +18,13 @@ public class Move implements Action {
             return game.updatePlayerPosition(direction, graphics);
         } else {
             game.setSelectedItemInBackpack(direction);
-            return game.getPlayer().getBackpack()
-                       .get(game.getPlayer().getBackpack().getSelectedItem()).getInfo();
+            if (game.getPlayer().getBackpack().size() != 0) {
+                return game.getPlayer().getBackpack()
+                           .get(game.getPlayer().getBackpack().getSelectedItem()).getInfo();
+            } else {
+                game.setBackpackOpened(false);
+                return List.of();
+            }
         }
     }
 }

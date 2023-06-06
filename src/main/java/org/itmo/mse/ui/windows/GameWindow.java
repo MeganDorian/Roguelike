@@ -19,13 +19,15 @@ public class GameWindow extends Window {
     
     private final Action interact;
     private final Action backpackAction;
+    private final Action dropItem;
     
-    public GameWindow(Move move, Game game, Action interact, Action backpackAction)
+    public GameWindow(Move move, Game game, Action interact, Action backpackAction, Action dropItem)
         throws IOException, IncorrectMapFormatException {
         this.move = move;
         this.game = game;
         this.interact = interact;
         this.backpackAction = backpackAction;
+        this.dropItem = dropItem;
         screen.clear();
         screen.refresh();
         printLevel();
@@ -67,7 +69,6 @@ public class GameWindow extends Window {
                 move.setDirection(pressedKey);
                 List<String> nearestObject = move.execute(textGraphics);
                 printObjectInfo(nearestObject);
-                printObject(game.getPlayer());
             } else if (input.getCharacter() != null) {
                 if (input.getCharacter().equals('e')) {
                     List<String> pickedUpItem = interact.execute(textGraphics);
@@ -76,8 +77,12 @@ public class GameWindow extends Window {
                 } else if (input.getCharacter().equals('i')) {
                     List<String> selectedItem = backpackAction.execute(textGraphics);
                     printObjectInfo(selectedItem);
+                } else if (input.getCharacter().equals('x')) {
+                    dropItem.execute(textGraphics);
                 }
             }
+            printObject(game.getLevelMap());
+            printObject(game.getPlayer());
             TextCharacter color =
                 game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
             int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItem();
