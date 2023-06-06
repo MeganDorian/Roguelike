@@ -23,7 +23,7 @@ import org.itmo.mse.game.objects.Object;
 
 
 public abstract class Printer {
-    private int startRow = 1;
+    private final int startRow = 1;
     
     protected static Terminal terminal;
     
@@ -72,7 +72,6 @@ public abstract class Printer {
     protected void printPlayerInfo(Game game) throws IOException {
         int column = (int) (getSize().getColumns() * Proportions.mapWidth);
         printPlayerStats(game, column);
-        backpackPrinter.printBackpack(game);
     }
     
     private void printPlayerStats(Game game, int column) throws IOException {

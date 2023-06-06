@@ -26,6 +26,12 @@ public class Game {
     private int dungeonLevel = 1;
     
     @Setter
+    private boolean isBackpackOpened = false;
+    
+    @Setter
+    private int backpackItemsInRow = 3;
+    
+    @Setter
     private Map levelMap;
     
     @Setter
@@ -119,5 +125,18 @@ public class Game {
         return List.of();
     }
     
-    
+    public void setSelectedItemInBackpack(KeyType direction) {
+        int selectedItem = player.getBackpack().getSelectedItem();
+        if (direction == KeyType.ArrowRight && selectedItem + 1 < player.getBackpack().size()) {
+            selectedItem++;
+        } else if (direction == KeyType.ArrowLeft && selectedItem != 0) {
+            selectedItem--;
+        } else if (direction == KeyType.ArrowUp && selectedItem - backpackItemsInRow >= 0) {
+            selectedItem -= backpackItemsInRow;
+        } else if (direction == KeyType.ArrowDown &&
+                   selectedItem + backpackItemsInRow < player.getBackpack().size()) {
+            selectedItem += backpackItemsInRow;
+        }
+        player.getBackpack().setSelectedItem(selectedItem);
+    }
 }
