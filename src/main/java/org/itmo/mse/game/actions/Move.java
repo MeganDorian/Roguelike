@@ -14,6 +14,6 @@ public class Move implements Action {
     public List<String> execute(TextGraphics graphics) {
         TerminalRectangle oldPosition = game.getPlayer().getPosition();
         graphics.drawRectangle(oldPosition.position, oldPosition.size, ' ');
-        return game.updatePlayerPosition(direction);
+        return game.updatePlayerPosition(direction, graphics);
     }
 }

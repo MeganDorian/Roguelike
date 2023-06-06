@@ -3,8 +3,8 @@ package org.itmo.mse.game;
 import static org.itmo.mse.constants.Proportions.backpackSize;
 
 import com.googlecode.lanterna.TerminalRectangle;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyType;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +15,13 @@ import org.itmo.mse.game.objects.Mob;
 import org.itmo.mse.game.objects.Object;
 import org.itmo.mse.game.objects.Player;
 import org.itmo.mse.game.objects.map.Map;
-import org.itmo.mse.ui.Printer;
+import org.itmo.mse.utils.Checker;
 
 @Getter
 public class Game {
+    private Item objectUnderPlayer;
+    
+    private Mob mobUnderPlayer;
     
     private int dungeonLevel = 1;
     
@@ -37,27 +40,24 @@ public class Game {
      *
      * @param direction to move
      */
-    public List<String> updatePlayerPosition(KeyType direction) {
-        List<String> info = List.of();
+    public List<String> updatePlayerPosition(KeyType direction, TextGraphics graphics) {
         TerminalRectangle playerPosition = player.getPosition();
-        TerminalRectangle newPosition = getNextPosition(direction, playerPosition);
-        if (isWallNearby(newPosition)) {
+        TerminalRectangle newPosition = Checker.getNextPosition(direction, playerPosition);
+        if (Checker.isWallNearby(newPosition, levelMap.getWalls())) {
             newPosition = playerPosition;
         }
         
-        // is there item nearby
-        Optional<Item> itemOnNewPosition = isItemNearby(newPosition);
-        if (itemOnNewPosition.isPresent()) {
-            newPosition = playerPosition;
-            info = itemOnNewPosition.get().getInfo();
+        List<String> info = playerOnItem(newPosition, graphics);
+        if (info.isEmpty()) {
+            info = playerOnMob(newPosition, graphics);
         }
         
         // is newPosition == map start
-        if (isStart(newPosition)) {
+        if (newPosition.position.equals(levelMap.getStart())) {
             newPosition = playerPosition;
         }
         
-        if (isExit(newPosition)) {
+        if (newPosition.position.equals(levelMap.getExit())) {
             // TODO level ended action
             dungeonLevel++;
             newPosition = playerPosition;
@@ -67,100 +67,57 @@ public class Game {
         return info;
     }
     
-    private boolean isStart(TerminalRectangle position) {
-        return position.position.equals(levelMap.getStart());
+    /**
+     * Proceeds if player will stand on the item we will save it
+     */
+    private List<String> playerOnItem(TerminalRectangle newPosition, TextGraphics graphics) {
+        // if player will stand on the item save this item
+        Optional<? extends Object> itemOnNewPosition =
+            Checker.isObjectAtPosition(newPosition, levelMap.getItems());
+        if (itemOnNewPosition.isPresent()) {
+            objectUnderPlayer = (Item) itemOnNewPosition.get();
+            return itemOnNewPosition.get().getInfo();
+        } else if (objectUnderPlayer != null) {
+            objectUnderPlayer.print(graphics);
+            objectUnderPlayer = null;
+        }
+        return List.of();
     }
     
-    private boolean isExit(TerminalRectangle position) {
-        return position.position.equals(levelMap.getExit());
+    /**
+     * Proceeds if player will stand on the mob we will save it
+     */
+    private List<String> playerOnMob(TerminalRectangle newPosition, TextGraphics graphics) {
+        // if player will stand on the item save this item
+        Optional<? extends Object> itemOnNewPosition =
+            Checker.isObjectAtPosition(newPosition, levelMap.getMobs());
+        if (itemOnNewPosition.isPresent()) {
+            mobUnderPlayer = (Mob) itemOnNewPosition.get();
+            return itemOnNewPosition.get().getInfo();
+        } else if (mobUnderPlayer != null) {
+            mobUnderPlayer.print(graphics);
+            mobUnderPlayer = null;
+        }
+        return List.of();
     }
     
-    private boolean isWallNearby(TerminalRectangle position) {
-        return levelMap.getWalls().stream().anyMatch(wall -> checkIsIntersect(wall, position));
-    }
-    
-    private Optional<Mob> isMobNearby(TerminalRectangle position) {
-        return levelMap.getMobs().stream().filter(mob -> checkIsIntersect(mob, position))
-                       .findFirst();
-    }
-    
-    public List<String> pickUpItemNearby() throws IOException {
-        Optional<Item> nearestItem = getNearestItem(player.getPosition());
-        if (nearestItem.isPresent()) {
+    public List<String> pickupItem() {
+        if (objectUnderPlayer != null) {
             // store it in backpack if its enough space in it
             if (player.getBackpack().size() == backpackSize) {
                 return List.of("Your backpack is full!");
             }
             
-            Item item = nearestItem.get();
-            levelMap.getItems().remove(item);
-            player.getBackpack().getItems().add(item);
-            Printer.eraseAtPosition(item.getPosition().position, 1);
+            levelMap.getItems().remove(objectUnderPlayer);
+            player.getBackpack().getItems().add(objectUnderPlayer);
             List<String> pickedItemInfo = new ArrayList<>();
             pickedItemInfo.add("You picked up :");
-            pickedItemInfo.addAll(item.getInfo());
+            pickedItemInfo.addAll(objectUnderPlayer.getInfo());
+            objectUnderPlayer = null;
             return pickedItemInfo;
         }
         return List.of();
     }
     
-    private Optional<Item> getNearestItem(TerminalRectangle position) {
-        return levelMap.getItems().stream().filter(item -> {
-            TerminalRectangle right =
-                new TerminalRectangle(position.x + 1, position.y, position.width, position.height);
-            TerminalRectangle left =
-                new TerminalRectangle(position.x - 1, position.y, position.width, position.height);
-            TerminalRectangle down =
-                new TerminalRectangle(position.x, position.y + 1, position.width, position.height);
-            TerminalRectangle up =
-                new TerminalRectangle(position.x, position.y - 1, position.width, position.height);
-            TerminalRectangle rightDown =
-                new TerminalRectangle(position.x + 1, position.y + 1, position.width,
-                                      position.height);
-            TerminalRectangle rightUp =
-                new TerminalRectangle(position.x + 1, position.y - 1, position.width,
-                                      position.height);
-            TerminalRectangle leftDown =
-                new TerminalRectangle(position.x - 1, position.y + 1, position.width,
-                                      position.height);
-            TerminalRectangle leftUp =
-                new TerminalRectangle(position.x - 1, position.y - 1, position.width,
-                                      position.height);
-            return checkIsIntersect(item, right) || checkIsIntersect(item, down) ||
-                   checkIsIntersect(item, left) || checkIsIntersect(item, up) ||
-                   checkIsIntersect(item, rightDown) || checkIsIntersect(item, rightUp) ||
-                   checkIsIntersect(item, leftDown) || checkIsIntersect(item, leftUp);
-        }).findFirst();
-    }
     
-    private Optional<Item> isItemNearby(TerminalRectangle position) {
-        return levelMap.getItems().stream().filter(item -> checkIsIntersect(item, position))
-                       .findFirst();
-    }
-    
-    private boolean checkIsIntersect(Object object, TerminalRectangle position) {
-        TerminalRectangle wallPosition = object.getPosition();
-        return position.x >= wallPosition.x && position.x <= wallPosition.xAndWidth - 1 &&
-               position.y >= wallPosition.y && position.y <= wallPosition.yAndHeight - 1;
-    }
-    
-    /**
-     * Returns next position according to the direction
-     */
-    private TerminalRectangle getNextPosition(KeyType direction, TerminalRectangle position) {
-        switch (direction) {
-            case ArrowUp:
-                return new TerminalRectangle(position.x, position.y - 1, position.width,
-                                             position.height);
-            case ArrowDown:
-                return new TerminalRectangle(position.x, position.y + 1, position.width,
-                                             position.height);
-            case ArrowLeft:
-                return new TerminalRectangle(position.x - 1, position.y, position.width,
-                                             position.height);
-            default:
-                return new TerminalRectangle(position.x + 1, position.y, position.width,
-                                             position.height);
-        }
-    }
 }
