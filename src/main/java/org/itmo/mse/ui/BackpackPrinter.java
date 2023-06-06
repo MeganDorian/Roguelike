@@ -31,7 +31,7 @@ public class BackpackPrinter {
     private int row;
     
     @Getter
-    private TerminalPosition infoBlockPosition;
+    private TerminalRectangle infoBlock;
     
     private int itemHeight;
     private int itemWidth;
@@ -44,7 +44,8 @@ public class BackpackPrinter {
         row = (int) (getSize().getRows() * playerBlockHeight + 1);
         itemHeight = (int) (height * Proportions.itemHeight);
         itemWidth = (int) (width * Proportions.itemWidth) + 1;
-        infoBlockPosition = new TerminalPosition(column, row + itemHeight * 3);
+        infoBlock =
+            new TerminalRectangle(column, row + itemHeight * 3, width, height - 3 * itemHeight);
     }
     
     public void printBackpack(Game game) throws IOException {

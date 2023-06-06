@@ -12,6 +12,6 @@ public class Mob extends Object {
     
     @Override
     public List<String> getInfo() {
-        return null;
+        return List.of();
     }
 }
