@@ -30,4 +30,8 @@ public interface Proportions {
     double weapon = 0.2;
     double aids = 0.4;
     double armor = 0.4;
+    
+    int numberMobs = 5;
+    
+    int numberItems = 5;
 }
