@@ -1,5 +1,6 @@
 package org.itmo.mse.generation;
 
+import com.googlecode.lanterna.TextCharacter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,6 +24,65 @@ public class MapGeneration extends Generation {
     
     private static int resizeWight = 0;
     private static int resizeHeight = 0;
+    
+    public static void generate(int mapWight, int mapHeight, int numberMobs, int numberItems)
+        throws IOException {
+        generateWall(mapWight, mapHeight);
+        generateObject(numberMobs, mapWight, mapHeight, SpecialCharacters.MOB);
+        generateObject(numberItems, mapWight, mapHeight, SpecialCharacters.ITEM);
+    }
+    
+    /**
+     * Builds walls on the map (generates a new map without mobs and items)
+     *
+     * @param mapWight
+     * @param mapHeight
+     * @throws IOException
+     */
+    public static void generateWall(int mapWight, int mapHeight) throws IOException {
+        File file = new File(fileName);
+        if(file.exists()) {
+            file.delete();
+        }
+        file.createNewFile();
+        generateRoomParameters(mapWight, mapHeight);
+        char[][] map = generateRooms();
+        writeWallInFile(map);
+        inputAndOutputGeneration(map, mapWight, mapHeight);
+    }
+    
+    /**
+     * Generates same objects (items and mobs) on the map
+     * @param number -- the number of objects on the map
+     * @param mapWight
+     * @param mapHeight
+     * @param symbol -- symbol of object
+     * @throws IOException
+     */
+    private static void generateObject(int number, int mapWight, int mapHeight,
+                                       TextCharacter symbol)
+        throws IOException {
+        RandomAccessFile file = new RandomAccessFile(fileName, "rw");
+        int range = mapWight * mapHeight;
+        boolean setObject;
+        for(int i = 0; i < number; i++) {
+            setObject = false;
+            while (!setObject) {
+                int position = rand.nextInt(range);
+                file.seek(position + position / mapWight);
+                if(file.read() == SpecialCharacters.SPACE.getCharacterString().charAt(0)) {
+                    file.seek(position + position / mapWight);
+                    file.write(symbol.getCharacterString().charAt(0));
+                    setObject = true;
+                }
+            }
+        }
+        file.close();
+    }
+    
+    private static void generateItems(int numberMobs, int mapWight, int mapHeight) {
+    
+    }
     
     /**
      * Finds greatest common divisor
@@ -66,25 +126,6 @@ public class MapGeneration extends Generation {
         size = 6;
         resizeWight = 0;
         resizeHeight = 0;
-    }
-    
-    /**
-     * Builds walls on the map (generates a new map without mobs and items)
-     *
-     * @param mapWight
-     * @param mapHeight
-     * @throws IOException
-     */
-    public static void generateWall(int mapWight, int mapHeight) throws IOException {
-        File file = new File(fileName);
-        if(file.exists()) {
-            file.delete();
-        }
-        file.createNewFile();
-        generateRoomParameters(mapWight, mapHeight);
-        char[][] map = generateRooms();
-        writeWallInFile(map);
-        inputAndOutputGeneration(map, mapWight, mapHeight);
     }
     
     /**
@@ -157,13 +198,13 @@ public class MapGeneration extends Generation {
                 yOut = 0;
             }
         } while (yOut == 0);
-        RandomAccessFile raf = new RandomAccessFile(fileName, "rw");
-        raf.seek(mapWight * yIn + yIn);
-        raf.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
-        raf.write(SpecialCharacters.PLAYER.getCharacterString().charAt(0));
-        raf.seek(mapWight * (yOut + 1) + yOut - 1);
-        raf.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
-        raf.close();
+        RandomAccessFile file = new RandomAccessFile(fileName, "rw");
+        file.seek(mapWight * yIn + yIn);
+        file.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
+        file.write(SpecialCharacters.PLAYER.getCharacterString().charAt(0));
+        file.seek(mapWight * (yOut + 1) + yOut - 1);
+        file.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
+        file.close();
     }
   
     
