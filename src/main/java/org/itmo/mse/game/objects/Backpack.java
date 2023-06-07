@@ -13,7 +13,7 @@ public class Backpack {
     private final List<Item> items = new ArrayList<>(backpackSize);
     
     @Setter
-    private int selectedItem = 0;
+    private int selectedItemIndex = 0;
     
     public int size() {
         return items.size();

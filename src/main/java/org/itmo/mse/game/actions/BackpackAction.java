@@ -14,8 +14,8 @@ public class BackpackAction implements Action {
             return List.of();
         }
         game.setBackpackOpened(!game.isBackpackOpened());
-        game.getPlayer().getBackpack().setSelectedItem(0);
-        int selectedItem = game.getPlayer().getBackpack().getSelectedItem();
+        game.getPlayer().getBackpack().setSelectedItemIndex(0);
+        int selectedItem = game.getPlayer().getBackpack().getSelectedItemIndex();
         return game.isBackpackOpened() ?
                game.getPlayer().getBackpack().get(selectedItem).getInfo() : List.of();
     }

@@ -12,11 +12,11 @@ import org.itmo.mse.constants.ItemType;
 @Getter
 public class Item extends Object {
     
-    private ItemCharacteristic itemCharacteristic;
+    private final ItemCharacteristic itemCharacteristic;
     
-    private ItemType itemType;
+    private final ItemType itemType;
     
-    private ItemClass itemClass;
+    private final ItemClass itemClass;
     
     protected String description;
     @Setter

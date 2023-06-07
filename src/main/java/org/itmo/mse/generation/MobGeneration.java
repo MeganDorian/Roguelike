@@ -23,17 +23,17 @@ public class MobGeneration extends Generation {
         int experience;
         int generateRandomStrategy = rand.nextInt(100);
         if (generateRandomStrategy < Proportions.cowardlyMob * 100) {
-            strategy = MobStrategy.COWARDLY_BEHAVIOUR;
+            strategy = MobStrategy.COWARDLY;
             allNames = ObjectNames.cowardlyMob;
             experience = Proportions.defaultExperienceCowardlyMob;
             character = SpecialCharacters.COWARDLY_MOB;
         } else if(generateRandomStrategy < (Proportions.cowardlyMob + Proportions.passiveMob) * 100) {
-            strategy = MobStrategy.PASSIVE_BEHAVIOUR;
+            strategy = MobStrategy.PASSIVE;
             allNames = ObjectNames.passiveMob;
             experience = Proportions.defaultExperiencePassiveMob;
             character = SpecialCharacters.PASSIVE_MOB;
         } else {
-            strategy = MobStrategy.AGGRESSIVE_BEHAVIOUR;
+            strategy = MobStrategy.AGGRESSIVE;
             allNames = ObjectNames.aggressiveMobs;
             experience = Proportions.defaultExperienceAggressiveMob;
             character = SpecialCharacters.AGGRESSIVE_MOB;
