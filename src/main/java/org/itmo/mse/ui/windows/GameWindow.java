@@ -60,7 +60,6 @@ public class GameWindow extends Window {
         throws IOException, IncorrectMapFormatException {
         game.setLevelMap(MapLoader.loadFromFile(fileName, isFirst, game.getPlayer()));
     }
-    
     public void play() throws IOException, IncorrectMapFormatException {
         while (true) {
             KeyStroke input = screen.pollInput();
@@ -96,7 +95,7 @@ public class GameWindow extends Window {
             printObject(game.getPlayer());
             TextCharacter color =
                 game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
-            int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItem();
+            int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
             backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
             backpackPrinter.printBackpack(game);
             playerPrinter.printPlayerInfo(game, startRow);

@@ -1,10 +1,10 @@
 package org.itmo.mse.utils;
 
 import com.googlecode.lanterna.TerminalRectangle;
-import com.googlecode.lanterna.input.KeyType;
 import java.util.List;
 import java.util.Optional;
 import lombok.experimental.UtilityClass;
+import org.itmo.mse.constants.Direction;
 import org.itmo.mse.game.objects.Object;
 import org.itmo.mse.game.objects.map.Wall;
 
@@ -45,13 +45,13 @@ public class Checker {
     /**
      * Returns next position according to the direction
      */
-    public TerminalRectangle getNextPosition(KeyType direction, TerminalRectangle position) {
+    public TerminalRectangle getNextPosition(Direction direction, TerminalRectangle position) {
         return switch (direction) {
-            case ArrowUp ->
+            case UP ->
                 new TerminalRectangle(position.x, position.y - 1, position.width, position.height);
-            case ArrowDown ->
+            case DOWN ->
                 new TerminalRectangle(position.x, position.y + 1, position.width, position.height);
-            case ArrowLeft ->
+            case LEFT ->
                 new TerminalRectangle(position.x - 1, position.y, position.width, position.height);
             default ->
                 new TerminalRectangle(position.x + 1, position.y, position.width, position.height);

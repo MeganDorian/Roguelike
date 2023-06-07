@@ -3,19 +3,21 @@ package org.itmo.mse.game.objects;
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
 import java.util.List;
+import lombok.Getter;
 import org.itmo.mse.constants.MobStrategy;
 
+@Getter
 public class Mob extends Object {
     
     private TerminalRectangle visionRange;
     
     private MobStrategy strategy;
     
-    private int damage;
+    private final int damage;
     
-    private int health;
+    private final int health;
     
-    private int experience;
+    private final int experience;
     
     
     public Mob(TerminalRectangle position, TextCharacter specialCharacters, String name, MobStrategy strategy,

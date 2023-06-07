@@ -13,7 +13,7 @@ public class Interact implements Action {
             List<String> info = new ArrayList<>();
             info.add("You used:");
             info.addAll(
-                game.getPlayer().getBackpack().get(game.getPlayer().getBackpack().getSelectedItem())
+                game.getPlayer().getBackpack().get(game.getPlayer().getBackpack().getSelectedItemIndex())
                     .getInfo());
             game.applySelectedItem();
             return info;

@@ -10,22 +10,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import lombok.experimental.UtilityClass;
 import org.itmo.mse.constants.Direction;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.utils.FileUtils;
 
+@UtilityClass
 public class MapGeneration extends Generation {
     
-    public static String fileName = "new_level";
+    public String fileName = "new_level";
     
-    private static int xRoom = 17;
-    private static int yRoom = 4;
-    private static int size = 6;
+    private int xRoom = 17;
+    private int yRoom = 4;
+    private int size = 6;
     
-    private static int resizeWight = 0;
-    private static int resizeHeight = 0;
+    private int resizeWight = 0;
+    private int resizeHeight = 0;
     
-    public static void generate(int mapWight, int mapHeight, int numberMobs, int numberItems)
+    public void generate(int mapWight, int mapHeight, int numberMobs, int numberItems)
         throws IOException {
         generateWall(mapWight, mapHeight);
         generateObject(numberMobs, mapWight, mapHeight, SpecialCharacters.MOB);
@@ -34,14 +36,10 @@ public class MapGeneration extends Generation {
     
     /**
      * Builds walls on the map (generates a new map without mobs and items)
-     *
-     * @param mapWight
-     * @param mapHeight
-     * @throws IOException
      */
-    public static void generateWall(int mapWight, int mapHeight) throws IOException {
+    public void generateWall(int mapWight, int mapHeight) throws IOException {
         File file = new File(fileName);
-        if(file.exists()) {
+        if (file.exists()) {
             file.delete();
         }
         file.createNewFile();
@@ -53,24 +51,21 @@ public class MapGeneration extends Generation {
     
     /**
      * Generates same objects (items and mobs) on the map
+     *
      * @param number -- the number of objects on the map
-     * @param mapWight
-     * @param mapHeight
      * @param symbol -- symbol of object
-     * @throws IOException
      */
-    private static void generateObject(int number, int mapWight, int mapHeight,
-                                       TextCharacter symbol)
+    private void generateObject(int number, int mapWight, int mapHeight, TextCharacter symbol)
         throws IOException {
         RandomAccessFile file = new RandomAccessFile(fileName, "rw");
         int range = mapWight * mapHeight;
         boolean setObject;
-        for(int i = 0; i < number; i++) {
+        for (int i = 0; i < number; i++) {
             setObject = false;
             while (!setObject) {
                 int position = rand.nextInt(range);
                 file.seek(position + position / mapWight);
-                if(file.read() == SpecialCharacters.SPACE.getCharacterString().charAt(0)) {
+                if (file.read() == SpecialCharacters.SPACE.getCharacterString().charAt(0)) {
                     file.seek(position + position / mapWight);
                     file.write(symbol.getCharacterString().charAt(0));
                     setObject = true;
@@ -80,26 +75,22 @@ public class MapGeneration extends Generation {
         file.close();
     }
     
-    private static void generateItems(int numberMobs, int mapWight, int mapHeight) {
-    
-    }
-    
     /**
-     * Finds greatest common divisor
+     * Finds the greatest common divisor
+     *
      * @param a -- first number
      * @param b -- second number
+     *
      * @return -- greatest common divisor
      */
-    private static int gcd(int a, int b) {
+    private int gcd(int a, int b) {
         return b == 0 ? a : gcd(b, a % b);
     }
     
     /**
      * Generates parameters for the map according to the set dimensions
-     * @param mapWight
-     * @param mapHeight
      */
-    private static void generateRoomParameters(int mapWight, int mapHeight) {
+    private void generateRoomParameters(int mapWight, int mapHeight) {
         int halfWight = mapWight / 2;
         int halfHeight = mapHeight / 2;
         int wight = mapWight;
@@ -107,7 +98,7 @@ public class MapGeneration extends Generation {
             int forChange = mapHeight;
             do {
                 int gcdWH = gcd(wight - 1, forChange - 1);
-                if(gcdWH > 1) {
+                if (gcdWH > 1) {
                     xRoom = (wight - 1) / gcdWH;
                     yRoom = (forChange - 1) / gcdWH;
                     size = gcdWH - 1;
@@ -130,16 +121,13 @@ public class MapGeneration extends Generation {
     
     /**
      * Writes the generated map without mobs and items to a file
-     *
-     * @param map
-     * @throws IOException
      */
-    private static void writeWallInFile(char[][] map) throws IOException {
+    private void writeWallInFile(char[][] map) throws IOException {
         OutputStream file = FileUtils.getFileForWrite(fileName);
         for (int y = 0; y < map[0].length + resizeHeight; y++) {
             int yForGet = y;
-            if(y >= map[0].length - 1) {
-                if(y == map[0].length + resizeHeight - 1) {
+            if (y >= map[0].length - 1) {
+                if (y == map[0].length + resizeHeight - 1) {
                     yForGet = map[0].length - 1;
                 } else {
                     yForGet = map[0].length - 2;
@@ -147,8 +135,8 @@ public class MapGeneration extends Generation {
             }
             for (int x = 0; x < map.length + resizeWight; x++) {
                 int xForGet = x;
-                if(x >= map.length - 1) {
-                    if(x == map.length + resizeWight - 1) {
+                if (x >= map.length - 1) {
+                    if (x == map.length + resizeWight - 1) {
                         xForGet = map.length - 1;
                     } else {
                         xForGet = map.length - 2;
@@ -160,55 +148,51 @@ public class MapGeneration extends Generation {
         }
     }
     
+    private int getY(int mapHeight, char[][] map) {
+        int y = rand.nextInt(mapHeight);
+        if (y >= map[0].length - 1) {
+            if (y == map[0].length + resizeHeight - 1) {
+                y = map[0].length - 1;
+            } else {
+                y = map[0].length - 2;
+            }
+        }
+        return y;
+    }
+    
     /**
      * Generates a random input and output on the map and writes it to a file
      *
      * @param map -- map as array of characters[x][y], where x is width and y is height
-     * @param mapWight
-     * @param mapHeight
-     * @throws IOException
      */
-    private static void inputAndOutputGeneration(char[][] map, int mapWight, int mapHeight)
+    private void inputAndOutputGeneration(char[][] map, int mapWight, int mapHeight)
         throws IOException {
         int yIn;
         int yOut;
         do {
-            yIn = rand.nextInt(mapHeight);
-            if(yIn >= map[0].length - 1) {
-                if(yIn == map[0].length + resizeHeight - 1) {
-                    yIn = map[0].length - 1;
-                } else {
-                    yIn = map[0].length - 2;
-                }
-            }
-            if(map[1][yIn] == SpecialCharacters.WALL.getCharacterString().charAt(0)) {
+            yIn = getY(mapHeight, map);
+            if (map[1][yIn] == SpecialCharacters.WALL.getCharacterString().charAt(0)) {
                 yIn = 0;
             }
         } while (yIn == 0);
         do {
-            yOut = rand.nextInt(mapHeight);
-            if(yOut >= map[0].length - 1) {
-                if(yOut == map[0].length + resizeHeight - 1) {
-                    yOut = map[0].length - 1;
-                } else {
-                    yOut = map[0].length - 2;
-                }
-            }
-            if(map[mapWight - resizeWight - 2][yOut] == SpecialCharacters.WALL.getCharacterString().charAt(0)) {
+            yOut = getY(mapHeight, map);
+            if (map[mapWight - resizeWight - 2][yOut] ==
+                SpecialCharacters.WALL.getCharacterString().charAt(0)) {
                 yOut = 0;
             }
         } while (yOut == 0);
         RandomAccessFile file = new RandomAccessFile(fileName, "rw");
-        file.seek(mapWight * yIn + yIn);
+        file.seek((long) mapWight * yIn + yIn);
         file.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
         file.write(SpecialCharacters.PLAYER.getCharacterString().charAt(0));
-        file.seek(mapWight * (yOut + 1) + yOut - 1);
+        file.seek((long) mapWight * (yOut + 1) + yOut - 1);
         file.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
         file.close();
     }
-  
     
-    private static char[][] generateRooms() {
+    
+    private char[][] generateRooms() {
         boolean[][] connected = new boolean[xRoom][yRoom];
         Direction[][] neighbor = new Direction[xRoom][yRoom];
         for (int x = 0; x < neighbor.length; x++) {
@@ -223,7 +207,7 @@ public class MapGeneration extends Generation {
         connected[startX][startY] = true;
         neighbor[startX][startY] = Direction.START;
         // Build a list of rooms remaining to be connected.
-        final List<Integer> remainingRooms = new ArrayList<Integer>();
+        final List<Integer> remainingRooms = new ArrayList<>();
         for (int i = 0; i < xRoom * yRoom; i++) {
             remainingRooms.add(i);
         }
@@ -231,7 +215,7 @@ public class MapGeneration extends Generation {
             // pick a random unconnected room
             final int roomIndexInList = rand.nextInt(remainingRooms.size());
             final int roomIndex = remainingRooms.get(roomIndexInList);
-            final int[] room = new int[] { roomIndex % xRoom, roomIndex / xRoom };
+            final int[] room = new int[] {roomIndex % xRoom, roomIndex / xRoom};
             if (connected[room[0]][room[1]]) {
                 remainingRooms.remove(roomIndexInList);
             } else {
@@ -275,8 +259,8 @@ public class MapGeneration extends Generation {
         }
         char[][] map = new char[xRoom * size + xRoom + 1][yRoom * size + yRoom + 1];
         // Build all ground
-        for (int x = 0; x < map.length; x++) {
-            Arrays.fill(map[x], SpecialCharacters.SPACE.getCharacterString().charAt(0));
+        for (char[] chars : map) {
+            Arrays.fill(chars, SpecialCharacters.SPACE.getCharacterString().charAt(0));
         }
         // Build wall grid
         for (int x = 0; x < map.length; x += size + 1) {
@@ -295,28 +279,32 @@ public class MapGeneration extends Generation {
                         int dx = x * (size + 1);
                         int dy = y * (size + 1);
                         for (int i = 1; i < (size + 1); i++) {
-                            map[dx + i][dy] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx + i][dy] =
+                                SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case LEFT:
                         dx = x * (size + 1);
                         dy = y * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx][dy + i] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx][dy + i] =
+                                SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case RIGHT:
                         dx = (x + 1) * (size + 1);
                         dy = (y) * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx][dy + i] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx][dy + i] =
+                                SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case DOWN:
                         dx = (x) * (size + 1);
                         dy = (y + 1) * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx + i][dy] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx + i][dy] =
+                                SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
                     case START:
                     default:

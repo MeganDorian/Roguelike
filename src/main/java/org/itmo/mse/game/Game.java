@@ -5,13 +5,13 @@ import static org.itmo.mse.constants.Proportions.backpackSize;
 
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.KeyType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
+import org.itmo.mse.constants.Direction;
 import org.itmo.mse.constants.ObjectEffect;
 import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.game.objects.Item;
@@ -50,7 +50,7 @@ public class Game {
      *
      * @param direction to move
      */
-    public List<String> updatePlayerPosition(KeyType direction, TextGraphics graphics) {
+    public List<String> updatePlayerPosition(Direction direction, TextGraphics graphics) {
         TerminalRectangle playerPosition = player.getPosition();
         TerminalRectangle newPosition = Checker.getNextPosition(direction, playerPosition);
         if (Checker.isWallNearby(newPosition, levelMap.getWalls())) {
@@ -128,33 +128,37 @@ public class Game {
         return List.of();
     }
     
-    public void setSelectedItemInBackpack(KeyType direction) {
-        int selectedItem = player.getBackpack().getSelectedItem();
-        if (direction == KeyType.ArrowRight && selectedItem + 1 < player.getBackpack().size()) {
+    /**
+     * Changes the selected item in the backpack according to the pressed by player arrow button
+     * (up, down, left or right)
+     */
+    public void setSelectedItemInBackpack(Direction direction) {
+        int selectedItem = player.getBackpack().getSelectedItemIndex();
+        if (direction == Direction.RIGHT && selectedItem + 1 < player.getBackpack().size()) {
             selectedItem++;
-        } else if (direction == KeyType.ArrowLeft && selectedItem != 0) {
+        } else if (direction == Direction.LEFT && selectedItem != 0) {
             selectedItem--;
-        } else if (direction == KeyType.ArrowUp && selectedItem - backpackItemsInRow >= 0) {
+        } else if (direction == Direction.UP && selectedItem - backpackItemsInRow >= 0) {
             selectedItem -= backpackItemsInRow;
-        } else if (direction == KeyType.ArrowDown &&
+        } else if (direction == Direction.DOWN &&
                    selectedItem + backpackItemsInRow < player.getBackpack().size()) {
             selectedItem += backpackItemsInRow;
         }
-        player.getBackpack().setSelectedItem(selectedItem);
+        player.getBackpack().setSelectedItemIndex(selectedItem);
     }
     
     /**
      * Applies selected item in the backpack
      */
     public void applySelectedItem() {
-        int selectedItem = player.getBackpack().getSelectedItem();
+        int selectedItem = player.getBackpack().getSelectedItemIndex();
         Item item = player.getBackpack().get(selectedItem);
         switch (item.getItemType()) {
             case MEDICAL_AID -> applyMedicalAid(item);
             case ARMOR -> applyArmor(item, selectedItem);
             case WEAPON -> applyWeapon(item, selectedItem);
         }
-        player.getBackpack().setSelectedItem(Math.max(0, selectedItem - 1));
+        player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
     }
     
     /**
@@ -223,8 +227,12 @@ public class Game {
         };
     }
     
+    /**
+     * Performs dropping the item on the floor. Get the current selected item in the backpack and
+     * searches for the free place near the player
+     */
     public void dropItemFromBackpack() {
-        int selectedItem = player.getBackpack().getSelectedItem();
+        int selectedItem = player.getBackpack().getSelectedItemIndex();
         Item item = player.getBackpack().get(selectedItem);
         player.getBackpack().getItems().remove(item);
         TerminalRectangle freePosition = getNearestFreePlace().get();
@@ -233,11 +241,11 @@ public class Game {
             objectUnderPlayer = item;
         }
         levelMap.getItems().add(item);
-        player.getBackpack().setSelectedItem(Math.max(0, selectedItem - 1));
+        player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
     }
     
     /**
-     * Searches for the nearest free position around the player. If there no free place, return
+     * Searches for the nearest free position around the player. If there is no free place, return
      * player position
      *
      * @return the first free position where no wall, no item or mob placed
