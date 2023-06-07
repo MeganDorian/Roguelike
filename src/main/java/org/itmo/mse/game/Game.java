@@ -68,9 +68,8 @@ public class Game {
         }
         
         if (newPosition.position.equals(levelMap.getExit())) {
-            // TODO level ended action
             dungeonLevel++;
-            newPosition = playerPosition;
+            return null;
         }
         
         player.setPosition(newPosition);

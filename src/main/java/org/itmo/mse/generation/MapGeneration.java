@@ -16,7 +16,7 @@ import org.itmo.mse.utils.FileUtils;
 
 public class MapGeneration extends Generation {
     
-    private static String fileName = "new_level";
+    public static String fileName = "new_level";
     
     private static int xRoom = 17;
     private static int yRoom = 4;
