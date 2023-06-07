@@ -5,11 +5,14 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
 import java.util.List;
+import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.Game;
 import org.itmo.mse.game.actions.Action;
 import org.itmo.mse.game.actions.Move;
+import org.itmo.mse.generation.MapGeneration;
+import org.itmo.mse.ui.Printer;
 import org.itmo.mse.utils.map.MapLoader;
 
 public class GameWindow extends Window {
@@ -38,7 +41,11 @@ public class GameWindow extends Window {
             // load tutorial level from file
             loadLevelFromFile("first_lvl", true);
         } else {
-            // generate new map
+            screen.clear();
+            MapGeneration.generate((int) (Printer.getSize().getColumns() * Proportions.mapWidth),
+                (int) (Printer.getSize().getRows() * Proportions.mapHeight),
+                Proportions.numberMobs, Proportions.numberItems);
+            loadLevelFromFile(MapGeneration.fileName, false);
         }
         printObject(game.getLevelMap());
         printObject(game.getPlayer());
@@ -68,7 +75,11 @@ public class GameWindow extends Window {
                        pressedKey == KeyType.ArrowLeft || pressedKey == KeyType.ArrowRight) {
                 move.setDirection(pressedKey);
                 List<String> nearestObject = move.execute(textGraphics);
-                printObjectInfo(nearestObject);
+                if(nearestObject == null) {
+                    printLevel();
+                } else {
+                    printObjectInfo(nearestObject);
+                }
             } else if (input.getCharacter() != null) {
                 if (input.getCharacter().equals('e')) {
                     List<String> pickedUpItem = interact.execute(textGraphics);
