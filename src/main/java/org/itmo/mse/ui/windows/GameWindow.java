@@ -36,6 +36,14 @@ public class GameWindow extends Window {
         printLevel();
     }
     
+    /**
+     * Loads the level and prints it
+     * The first level is static
+     * the others are randomly generated
+     *
+     * @throws IOException
+     * @throws IncorrectMapFormatException
+     */
     private void printLevel() throws IOException, IncorrectMapFormatException {
         if (game.getDungeonLevel() == 1) {
             // load tutorial level from file
@@ -56,10 +64,28 @@ public class GameWindow extends Window {
         screen.refresh();
     }
     
+    /**
+     * Loads a level from a file
+     * If level one, it reads from the resource folder,
+     * otherwise it takes the file with the name given
+     *
+     * @param fileName
+     * @param isFirst
+     * @throws IOException
+     * @throws IncorrectMapFormatException
+     */
     private void loadLevelFromFile(String fileName, boolean isFirst)
         throws IOException, IncorrectMapFormatException {
         game.setLevelMap(MapLoader.loadFromFile(fileName, isFirst, game.getPlayer()));
     }
+    
+    /**
+     * Tracks user presses during play
+     * and reacts according to the pressed button
+     *
+     * @throws IOException
+     * @throws IncorrectMapFormatException
+     */
     public void play() throws IOException, IncorrectMapFormatException {
         while (true) {
             KeyStroke input = screen.pollInput();

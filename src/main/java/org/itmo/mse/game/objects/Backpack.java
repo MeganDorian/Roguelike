@@ -15,10 +15,20 @@ public class Backpack {
     @Setter
     private int selectedItemIndex = 0;
     
+    /**
+     * Get the number of items in the backpack
+     * @return number of items
+     */
     public int size() {
         return items.size();
     }
     
+    /**
+     * Get item from the backpack by index
+     *
+     * @param i -- index
+     * @return item by index
+     */
     public Item get(int i) {
         return items.get(i);
     }

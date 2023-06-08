@@ -10,6 +10,14 @@ public class WallsLoader {
     @Getter
     private final HashMap<TerminalPosition, TerminalPosition> walls = new HashMap<>();
     
+    /**
+     * Analyses the transmitted column for the presence
+     * of vertical walls and adds them to the list
+     *
+     * @param position
+     * @param column
+     * @return is exists vertical wall
+     */
     private boolean addVerticalWall(TerminalPosition position, int column) {
         // if vertical wall already exists
         position = position.withRelativeRow(-1);
@@ -21,6 +29,14 @@ public class WallsLoader {
         return false;
     }
     
+    /**
+     * Analyses the transmitted string for the presence
+     * of vertical walls and adds them to the list
+     *
+     * @param position
+     * @param height
+     * @return is exists horizontal wall
+     */
     private boolean addHorizontalWall(TerminalPosition position, int height) {
         // if horizontal wall already exists
         position = position.withRelativeColumn(-1);
@@ -32,6 +48,13 @@ public class WallsLoader {
         return false;
     }
     
+    /**
+     * Get walls
+     *
+     * @param position
+     * @param i
+     * @param height
+     */
     public void getWalls(TerminalRectangle position, int i, int height) {
         if (!addVerticalWall(position.position, i) &&
             !addHorizontalWall(position.position, height)) {

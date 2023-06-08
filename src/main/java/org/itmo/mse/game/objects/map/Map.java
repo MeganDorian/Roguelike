@@ -37,6 +37,11 @@ public class Map extends Object {
         return new MapBuilder();
     }
     
+    /**
+     * Print map
+     *
+     * @param graphics to draw object
+     */
     @Override
     public void print(TextGraphics graphics) {
         walls.forEach(wall -> wall.print(graphics));
@@ -44,6 +49,9 @@ public class Map extends Object {
         mobs.forEach(mob -> mob.print(graphics));
     }
     
+    /**
+     * Builder for build map
+     */
     public static class MapBuilder {
         private TerminalRectangle position;
         
@@ -56,36 +64,75 @@ public class Map extends Object {
         
         private TerminalPosition start;
         
+        /**
+         * Set walls
+         *
+         * @param walls
+         * @return
+         */
         public MapBuilder walls(List<Wall> walls) {
             this.walls = walls;
             return this;
         }
         
+        /**
+         * Set mobs
+         *
+         * @param mobs
+         * @return
+         */
         public MapBuilder mobs(List<Mob> mobs) {
             this.mobs = mobs;
             return this;
         }
         
+        /**
+         * Set items
+         * @param items
+         * @return
+         */
         public MapBuilder things(List<Item> items) {
             this.items = items;
             return this;
         }
         
+        /**
+         *  Set border
+         *
+         * @param position
+         * @return
+         */
         public MapBuilder border(TerminalRectangle position) {
             this.position = position;
             return this;
         }
         
+        /**
+         * Set exit
+         *
+         * @param exit
+         * @return
+         */
         public MapBuilder exit(TerminalPosition exit) {
             this.exit = exit;
             return this;
         }
         
+        /**
+         * Set start
+         *
+         * @param start
+         * @return
+         */
         public MapBuilder start(TerminalPosition start) {
             this.start = start;
             return this;
         }
         
+        /**
+         * Build map with the set parameters
+         * @return
+         */
         public Map build() {
             return new Map(position, walls, mobs, items, exit, start);
         }

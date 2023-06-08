@@ -13,6 +13,12 @@ public class MobLoader {
     @Getter
     private final List<Mob> mobs = new ArrayList<>();
     
+    /**
+     * Adds a randomly generated mob to the list
+     * of mobs with a passed position
+     *
+     * @param position
+     */
     public void getMobs(TerminalRectangle position) {
         //so far so good for the default map
         Mob mob = generateMob();

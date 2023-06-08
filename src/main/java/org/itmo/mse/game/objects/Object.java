@@ -30,6 +30,11 @@ public abstract class Object {
         graphics.drawRectangle(position.position, position.size, character);
     }
     
+    /**
+     * Get info about object
+     *
+     * @return info
+     */
     public List<String> getInfo() {
         return List.of();
     }

@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Interact implements Action {
+    
+    /**
+     * Picking up an object from a map
+     *
+     * @param graphics
+     * @return
+     */
     @Override
     public List<String> execute(TextGraphics graphics) {
         if (!game.isBackpackOpened()) {

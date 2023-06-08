@@ -37,24 +37,48 @@ public abstract class Printer {
         playerPrinter = new PlayerPrinter(textGraphics);
     }
     
-    
+    /**
+     * Prints the object on the screen
+     * @param object
+     * @throws IOException
+     */
     protected void printObject(Object object) throws IOException {
         object.print(textGraphics);
         screen.refresh();
     }
     
+    /**
+     * Prints a line at a given position
+     *
+     * @param string
+     * @param position
+     * @throws IOException
+     */
     protected void printStringAtPosition(String string, TerminalPosition position)
         throws IOException {
         textGraphics.putString(position, string);
         screen.refresh();
     }
     
+    /**
+     * Erases a set position
+     * (sets a system-defined character in a set position)
+     *
+     * @param position
+     * @param length
+     * @throws IOException
+     */
     public static void eraseAtPosition(TerminalPosition position, int length) throws IOException {
         textGraphics.drawLine(position, position.withRelativeColumn(length - 1),
                               SpecialCharacters.SPACE);
         screen.refresh();
     }
     
+    /**
+     * Prints help for the player
+     *
+     * @throws IOException
+     */
     protected void printHelp() throws IOException {
         List<String> help =
             List.of(ARROW_DOWN + " " + ARROW_UP + " " + ARROW_LEFT + " " + ARROW_RIGHT + " : move",
@@ -91,6 +115,12 @@ public abstract class Printer {
         screen.refresh();
     }
     
+    /**
+     *  Gets the current terminal size
+     *
+     * @return terminal size
+     * @throws IOException
+     */
     protected static TerminalSize getSize() throws IOException {
         return terminal.getTerminalSize();
     }

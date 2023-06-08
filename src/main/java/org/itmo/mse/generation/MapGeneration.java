@@ -27,6 +27,15 @@ public class MapGeneration extends Generation {
     private int resizeWight = 0;
     private int resizeHeight = 0;
     
+    /**
+     * Generates map with the set parameters
+     *
+     * @param mapWight
+     * @param mapHeight
+     * @param numberMobs
+     * @param numberItems
+     * @throws IOException
+     */
     public void generate(int mapWight, int mapHeight, int numberMobs, int numberItems)
         throws IOException {
         generateWall(mapWight, mapHeight);
@@ -148,6 +157,15 @@ public class MapGeneration extends Generation {
         }
     }
     
+    /**
+     * Generates y to randomly position the entrance
+     * and exit to the level, taking into account
+     * the fit of the map to the required dimensions
+     *
+     * @param mapHeight
+     * @param map -- as a two-dimensional array of characters
+     * @return y
+     */
     private int getY(int mapHeight, char[][] map) {
         int y = rand.nextInt(mapHeight);
         if (y >= map[0].length - 1) {
@@ -191,7 +209,13 @@ public class MapGeneration extends Generation {
         file.close();
     }
     
-    
+    /**
+     * Generate rooms and delete random walls
+     * Guaranteed that there will be a passage
+     * from the entrance to the level to the exit
+     *
+     * @return map with walls
+     */
     private char[][] generateRooms() {
         boolean[][] connected = new boolean[xRoom][yRoom];
         Direction[][] neighbor = new Direction[xRoom][yRoom];

@@ -110,6 +110,10 @@ public class Game {
         return List.of();
     }
     
+    /**
+     * Picks up item from map and puts it in backpack
+     * @return information about item or notification of overfilling the backpack
+     */
     public List<String> pickupItem() {
         if (objectUnderPlayer != null) {
             // store it in backpack if its enough space in it

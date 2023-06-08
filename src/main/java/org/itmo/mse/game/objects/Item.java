@@ -33,6 +33,11 @@ public class Item extends Object {
         this.value = value;
     }
     
+    /**
+     * Get info about item
+     *
+     * @return info
+     */
     @Override
     public List<String> getInfo() {
         return List.of(getName(), description, itemCharacteristic.name(),

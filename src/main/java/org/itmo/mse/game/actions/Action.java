@@ -9,6 +9,14 @@ import org.itmo.mse.game.Game;
 public interface Action {
     Game game = new Game();
     
+    /**
+     * Action interface for different objects
+     *
+     * @param graphics
+     * @return
+     * @throws IncorrectMapFormatException
+     * @throws IOException
+     */
     List<String> execute(TextGraphics graphics) throws IncorrectMapFormatException, IOException;
 
 }

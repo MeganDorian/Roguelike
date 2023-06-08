@@ -53,12 +53,24 @@ public class BackpackPrinter {
             new TerminalRectangle(column, row + itemHeight * 3, width, height - 3 * itemHeight);
     }
     
+    /**
+     * Prints the backpack together with its contents
+     *
+     * @param game
+     * @throws IOException
+     */
     public void printBackpack(Game game) throws IOException {
         textGraphics.drawRectangle(new TerminalPosition(column, row),
                                    new TerminalSize(width, height), SpecialCharacters.DELIMITER);
         printBackpackCells(game);
     }
     
+    /**
+     * Lights up the selected item in the backpack
+     *
+     * @param item
+     * @param color
+     */
     public void printSelectBackpackItem(int item, TextCharacter color) {
         textGraphics.fillRectangle(new TerminalPosition(column, row),
                                    new TerminalSize(width,
@@ -68,6 +80,11 @@ public class BackpackPrinter {
         textGraphics.fillRectangle(selectedItem.position, selectedItem.size, color);
     }
     
+    /**
+     * Prints the backpack cells
+     * @param game
+     * @throws IOException
+     */
     private void printBackpackCells(Game game) throws IOException {
         int itemColumn = column;
         int currRow = row;
@@ -91,6 +108,11 @@ public class BackpackPrinter {
         printBackpackItems(game);
     }
     
+    /**
+     * Prints the items in the backpack
+     *
+     * @param game
+     */
     private void printBackpackItems(Game game) {
         Backpack backpack = game.getPlayer().getBackpack();
         for (int i = 0; i < backpack.size(); i++) {

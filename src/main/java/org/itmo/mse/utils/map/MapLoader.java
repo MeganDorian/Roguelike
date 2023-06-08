@@ -36,6 +36,9 @@ public class MapLoader {
     
     private MobLoader mobLoader;
     
+    /**
+     * Resets the map
+     */
     private void reset() {
         exitPosition = null;
         startPosition = null;
@@ -45,6 +48,16 @@ public class MapLoader {
         mobLoader = new MobLoader();
     }
     
+    /**
+     * Checking for the existence of a level entry position
+     *
+     * @param line
+     * @param indexToSearch
+     * @param position
+     * @param error
+     * @return
+     * @throws IncorrectMapFormatException
+     */
     private TerminalPosition checkExitStartPosition(String line, int indexToSearch,
                                                     TerminalPosition position, String error)
         throws IncorrectMapFormatException {
@@ -57,6 +70,14 @@ public class MapLoader {
         return position;
     }
     
+    /**
+     * Sets the user's position on the map.
+     * Performs a check to ensure that the number of users
+     * on the map is correct.
+     *
+     * @param line
+     * @throws IncorrectMapFormatException
+     */
     private void getPlayerPosition(String line) throws IncorrectMapFormatException {
         if (line.indexOf(SpecialCharacters.getUserChar()) != -1) {
             if (playerPosition != null) {
@@ -67,6 +88,11 @@ public class MapLoader {
         }
     }
     
+    /**
+     * Interprets the characters in the string according to the game objects
+     *
+     * @param line -- analysis line
+     */
     private void searchForObjectsOnMap(String line) {
         for (int i = 0; i < line.length(); i++) {
             TerminalRectangle position = new TerminalRectangle(i, height, 1, 1);
@@ -80,6 +106,11 @@ public class MapLoader {
         }
     }
     
+    /**
+     * Performs string processing
+     * @param line -- analysis line
+     * @throws IncorrectMapFormatException
+     */
     private void processLine(String line) throws IncorrectMapFormatException {
         exitPosition =
             checkExitStartPosition(line, width, exitPosition, "It can't be two exits on map");
@@ -90,6 +121,15 @@ public class MapLoader {
         searchForObjectsOnMap(line);
     }
     
+    /**
+     * Read map from file
+     * First level is static
+     *
+     * @param fileName
+     * @param isFirst
+     * @throws IOException
+     * @throws IncorrectMapFormatException
+     */
     private void readMap(String fileName, boolean isFirst)
         throws IOException, IncorrectMapFormatException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -111,6 +151,16 @@ public class MapLoader {
         }
     }
     
+    /**
+     * Load map from file and return map object
+     *
+     * @param fileName
+     * @param isFirst
+     * @param player
+     * @return map
+     * @throws IOException
+     * @throws IncorrectMapFormatException
+     */
     public Map loadFromFile(String fileName, boolean isFirst, Player player)
         throws IOException, IncorrectMapFormatException {
         reset();
