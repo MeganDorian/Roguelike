@@ -43,6 +43,11 @@ public class Player extends Object {
         }
     }
     
+    /**
+     * Get info about player
+     *
+     * @return info
+     */
     @Override
     public List<String> getInfo() {
         return List.of(getName(), "", "LVL: " + level, "XP: " + experience, "HP: " + health,

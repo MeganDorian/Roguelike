@@ -4,6 +4,13 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import java.util.List;
 
 public class BackpackAction implements Action {
+    
+    /**
+     * Open/close backpack
+     *
+     * @param graphics
+     * @return
+     */
     @Override
     public List<String> execute(TextGraphics graphics) {
         if (game.getPlayer().getBackpack().size() == 0) {

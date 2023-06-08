@@ -16,6 +16,14 @@ import org.itmo.mse.ui.windows.GameWindow;
 public class StartGame implements Action {
     private GameWindow gameWindow;
     
+    /**
+     * Start game window
+     *
+     * @param graphics
+     * @return
+     * @throws IncorrectMapFormatException
+     * @throws IOException
+     */
     @Override
     public List<String> execute(TextGraphics graphics)
         throws IncorrectMapFormatException, IOException {

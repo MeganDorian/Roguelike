@@ -10,6 +10,11 @@ import org.itmo.mse.game.objects.Mob;
 
 public class MobGeneration extends Generation {
     
+    /**
+     * Generate random mob
+     *
+     * @return mob
+     */
     public static Mob generateMob() {
         MobStrategy strategy;
         List<String> allNames;

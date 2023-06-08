@@ -14,6 +14,10 @@ public class ItemsLoader {
     @Getter
     private final List<Item> items = new ArrayList<>();
     
+    /**
+     * Get random item and set the position transferred
+     * @param position
+     */
     public void getItems(TerminalRectangle position) {
         //so far so good for the default map
         try {

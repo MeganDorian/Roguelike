@@ -10,6 +10,12 @@ public class Move implements Action {
     
     private Direction direction;
     
+    /**
+     * Move the player around the map or move around the backpack cells
+     *
+     * @param graphics
+     * @return
+     */
     @Override
     public List<String> execute(TextGraphics graphics) {
         if (!game.isBackpackOpened()) {
@@ -28,6 +34,10 @@ public class Move implements Action {
         }
     }
     
+    /**
+     * Set direction
+     * @param pressedKey -- button pressed by the user
+     */
     public void setDirection(KeyType pressedKey) {
         switch (pressedKey) {
             case ArrowUp -> direction = Direction.UP;

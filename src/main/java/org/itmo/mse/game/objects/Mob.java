@@ -30,6 +30,11 @@ public class Mob extends Object {
         this.experience = experience;
     }
     
+    /**
+     * Get info about mob
+     *
+     * @return info
+     */
     @Override
     public List<String> getInfo() {
         return List.of(getName(),"ATTACK: " + damage, "HP: " + health, "XP: " + experience);

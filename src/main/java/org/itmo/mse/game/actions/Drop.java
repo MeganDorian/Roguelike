@@ -4,6 +4,13 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import java.util.List;
 
 public class Drop implements Action {
+    
+    /**
+     * Drop item from backpack
+     *
+     * @param graphics
+     * @return
+     */
     @Override
     public List<String> execute(TextGraphics graphics) {
         if (game.isBackpackOpened()) {

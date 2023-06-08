@@ -25,11 +25,25 @@ public class PlayerPrinter {
                                            (int) (getSize().getRows() * playerBlockHeight) - 1);
     }
     
+    /**
+     * Print information about player
+     *
+     * @param game
+     * @param startRow
+     * @throws IOException
+     */
     public void printPlayerInfo(Game game, int startRow) throws IOException {
         int column = (int) (getSize().getColumns() * Proportions.mapWidth);
         printPlayerStats(game, column, startRow);
     }
     
+    /**
+     * Prints player's stats
+     *
+     * @param game
+     * @param column
+     * @param startRow
+     */
     private void printPlayerStats(Game game, int column, int startRow) {
         textGraphics.fillRectangle(new TerminalPosition(column, startRow), playerBlockSize,
                                    SpecialCharacters.SPACE);

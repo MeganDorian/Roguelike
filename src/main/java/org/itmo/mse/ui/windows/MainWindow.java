@@ -39,6 +39,13 @@ public class MainWindow extends Window {
         printLogo();
     }
     
+    /**
+     * Waiting for Enter to start the game or ESC to close
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IncorrectMapFormatException
+     */
     public void startGame() throws IOException, InterruptedException, IncorrectMapFormatException {
         while (true) {
             enterPressed();
@@ -56,6 +63,13 @@ public class MainWindow extends Window {
         }
     }
     
+    /**
+     * Checks that the screen is the right size
+     * for a comfortable game
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
     private void checkScreenSize() throws IOException, InterruptedException {
         TerminalPosition center = new TerminalPosition(0, 0);
         String screenResize = "please resize your screen if you can't see this text in full";
@@ -78,6 +92,11 @@ public class MainWindow extends Window {
         Thread.sleep(1000);
     }
     
+    /**
+     * Print logo for screen
+     *
+     * @throws IOException
+     */
     private void printLogo() throws IOException {
         TextImage image = createLogoAsImage();
         
@@ -93,6 +112,11 @@ public class MainWindow extends Window {
         screen.refresh();
     }
     
+    /**
+     * Create logo as image
+     * @return image
+     * @throws IOException
+     */
     private TextImage createLogoAsImage() throws IOException {
         int imageWidth;
         int imageHeight;
@@ -114,6 +138,13 @@ public class MainWindow extends Window {
         return image;
     }
     
+    /**
+     * Read image (for logo)
+     *
+     * @param image
+     * @param line
+     * @param j
+     */
     private void readImage(TextImage image, String line, int j) {
         for (int i = 0; i < line.length(); i++) {
             if (line.charAt(i) == ' ') {
