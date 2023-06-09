@@ -106,14 +106,14 @@ public class GameWindow extends Window {
                     printObjectInfo(nearestObject);
                 }
             } else if (input.getCharacter() != null) {
-                if (input.getCharacter().equals('e')) {
+                if (input.getCharacter().equals('e') || input.getCharacter().equals('у')) {
                     List<String> pickedUpItem = interact.execute(textGraphics);
                     printObjectInfo(pickedUpItem);
                     backpackPrinter.printBackpack(game);
-                } else if (input.getCharacter().equals('i')) {
+                } else if (input.getCharacter().equals('i') || input.getCharacter().equals('ш')) {
                     List<String> selectedItem = backpackAction.execute(textGraphics);
                     printObjectInfo(selectedItem);
-                } else if (input.getCharacter().equals('x')) {
+                } else if (input.getCharacter().equals('x') || input.getCharacter().equals('ч')) {
                     dropItem.execute(textGraphics);
                 }
             }
