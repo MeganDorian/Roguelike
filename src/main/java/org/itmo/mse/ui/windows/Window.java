@@ -17,7 +17,7 @@ public abstract class Window extends Printer {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             terminal =
-                defaultTerminalFactory.setInitialTerminalSize(new TerminalSize(120, 30)).createTerminal();
+                defaultTerminalFactory.setInitialTerminalSize(new TerminalSize(columnSize, rowsSize)).createTerminal();
             screen = new TerminalScreen(terminal);
             screen.startScreen();
         } catch (IOException e) {
