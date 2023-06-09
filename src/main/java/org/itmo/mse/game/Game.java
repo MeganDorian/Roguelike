@@ -45,6 +45,16 @@ public class Game {
         player = new Player(new TerminalRectangle(0, 0, 0, 0));
     }
     
+    public Game(Game state) {
+        this.objectUnderPlayer = state.objectUnderPlayer;
+        this.mobUnderPlayer = state.mobUnderPlayer;
+        this.dungeonLevel = state.dungeonLevel;
+        this.isBackpackOpened = state.isBackpackOpened;
+        this.backpackItemsInRow = state.backpackItemsInRow;
+        this.levelMap = state.levelMap;
+        this.player = state.player;
+    }
+    
     /**
      * Changes and redraws player position after he moves
      *

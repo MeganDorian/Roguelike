@@ -23,14 +23,17 @@ public class GameWindow extends Window {
     private final Action interact;
     private final Action backpackAction;
     private final Action dropItem;
+    private final Action reaction;
     
-    public GameWindow(Move move, Game game, Action interact, Action backpackAction, Action dropItem)
+    public GameWindow(Move move, Game game, Action interact, Action backpackAction,
+                      Action dropItem, Action reaction)
         throws IOException, IncorrectMapFormatException {
         this.move = move;
         this.game = game;
         this.interact = interact;
         this.backpackAction = backpackAction;
         this.dropItem = dropItem;
+        this.reaction = reaction;
         screen.clear();
         screen.refresh();
         printLevel();
@@ -117,15 +120,18 @@ public class GameWindow extends Window {
                     dropItem.execute(textGraphics);
                 }
             }
-            printObject(game.getLevelMap());
-            printObject(game.getPlayer());
-            TextCharacter color =
-                game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
-            int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
-            backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
-            backpackPrinter.printBackpack(game);
-            playerPrinter.printPlayerInfo(game, startRow);
-            screen.refresh();
+            List<String> changes = reaction.execute(textGraphics);
+            if(!changes.isEmpty()) {
+                printObject(game.getLevelMap());
+                printObject(game.getPlayer());
+                TextCharacter color = game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM :
+                                      SpecialCharacters.SPACE;
+                int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
+                backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
+                backpackPrinter.printBackpack(game);
+                playerPrinter.printPlayerInfo(game, startRow);
+                screen.refresh();
+            }
         }
     }
 }
