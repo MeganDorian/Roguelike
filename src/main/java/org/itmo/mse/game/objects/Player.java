@@ -25,7 +25,7 @@ public class Player extends Object {
     private int health = 2;
     private int maxHealth = 10;
     private Item weapon =
-        new Item(null, null, emptyHands, ItemCharacteristic.USUAL, ItemType.WEAPON, null, "", 0);
+        new Item(null, null, emptyHands, ItemCharacteristic.USUAL, ItemType.WEAPON, null, "", 1);
     
     private Item armor =
         new Item(null, null, noArmor, ItemCharacteristic.USUAL, ItemType.ARMOR, null, "", 0);
