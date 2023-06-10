@@ -24,8 +24,11 @@ public class MapGeneration extends Generation {
     private int yRoom = 4;
     private int size = 6;
     
+    private int oldMapWight = 120;
+    private int oldMapHeight = 30;
+    
     private int resizeWight = 0;
-    private int resizeHeight = 0;
+    private int resizeHeight = 1;
     
     /**
      * Generates map with the set parameters
@@ -52,7 +55,11 @@ public class MapGeneration extends Generation {
             file.delete();
         }
         file.createNewFile();
-        generateRoomParameters(mapWight, mapHeight);
+        if(mapHeight != oldMapHeight || mapWight != oldMapWight) {
+            generateRoomParameters(mapWight, mapHeight);
+            oldMapHeight = mapHeight;
+            oldMapWight = mapWight;
+        }
         char[][] map = generateRooms();
         writeWallInFile(map);
         inputAndOutputGeneration(map, mapWight, mapHeight);
