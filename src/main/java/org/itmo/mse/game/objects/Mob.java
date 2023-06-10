@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
 import java.util.List;
 import lombok.Getter;
+import lombok.Setter;
 import org.itmo.mse.constants.MobStrategy;
 
 @Getter
@@ -15,7 +16,8 @@ public class Mob extends Object {
     
     private final int damage;
     
-    private final int health;
+    @Setter
+    private int health;
     
     private final int experience;
     

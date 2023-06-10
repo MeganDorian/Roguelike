@@ -1,6 +1,7 @@
 package org.itmo.mse.game;
 
 import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
+import static org.itmo.mse.constants.ObjectNames.noArmor;
 import static org.itmo.mse.constants.Proportions.backpackSize;
 
 import com.googlecode.lanterna.TerminalRectangle;
@@ -8,12 +9,18 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 import org.itmo.mse.constants.Direction;
+import org.itmo.mse.constants.ItemCharacteristic;
+import org.itmo.mse.constants.ItemType;
 import org.itmo.mse.constants.ObjectEffect;
 import org.itmo.mse.constants.ObjectNames;
+import org.itmo.mse.game.actions.Action;
+import org.itmo.mse.game.actions.Damage;
 import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.Specifications;
 import org.itmo.mse.game.objects.Item;
@@ -31,6 +38,8 @@ public class Game {
     
     private int dungeonLevel = 1;
     
+    private long timeUnderPlayer = 0;
+    
     @Setter
     private boolean isBackpackOpened = false;
     
@@ -43,8 +52,13 @@ public class Game {
     @Setter
     private Player player;
     
+    private Timer timerForDamage;
+    
     public Game() {
         player = new Player(new TerminalRectangle(0, 0, 0, 0));
+        timerForDamage = new Timer();
+        Action damage = new Damage();
+        timerForDamage.schedule((TimerTask) damage, 0, 1000);
     }
     
     public Game(Game state) {
@@ -53,8 +67,14 @@ public class Game {
         this.dungeonLevel = state.dungeonLevel;
         this.isBackpackOpened = state.isBackpackOpened;
         this.backpackItemsInRow = state.backpackItemsInRow;
-        this.levelMap = state.levelMap;
+        if(levelMap!= null) {
+            this.levelMap = Map.builder().start(levelMap.getStart()).exit(levelMap.getExit())
+                .border(levelMap.getPosition()).walls(levelMap.getWalls())
+                .things(levelMap.getItems()).mobs(levelMap.getMobs()).build();
+        }
         this.player = new Player(state.player);
+        this.timeUnderPlayer = state.timeUnderPlayer;
+        this.timerForDamage = state.timerForDamage;
     }
     
     /**
@@ -119,6 +139,7 @@ public class Game {
         Optional<? extends Object> itemOnNewPosition =
             Checker.isObjectAtPosition(newPosition, levelMap.getItems());
         if (itemOnNewPosition.isPresent()) {
+            timeUnderPlayer = System.currentTimeMillis();
             objectUnderPlayer = (Item) itemOnNewPosition.get();
             return itemOnNewPosition.get().getInfo();
         } else if (objectUnderPlayer != null) {
@@ -137,7 +158,9 @@ public class Game {
             Checker.isObjectAtPosition(newPosition, levelMap.getMobs());
         if (itemOnNewPosition.isPresent()) {
             mobUnderPlayer = (Mob) itemOnNewPosition.get();
-            return itemOnNewPosition.get().getInfo();
+            List<String> info = itemOnNewPosition.get().getInfo();
+            causingDamage();
+            return info;
         } else if (mobUnderPlayer != null) {
             mobUnderPlayer.print(graphics);
             mobUnderPlayer = null;
@@ -286,6 +309,35 @@ public class Game {
         player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
         if(player.getBackpack().size() == 0) {
             isBackpackOpened = false;
+        }
+    }
+    
+    /**
+     * The method deals damage if the user stands on
+     * a mob for a certain amount of time
+     */
+    public void causingDamage() {
+        if(mobUnderPlayer != null && !isBackpackOpened) {
+            if(System.currentTimeMillis() - timeUnderPlayer >= 1000) {
+                mobUnderPlayer.setHealth(mobUnderPlayer.getHealth() - player.getWeapon().getValue());
+                if(player.getArmor().getValue() > mobUnderPlayer.getDamage()) {
+                    player.getArmor().setValue(player.getArmor().getValue()
+                                               - mobUnderPlayer.getDamage());
+                } else {
+                    player.setHealth(player.getHealth() - mobUnderPlayer.getDamage()
+                                     + player.getArmor().getValue());
+                    player.setArmor(new Item(null, null, noArmor,
+                        ItemCharacteristic.USUAL, ItemType.ARMOR, null,
+                        "", 0));
+                }
+                timeUnderPlayer = System.currentTimeMillis();
+            }
+            //TODO add experience accrual and character death
+            if(mobUnderPlayer.getHealth() <= 0) {
+                levelMap.getMobs().remove(mobUnderPlayer);
+                mobUnderPlayer = null;
+                timeUnderPlayer = 0;
+            }
         }
     }
     

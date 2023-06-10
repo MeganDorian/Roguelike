@@ -3,6 +3,7 @@ package org.itmo.mse.game.actions;
 import static org.itmo.mse.constants.Change.ADD_REMOVE_ITEM;
 import static org.itmo.mse.constants.Change.BACKPACK_OPENED_FALSE;
 import static org.itmo.mse.constants.Change.BACKPACK_OPENED_TRUE;
+import static org.itmo.mse.constants.Change.DEATH_MOB;
 import static org.itmo.mse.constants.Change.DUNGEON_LEVEL;
 import static org.itmo.mse.constants.Change.PLAYER_INFO;
 import static org.itmo.mse.constants.Change.PLAYER_POSITION;
@@ -53,6 +54,9 @@ public class ReactionChanges implements Action {
                 }
                 if(!oldGameObject.getPlayer().getInfo().equals(game.getPlayer().getInfo())) {
                     changes.add(PLAYER_INFO.name());
+                }
+                if (!game.getLevelMap().equals(oldGameObject.getLevelMap())) {
+                    changes.add(DEATH_MOB.name());
                 }
                 oldGameObject = new Game(game);
                 return changes;

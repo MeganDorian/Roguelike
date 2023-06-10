@@ -102,6 +102,7 @@ public class GameWindow extends Window {
             KeyType pressedKey = input.getKeyType();
             if (pressedKey == KeyType.Escape) {
                 terminal.close();
+                game.getTimerForDamage().cancel();
                 return;
             } else if (pressedKey == KeyType.ArrowDown ||
                        pressedKey == KeyType.ArrowUp ||
@@ -125,6 +126,9 @@ public class GameWindow extends Window {
                 } else {
                     if (info != null) {
                         printObjectInfo(info);
+                    }
+                    if(changes.contains(Change.DEATH_MOB.name())) {
+                        printObject(game.getLevelMap());
                     }
                     if (changes.contains(Change.PLAYER_POSITION.name())) {
                         printObject(game.getPlayer());
