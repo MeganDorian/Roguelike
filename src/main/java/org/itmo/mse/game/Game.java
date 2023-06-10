@@ -357,6 +357,8 @@ public class Game {
                 proportionLevelEx = Proportions.newLevelEx;
             }
             player.setExperienceForNextLevel((int) (player.getExperienceForNextLevel() * proportionLevelEx));
+            player.setMaxHealth((int) (player.getMaxHealth() * Proportions.maxHealth));
+            player.setHealth(player.getMaxHealth());
         };
     }
     

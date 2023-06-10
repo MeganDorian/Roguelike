@@ -37,4 +37,6 @@ public interface Proportions {
     double newTenthLevelEx = 1.9;
     
     double newHundredthLevelEx = 3;
+    
+    double maxHealth = 1.1;
 }
