@@ -5,12 +5,14 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
 import java.util.List;
+import org.itmo.mse.constants.Change;
 import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.Game;
 import org.itmo.mse.game.actions.Action;
 import org.itmo.mse.game.actions.Move;
+import org.itmo.mse.game.actions.ReactionChanges;
 import org.itmo.mse.generation.MapGeneration;
 import org.itmo.mse.ui.Printer;
 import org.itmo.mse.utils.map.MapLoader;
@@ -34,6 +36,7 @@ public class GameWindow extends Window {
         this.backpackAction = backpackAction;
         this.dropItem = dropItem;
         this.reaction = reaction;
+        ((ReactionChanges) reaction).setOldGameObject(new Game(game));
         screen.clear();
         screen.refresh();
         printLevel();
@@ -92,6 +95,7 @@ public class GameWindow extends Window {
     public void play() throws IOException, IncorrectMapFormatException {
         while (true) {
             KeyStroke input = screen.pollInput();
+            List<String> info = null;
             if (input == null) {
                 continue;
             }
@@ -102,35 +106,45 @@ public class GameWindow extends Window {
             } else if (pressedKey == KeyType.ArrowDown || pressedKey == KeyType.ArrowUp ||
                        pressedKey == KeyType.ArrowLeft || pressedKey == KeyType.ArrowRight) {
                 move.setDirection(pressedKey);
-                List<String> nearestObject = move.execute(textGraphics);
-                if(nearestObject == null) {
-                    printLevel();
-                } else {
-                    printObjectInfo(nearestObject);
-                }
+                info = move.execute(textGraphics);
             } else if (input.getCharacter() != null) {
                 if (input.getCharacter().equals('e') || input.getCharacter().equals('у')) {
-                    List<String> pickedUpItem = interact.execute(textGraphics);
-                    printObjectInfo(pickedUpItem);
-                    backpackPrinter.printBackpack(game);
+                    info = interact.execute(textGraphics);
                 } else if (input.getCharacter().equals('i') || input.getCharacter().equals('ш')) {
-                    List<String> selectedItem = backpackAction.execute(textGraphics);
-                    printObjectInfo(selectedItem);
+                    info = backpackAction.execute(textGraphics);
                 } else if (input.getCharacter().equals('x') || input.getCharacter().equals('ч')) {
                     dropItem.execute(textGraphics);
                 }
             }
             List<String> changes = reaction.execute(textGraphics);
             if(!changes.isEmpty()) {
-                printObject(game.getLevelMap());
-                printObject(game.getPlayer());
-                TextCharacter color = game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM :
-                                      SpecialCharacters.SPACE;
-                int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
-                backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
-                backpackPrinter.printBackpack(game);
-                playerPrinter.printPlayerInfo(game, startRow);
-                screen.refresh();
+                if(changes.contains(Change.DUNGEON_LEVEL.name())) {
+                    printLevel();
+                } else {
+                    if (info != null) {
+                        printObjectInfo(info);
+                    }
+                    if (changes.contains(Change.PLAYER_POSITION.name())) {
+                        printObject(game.getPlayer());
+                    }
+                    if(changes.contains(Change.SELECTED_INDEX_ITEM.name()) ||
+                       changes.contains(Change.BACKPACK_OPENED_TRUE.name()) ||
+                       changes.contains(Change.ADD_REMOVE_ITEM.name())) {
+                        TextCharacter color =
+                            game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM :
+                            SpecialCharacters.SPACE;
+                        int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
+                        backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
+                        backpackPrinter.printBackpack(game);
+                    }
+                    if (changes.contains(Change.BACKPACK_OPENED_FALSE.name())) {
+                        backpackPrinter.printBackpack(game);
+                    }
+                    if(changes.contains(Change.PLAYER_INFO.name())) {
+                        playerPrinter.printPlayerInfo(game, startRow);
+                    }
+                    screen.refresh();
+                }
             }
         }
     }

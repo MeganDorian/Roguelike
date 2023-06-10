@@ -43,6 +43,23 @@ public class Player extends Object {
         }
     }
     
+    public Player(Player state) {
+        super(new TerminalRectangle(state.getPosition().x, state.getPosition().y,
+            state.getPosition().width, state.getPosition().height), state.getCharacter(),
+            state.getName());
+        for (Item i: state.backpack.getItems()) {
+            this.backpack.getItems().add(new Item(i));
+        }
+        this.level = state.getLevel();
+        this.experienceForNextLevel = state.experienceForNextLevel;
+        this.experience = state.experience;
+        this.health = state.health;
+        this.maxHealth = state.maxHealth;
+        this.weapon = new Item(state.weapon);
+        this.armor = new Item(state.armor);
+        this.backpack.setSelectedItemIndex(state.backpack.getSelectedItemIndex());
+    }
+    
     /**
      * Get info about player
      *

@@ -52,7 +52,7 @@ public class Game {
         this.isBackpackOpened = state.isBackpackOpened;
         this.backpackItemsInRow = state.backpackItemsInRow;
         this.levelMap = state.levelMap;
-        this.player = state.player;
+        this.player = new Player(state.player);
     }
     
     /**
