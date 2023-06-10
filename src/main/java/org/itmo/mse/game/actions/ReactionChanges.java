@@ -55,7 +55,8 @@ public class ReactionChanges implements Action {
                 if(!oldGameObject.getPlayer().getInfo().equals(game.getPlayer().getInfo())) {
                     changes.add(PLAYER_INFO.name());
                 }
-                if (!game.getLevelMap().equals(oldGameObject.getLevelMap())) {
+                if (game.getLevelMap() != null && (oldGameObject.getLevelMap() == null ||
+                    !game.getLevelMap().getMobs().equals(oldGameObject.getLevelMap().getMobs()))) {
                     changes.add(DEATH_MOB.name());
                 }
                 oldGameObject = new Game(game);

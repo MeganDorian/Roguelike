@@ -3,6 +3,9 @@ package org.itmo.mse.ui.windows;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.itmo.mse.constants.Change;
 import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
@@ -51,9 +54,17 @@ public class GameWindow extends Window {
      * @throws IncorrectMapFormatException
      */
     private void printLevel() throws IOException, IncorrectMapFormatException {
+        List<String> info = new ArrayList<>();
         if (game.getDungeonLevel() == 1) {
             // load tutorial level from file
             loadLevelFromFile("first_lvl", true);
+        } else if(game.getDungeonLevel() == -1){
+            //after death
+            screen.clear();
+            loadLevelFromFile("first_lvl", true);
+            game.setLevelAfterRestart();
+            info.add("You died x.x");
+            info.add("Try again");
         } else {
             screen.clear();
             MapGeneration.generate((int) (Printer.getSize().getColumns() * Proportions.mapWidth),
@@ -62,6 +73,7 @@ public class GameWindow extends Window {
                                    Proportions.numberItems);
             loadLevelFromFile(MapGeneration.fileName, false);
         }
+        printObjectInfo(info);
         printObject(game.getLevelMap());
         printObject(game.getPlayer());
         printHelp();
@@ -96,61 +108,74 @@ public class GameWindow extends Window {
         while (true) {
             KeyStroke input = screen.pollInput();
             List<String> info = null;
-            if (input == null) {
+            List<String> changes = null;
+            if (input == null && game.getDungeonLevel() != -1 && changes == null) {
+                changes = reaction.execute(textGraphics);
+                if(!changes.isEmpty()) {
+                    reprint(changes, null);
+                }
+                changes = null;
                 continue;
             }
-            KeyType pressedKey = input.getKeyType();
-            if (pressedKey == KeyType.Escape) {
-                terminal.close();
-                game.getTimerForDamage().cancel();
-                return;
-            } else if (pressedKey == KeyType.ArrowDown ||
-                       pressedKey == KeyType.ArrowUp ||
-                       pressedKey == KeyType.ArrowLeft ||
-                       pressedKey == KeyType.ArrowRight) {
-                move.setDirection(pressedKey);
-                info = move.execute(textGraphics);
-            } else if (input.getCharacter() != null) {
-                if (input.getCharacter().equals('e')) {
-                    info = interact.execute(textGraphics);
-                } else if (input.getCharacter().equals('i')) {
-                    info = backpackAction.execute(textGraphics);
-                } else if (input.getCharacter().equals('x')) {
-                    dropItem.execute(textGraphics);
+            if (game.getDungeonLevel() == -1) {
+                printLevel();
+            } else {
+                KeyType pressedKey = input.getKeyType();
+                if (pressedKey == KeyType.Escape) {
+                    terminal.close();
+                    game.getTimerForDamage().cancel();
+                    return;
+                } else if (pressedKey == KeyType.ArrowDown || pressedKey == KeyType.ArrowUp ||
+                           pressedKey == KeyType.ArrowLeft || pressedKey == KeyType.ArrowRight) {
+                    move.setDirection(pressedKey);
+                    info = move.execute(textGraphics);
+                } else if (input.getCharacter() != null) {
+                    if (input.getCharacter().equals('e') ) {
+                        info = interact.execute(textGraphics);
+                    } else if (input.getCharacter().equals('i') ) {
+                        info = backpackAction.execute(textGraphics);
+                    } else if (input.getCharacter().equals('x') ) {
+                        dropItem.execute(textGraphics);
+                    }
+                }
+                changes = reaction.execute(textGraphics);
+                if (!changes.isEmpty()) {
+                    reprint(changes, info);
                 }
             }
-            List<String> changes = reaction.execute(textGraphics);
-            if (!changes.isEmpty()) {
-                if (changes.contains(Change.DUNGEON_LEVEL.name())) {
-                    printLevel();
-                } else {
-                    if (info != null) {
-                        printObjectInfo(info);
-                    }
-                    if(changes.contains(Change.DEATH_MOB.name())) {
-                        printObject(game.getLevelMap());
-                    }
-                    if (changes.contains(Change.PLAYER_POSITION.name())) {
-                        printObject(game.getPlayer());
-                    }
-                    if (changes.contains(Change.SELECTED_INDEX_ITEM.name()) ||
-                        changes.contains(Change.BACKPACK_OPENED_TRUE.name()) ||
-                        changes.contains(Change.ADD_REMOVE_ITEM.name())) {
-                        TextCharacter color =
-                                game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
-                        int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
-                        backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
-                        backpackPrinter.printBackpack(game);
-                    }
-                    if (changes.contains(Change.BACKPACK_OPENED_FALSE.name())) {
-                        backpackPrinter.printBackpack(game);
-                    }
-                    if (changes.contains(Change.PLAYER_INFO.name())) {
-                        playerPrinter.printPlayerInfo(game, startRow);
-                    }
-                    screen.refresh();
-                }
+            changes = null;
+        }
+    }
+    
+    public void reprint(List<String> changes, List<String> info)
+        throws IncorrectMapFormatException, IOException {
+        if (changes.contains(Change.DUNGEON_LEVEL.name())) {
+            printLevel();
+        } else {
+            if (info != null) {
+                printObjectInfo(info);
             }
+            if (changes.contains(Change.DEATH_MOB.name())) {
+                printObject(game.getLevelMap());
+            }
+            if (changes.contains(Change.PLAYER_POSITION.name())) {
+                printObject(game.getPlayer());
+            }
+            if (changes.contains(Change.SELECTED_INDEX_ITEM.name()) ||
+                changes.contains(Change.BACKPACK_OPENED_TRUE.name()) || changes.contains(Change.ADD_REMOVE_ITEM.name())) {
+                TextCharacter color = game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM :
+                                      SpecialCharacters.SPACE;
+                int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
+                backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
+                backpackPrinter.printBackpack(game);
+            }
+            if (changes.contains(Change.BACKPACK_OPENED_FALSE.name())) {
+                backpackPrinter.printBackpack(game);
+            }
+            if (changes.contains(Change.PLAYER_INFO.name())) {
+                playerPrinter.printPlayerInfo(game, startRow);
+            }
+            screen.refresh();
         }
     }
 }

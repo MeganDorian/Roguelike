@@ -25,7 +25,7 @@ public class Player extends Object {
     private int health = 2;
     private int maxHealth = 10;
     private Item weapon =
-        new Item(null, null, emptyHands, ItemCharacteristic.USUAL, ItemType.WEAPON, null, "", 1);
+        new Item(null, null, emptyHands, ItemCharacteristic.USUAL, ItemType.WEAPON, null, "", 0);
     
     private Item armor =
         new Item(null, null, noArmor, ItemCharacteristic.USUAL, ItemType.ARMOR, null, "", 0);
@@ -48,7 +48,7 @@ public class Player extends Object {
             state.getPosition().width, state.getPosition().height), state.getCharacter(),
             state.getName());
         for (Item i: state.backpack.getItems()) {
-            this.backpack.getItems().add(new Item(i));
+            this.backpack.getItems().add(i);
         }
         this.level = state.getLevel();
         this.experienceForNextLevel = state.experienceForNextLevel;
