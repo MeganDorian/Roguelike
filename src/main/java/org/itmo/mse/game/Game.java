@@ -19,6 +19,7 @@ import org.itmo.mse.constants.ItemCharacteristic;
 import org.itmo.mse.constants.ItemType;
 import org.itmo.mse.constants.ObjectEffect;
 import org.itmo.mse.constants.ObjectNames;
+import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.game.actions.Action;
 import org.itmo.mse.game.actions.Damage;
 import org.itmo.mse.constants.Proportions;
@@ -335,10 +336,28 @@ public class Game {
             //TODO add experience accrual and character death
             if(mobUnderPlayer.getHealth() <= 0) {
                 levelMap.getMobs().remove(mobUnderPlayer);
+                addExperience(mobUnderPlayer.getExperience());
                 mobUnderPlayer = null;
                 timeUnderPlayer = 0;
             }
         }
+    }
+    
+    public void addExperience(int experience) {
+        player.setExperience(player.getExperience() + experience);
+        while (player.getExperience() >= player.getExperienceForNextLevel()) {
+            player.setExperience(player.getExperience() - player.getExperienceForNextLevel());
+            player.setLevel(player.getLevel() + 1);
+            double proportionLevelEx;
+            if(player.getLevel() % 100 == 99) {
+                proportionLevelEx = Proportions.newHundredthLevelEx;
+            } else if(player.getLevel() % 10 == 9) {
+                proportionLevelEx = Proportions.newTenthLevelEx;
+            } else {
+                proportionLevelEx = Proportions.newLevelEx;
+            }
+            player.setExperienceForNextLevel((int) (player.getExperienceForNextLevel() * proportionLevelEx));
+        };
     }
     
     /**

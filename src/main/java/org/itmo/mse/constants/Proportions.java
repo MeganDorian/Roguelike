@@ -31,4 +31,10 @@ public interface Proportions {
     int numberMobs = 5;
     
     int numberItems = 5;
+    
+    double newLevelEx = 1.4;
+    
+    double newTenthLevelEx = 1.9;
+    
+    double newHundredthLevelEx = 3;
 }
