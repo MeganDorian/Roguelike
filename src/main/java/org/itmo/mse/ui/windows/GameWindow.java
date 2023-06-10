@@ -107,14 +107,12 @@ public class GameWindow extends Window {
                 if (pressedKey == KeyType.Escape) {
                     terminal.close();
                     game.getTimerForDamage().cancel();
-                    return;
-                } else if (pressedKey == KeyType.ArrowDown ||
-                           pressedKey == KeyType.ArrowUp ||
-                           pressedKey == KeyType.ArrowLeft ||
-                           pressedKey == KeyType.ArrowRight) {
-                    move.setDirection(pressedKey);
-                    info = move.execute(textGraphics);
-                    if (game.getLevelMap() != null) {
+                return;
+            } else if (pressedKey == KeyType.ArrowDown || pressedKey == KeyType.ArrowUp ||
+                       pressedKey == KeyType.ArrowLeft || pressedKey == KeyType.ArrowRight) {
+                move.setDirection(pressedKey);
+                info = move.execute(textGraphics);
+            if (game.getLevelMap() != null) {
                         game.makeAllMobsAlive();
                     }
                 } else if (input.getCharacter() != null) {
@@ -137,10 +135,13 @@ public class GameWindow extends Window {
     
     public void reprint(List<String> changes, List<String> info) throws IncorrectMapFormatException, IOException {
         if (changes.contains(ChangeNames.DUNGEON_LEVEL)) {
-            printLevel();
-        } else {
-            if (info != null) {
-                printObjectInfo(info);
+                    printLevel();
+                } else {
+                    if (info != null) {
+                        printObjectInfo(info);
+                    }
+                    if(changes.contains(Change.DEATH_MOB.name())) {
+                        printObject(game.getLevelMap());
             }
             if (changes.contains(ChangeNames.DEATH_MOB)) {
                 printObject(game.getLevelMap());
