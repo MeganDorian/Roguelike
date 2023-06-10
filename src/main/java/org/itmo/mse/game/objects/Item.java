@@ -33,6 +33,15 @@ public class Item extends Object {
         this.value = value;
     }
     
+    public Item(Item state) {
+        super(state.getPosition(), state.getCharacter(), state.getName());
+        this.description = state.description;
+        this.itemCharacteristic = state.itemCharacteristic;
+        this.itemType = state.itemType;
+        this.itemClass = state.itemClass;
+        this.value = state.value;
+    }
+    
     /**
      * Get info about item
      *
