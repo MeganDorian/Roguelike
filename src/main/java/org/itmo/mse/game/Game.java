@@ -173,6 +173,9 @@ public class Game {
             case WEAPON -> applyWeapon(item, selectedItem);
         }
         player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
+        if(player.getBackpack().size() == 0) {
+            isBackpackOpened = false;
+        }
     }
     
     /**
@@ -256,6 +259,9 @@ public class Game {
         }
         levelMap.getItems().add(item);
         player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
+        if(player.getBackpack().size() == 0) {
+            isBackpackOpened = false;
+        }
     }
     
     /**

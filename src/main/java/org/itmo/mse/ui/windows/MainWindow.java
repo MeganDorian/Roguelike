@@ -80,6 +80,7 @@ public class MainWindow extends Window {
             printStringAtPosition(screenResize, center);
             Thread.sleep(1000);
         }
+        screen.clear();
     }
     
     /**
