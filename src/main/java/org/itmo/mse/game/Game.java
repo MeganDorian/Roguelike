@@ -14,6 +14,8 @@ import lombok.Setter;
 import org.itmo.mse.constants.Direction;
 import org.itmo.mse.constants.ObjectEffect;
 import org.itmo.mse.constants.ObjectNames;
+import org.itmo.mse.constants.Proportions;
+import org.itmo.mse.constants.Specifications;
 import org.itmo.mse.game.objects.Item;
 import org.itmo.mse.game.objects.Mob;
 import org.itmo.mse.game.objects.Object;
@@ -79,6 +81,29 @@ public class Game {
         
         if (newPosition.position.equals(levelMap.getExit())) {
             dungeonLevel++;
+            double upMobHealthy;
+            double upMobDamage;
+            if(dungeonLevel % 10 == 0){
+                upMobHealthy = Proportions.upTenthMobHealthy;
+                upMobDamage = Proportions.upTenthMobDamage;
+            } else {
+                upMobHealthy = Proportions.upMobHealthy;
+                upMobDamage = Proportions.upMobDamage;
+            }
+            Specifications.lowerMobHealthy =
+                (int) Math.ceil(Specifications.lowerMobHealthy * upMobHealthy);
+            Specifications.upperMobHealthy =
+                (int) Math.ceil(Specifications.upperMobHealthy * upMobHealthy);
+            Specifications.lowerMobDamage =
+                (int) Math.ceil(Specifications.lowerMobDamage * upMobDamage);
+            Specifications.upperMobDamage =
+                (int) Math.ceil(Specifications.upperMobDamage * upMobDamage);
+            Specifications.defaultExperienceCowardlyMob =
+                (int) Math.ceil(Specifications.defaultExperienceCowardlyMob * Proportions.upMobExperience);
+            Specifications.defaultExperiencePassiveMob =
+                (int) Math.ceil(Specifications.defaultExperiencePassiveMob * Proportions.upMobExperience);
+            Specifications.defaultExperienceAggressiveMob =
+                (int) Math.ceil(Specifications.defaultExperienceAggressiveMob * Proportions.upMobExperience);
             return null;
         }
         
