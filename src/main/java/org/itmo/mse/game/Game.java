@@ -69,7 +69,8 @@ public class Game {
         this.isBackpackOpened = state.isBackpackOpened;
         this.backpackItemsInRow = state.backpackItemsInRow;
         if (this.levelMap == null && state.levelMap != null) {
-            this.levelMap = Map.builder()
+            this.levelMap =
+                Map.builder()
                                .start(state.levelMap.getStart())
                                .exit(state.levelMap.getExit())
                                .border(state.levelMap.getPosition())
@@ -333,11 +334,15 @@ public class Game {
                 }
                 timeUnderPlayer = System.currentTimeMillis();
             }
-            //TODO add experience accrual and character death
-            if(mobUnderPlayer.getHealth() <= 0) {
-                levelMap.getMobs().remove(mobUnderPlayer);
-                mobUnderPlayer = null;
-                timeUnderPlayer = 0;
+            if(player.getHealth() <= 0) {
+                restart();
+            } else {
+                if (mobUnderPlayer.getHealth() <= 0) {
+                    levelMap.getMobs().remove(mobUnderPlayer);
+                    
+                    mobUnderPlayer = null;
+                    timeUnderPlayer = 0;
+                }
             }
         }
     }
@@ -382,6 +387,21 @@ public class Game {
      */
     public void makeAllMobsAlive() {
         levelMap.getMobs().forEach(mob -> mob.makeAction(player.getPosition(), levelMap.getWalls()));
+    }
+    
+    public void restart() {
+        objectUnderPlayer = null;
+        mobUnderPlayer = null;
+        dungeonLevel = -1;
+        timeUnderPlayer = 0;
+        isBackpackOpened = false;
+        backpackItemsInRow = 3;
+        levelMap = null;
+        player = new Player(new TerminalRectangle(0, 0, 0, 0));
+    }
+    
+    public void setLevelAfterRestart() {
+        dungeonLevel = 1;
     }
     
 }
