@@ -49,9 +49,9 @@ public class MapGeneration extends Generation {
     }
     
     /**
-     * Builds walls on the map (generates a new map without mobs and items)
+     * Builds walls on the map
      */
-    public void generateWall(int mapWight, int mapHeight) throws IOException {
+    public void generateWall(int mapWight, int mapHeight)  {
         if(mapHeight != oldMapHeight || mapWight != oldMapWight) {
             generateRoomParameters(mapWight, mapHeight);
             oldMapHeight = mapHeight;
@@ -128,7 +128,7 @@ public class MapGeneration extends Generation {
     }
     
     /**
-     * Writes the generated map without mobs and items to a file
+     * Writes the generated map to file
      */
     private void writeWallInFile() throws IOException {
         File file = new File(fileName);
@@ -155,7 +155,14 @@ public class MapGeneration extends Generation {
                         xForGet = map.length - 2;
                     }
                 }
-                fileForWrite.write(map[xForGet][yForGet]);
+                //making sure there is no dubbing of items and mobs when sizing up
+                if((y >= map[0].length - 1 || x >= map.length - 1) &&
+                   (map[xForGet][yForGet] != SpecialCharacters.SPACE.getCharacterString().charAt(0) &&
+                    map[xForGet][yForGet] != SpecialCharacters.WALL.getCharacterString().charAt(0))) {
+                    fileForWrite.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
+                } else {
+                    fileForWrite.write(map[xForGet][yForGet]);
+                }
             }
             fileForWrite.write("\n".getBytes(StandardCharsets.UTF_8));
         }
@@ -167,10 +174,9 @@ public class MapGeneration extends Generation {
      * the fit of the map to the required dimensions
      *
      * @param mapHeight
-     * @param map -- as a two-dimensional array of characters
      * @return y
      */
-    private int getY(int mapHeight, char[][] map) {
+    private int getY(int mapHeight) {
         int y = rand.nextInt(mapHeight);
         if (y >= map[0].length - 1) {
             if (y == map[0].length + resizeHeight - 1) {
@@ -183,13 +189,13 @@ public class MapGeneration extends Generation {
     }
     
     /**
-     * Generates a random input and output on the map and writes it to a file
+     * Generates a random input and output on the map
      */
     private void inputAndOutputGeneration(int mapWight, int mapHeight) {
         int yIn;
         int yOut;
         do {
-            yIn = getY(mapHeight, map);
+            yIn = getY(mapHeight);
             if (map[1][yIn] == SpecialCharacters.WALL.getCharacterString().charAt(0)) {
                 yIn = 0;
             }
@@ -197,7 +203,7 @@ public class MapGeneration extends Generation {
         map[0][yIn] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
         map[1][yIn] = SpecialCharacters.PLAYER.getCharacterString().charAt(0);
         do {
-            yOut = getY(mapHeight, map);
+            yOut = getY(mapHeight);
             if (map[mapWight - resizeWight - 2][yOut] ==
                 SpecialCharacters.WALL.getCharacterString().charAt(0)) {
                 yOut = 0;
@@ -211,8 +217,6 @@ public class MapGeneration extends Generation {
      * Generate rooms and delete random walls
      * Guaranteed that there will be a passage
      * from the entrance to the level to the exit
-     *
-     * @return map with walls
      */
     private void generateRooms() {
         boolean[][] connected = new boolean[xRoom][yRoom];
@@ -271,7 +275,6 @@ public class MapGeneration extends Generation {
                                 connected[room[0]][room[1]] = true;
                                 neighbor[room[0]][room[1]] = Direction.DOWN;
                             }
-                        case START:
                         default:
                     }
                     
@@ -328,7 +331,6 @@ public class MapGeneration extends Generation {
                             map[dx + i][dy] =
                                 SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
-                    case START:
                     default:
                 }
             }
