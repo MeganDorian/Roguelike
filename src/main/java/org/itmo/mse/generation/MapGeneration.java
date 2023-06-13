@@ -4,7 +4,6 @@ import com.googlecode.lanterna.TextCharacter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +28,7 @@ public class MapGeneration extends Generation {
     
     private int resizeWight = 0;
     private int resizeHeight = 1;
+    private char[][] map;
     
     /**
      * Generates map with the set parameters
@@ -44,25 +44,20 @@ public class MapGeneration extends Generation {
         generateWall(mapWight, mapHeight);
         generateObject(numberMobs, mapWight, mapHeight, SpecialCharacters.MOB);
         generateObject(numberItems, mapWight, mapHeight, SpecialCharacters.ITEM);
+        inputAndOutputGeneration(mapWight, mapHeight);
+        writeWallInFile();
     }
     
     /**
      * Builds walls on the map (generates a new map without mobs and items)
      */
     public void generateWall(int mapWight, int mapHeight) throws IOException {
-        File file = new File(fileName);
-        if (file.exists()) {
-            file.delete();
-        }
-        file.createNewFile();
         if(mapHeight != oldMapHeight || mapWight != oldMapWight) {
             generateRoomParameters(mapWight, mapHeight);
             oldMapHeight = mapHeight;
             oldMapWight = mapWight;
         }
-        char[][] map = generateRooms();
-        writeWallInFile(map);
-        inputAndOutputGeneration(map, mapWight, mapHeight);
+        generateRooms();
     }
     
     /**
@@ -71,24 +66,21 @@ public class MapGeneration extends Generation {
      * @param number -- the number of objects on the map
      * @param symbol -- symbol of object
      */
-    private void generateObject(int number, int mapWight, int mapHeight, TextCharacter symbol)
-        throws IOException {
-        RandomAccessFile file = new RandomAccessFile(fileName, "rw");
-        int range = mapWight * mapHeight;
+    private void generateObject(int number, int mapWight, int mapHeight, TextCharacter symbol) {
+        int rangeW = mapWight - resizeWight;
+        int rangeH = mapHeight - resizeHeight;
         boolean setObject;
         for (int i = 0; i < number; i++) {
             setObject = false;
             while (!setObject) {
-                int position = rand.nextInt(range);
-                file.seek(position + position / mapWight);
-                if (file.read() == SpecialCharacters.SPACE.getCharacterString().charAt(0)) {
-                    file.seek(position + position / mapWight);
-                    file.write(symbol.getCharacterString().charAt(0));
+                int positionX = rand.nextInt(rangeW);
+                int positionY = rand.nextInt(rangeH);
+                if (map[positionX][positionY] == SpecialCharacters.SPACE.getCharacterString().charAt(0)) {
+                    map[positionX][positionY] = symbol.getCharacterString().charAt(0);
                     setObject = true;
                 }
             }
         }
-        file.close();
     }
     
     /**
@@ -138,8 +130,13 @@ public class MapGeneration extends Generation {
     /**
      * Writes the generated map without mobs and items to a file
      */
-    private void writeWallInFile(char[][] map) throws IOException {
-        OutputStream file = FileUtils.getFileForWrite(fileName);
+    private void writeWallInFile() throws IOException {
+        File file = new File(fileName);
+        if (file.exists()) {
+            file.delete();
+        }
+        file.createNewFile();
+        OutputStream fileForWrite = FileUtils.getFileForWrite(fileName);
         for (int y = 0; y < map[0].length + resizeHeight; y++) {
             int yForGet = y;
             if (y >= map[0].length - 1) {
@@ -158,9 +155,9 @@ public class MapGeneration extends Generation {
                         xForGet = map.length - 2;
                     }
                 }
-                file.write(map[xForGet][yForGet]);
+                fileForWrite.write(map[xForGet][yForGet]);
             }
-            file.write("\n".getBytes(StandardCharsets.UTF_8));
+            fileForWrite.write("\n".getBytes(StandardCharsets.UTF_8));
         }
     }
     
@@ -187,11 +184,8 @@ public class MapGeneration extends Generation {
     
     /**
      * Generates a random input and output on the map and writes it to a file
-     *
-     * @param map -- map as array of characters[x][y], where x is width and y is height
      */
-    private void inputAndOutputGeneration(char[][] map, int mapWight, int mapHeight)
-        throws IOException {
+    private void inputAndOutputGeneration(int mapWight, int mapHeight) {
         int yIn;
         int yOut;
         do {
@@ -200,6 +194,8 @@ public class MapGeneration extends Generation {
                 yIn = 0;
             }
         } while (yIn == 0);
+        map[0][yIn] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+        map[1][yIn] = SpecialCharacters.PLAYER.getCharacterString().charAt(0);
         do {
             yOut = getY(mapHeight, map);
             if (map[mapWight - resizeWight - 2][yOut] ==
@@ -207,13 +203,8 @@ public class MapGeneration extends Generation {
                 yOut = 0;
             }
         } while (yOut == 0);
-        RandomAccessFile file = new RandomAccessFile(fileName, "rw");
-        file.seek((long) mapWight * yIn + yIn);
-        file.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
-        file.write(SpecialCharacters.PLAYER.getCharacterString().charAt(0));
-        file.seek((long) mapWight * (yOut + 1) + yOut - 1);
-        file.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
-        file.close();
+        map[mapWight - resizeWight - 1][yOut]
+            = SpecialCharacters.SPACE.getCharacterString().charAt(0);
     }
     
     /**
@@ -223,7 +214,7 @@ public class MapGeneration extends Generation {
      *
      * @return map with walls
      */
-    private char[][] generateRooms() {
+    private void generateRooms() {
         boolean[][] connected = new boolean[xRoom][yRoom];
         Direction[][] neighbor = new Direction[xRoom][yRoom];
         for (int x = 0; x < neighbor.length; x++) {
@@ -288,7 +279,7 @@ public class MapGeneration extends Generation {
                 
             }
         }
-        char[][] map = new char[xRoom * size + xRoom + 1][yRoom * size + yRoom + 1];
+        map = new char[xRoom * size + xRoom + 1][yRoom * size + yRoom + 1];
         // Build all ground
         for (char[] chars : map) {
             Arrays.fill(chars, SpecialCharacters.SPACE.getCharacterString().charAt(0));
@@ -342,6 +333,5 @@ public class MapGeneration extends Generation {
                 }
             }
         }
-        return map;
     }
 }
