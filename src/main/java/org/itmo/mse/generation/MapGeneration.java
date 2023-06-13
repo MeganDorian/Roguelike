@@ -9,11 +9,17 @@ import org.itmo.mse.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import lombok.experimental.UtilityClass;
+import org.itmo.mse.constants.Direction;
+import org.itmo.mse.constants.Proportions;
+import org.itmo.mse.constants.SpecialCharacters;
+import org.itmo.mse.utils.FileUtils;
 
 @UtilityClass
 public class MapGeneration extends Generation {
@@ -24,17 +30,22 @@ public class MapGeneration extends Generation {
     private int yRoom = 4;
     private int size = 6;
     
+    private int mapWight = 120;
+    private int mapHeight = 30;
+    
     private int oldMapWight = 120;
     private int oldMapHeight = 30;
     
     private int resizeWight = 0;
     private int resizeHeight = 1;
     private char[][] map;
+    private int numberMobs = Proportions.numberMobs;
+    private int numberItems = Proportions.numberItems;
     
     /**
      * Generates map with the set parameters
      */
-    public void generate(int mapWight, int mapHeight, int numberMobs, int numberItems) throws IOException {
+    private void generate() throws IOException {
         generateWall(mapWight, mapHeight);
         generateObject(numberMobs, mapWight, mapHeight, SpecialCharacters.MOB);
         generateObject(numberItems, mapWight, mapHeight, SpecialCharacters.ITEM);
@@ -322,5 +333,58 @@ public class MapGeneration extends Generation {
                 }
             }
         }
+    }
+    
+    public MapGenerationBuilder builder() {
+        return new MapGenerationBuilder();
+    }
+    
+    public class MapGenerationBuilder {
+        //где-то тут фабрика мобов
+        
+        /**
+         * Генерирует стены с предыдущими заданными параметрами
+         * @return билдер
+         */
+        public MapGenerationBuilder walls() throws IOException {
+            return this;
+        }
+        
+        /**
+         * Генерирует стены в соответствии с установленными параметрами размера карты
+         * Исходя из размеров карты подбирает параметры генерации
+         * Если параметры для генерации подобрать не удалось, то устанавливает дефолтные
+         * @return
+         */
+        public MapGenerationBuilder walls(int wight, int height) throws IOException {
+            mapWight = wight;
+            mapHeight = height;
+            return this;
+        }
+        
+        public MapGenerationBuilder mobs() {
+            numberMobs = Proportions.numberMobs;
+            return this;
+        }
+        
+        public MapGenerationBuilder mobs(int num) {
+            numberMobs = num;
+            return this;
+        }
+        
+        public MapGenerationBuilder items() {
+            numberItems = Proportions.numberItems;
+            return this;
+        }
+        
+        public MapGenerationBuilder items(int num) {
+            numberItems = num;
+            return this;
+        }
+        
+        public void build() throws IOException {
+            generate();
+        }
+        
     }
 }

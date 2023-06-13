@@ -64,10 +64,9 @@ public class GameWindow extends Window {
             info.add("Try again");
         } else {
             screen.clear();
-            MapGeneration.generate((int) (Printer.getSize().getColumns() * Proportions.mapWidth),
-                                   (int) (Printer.getSize().getRows() * Proportions.mapHeight),
-                                   Proportions.numberMobs,
-                                   Proportions.numberItems);
+            MapGeneration.builder().walls((int) (Printer.getSize().getColumns() * Proportions.mapWidth),
+                (int) (Printer.getSize().getRows() * Proportions.mapHeight)).
+                mobs(Proportions.numberMobs).items(Proportions.numberItems).build();
             loadLevelFromFile(MapGeneration.fileName, false);
         }
         printObjectInfo(info);
