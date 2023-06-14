@@ -1,12 +1,13 @@
 package org.itmo.mse.game.actions;
 
 import com.googlecode.lanterna.graphics.TextGraphics;
-import java.io.IOException;
-import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.ui.windows.GameWindow;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * User pressed enter
@@ -18,20 +19,14 @@ public class StartGame implements Action {
     
     /**
      * Start game window
-     *
-     * @param graphics
-     * @return
-     * @throws IncorrectMapFormatException
-     * @throws IOException
      */
     @Override
-    public List<String> execute(TextGraphics graphics)
-        throws IncorrectMapFormatException, IOException {
+    public List<String> execute(TextGraphics graphics) throws IncorrectMapFormatException, IOException {
         Move move = new Move();
         Action interact = new Interact();
         Action backpackAction = new BackpackAction();
         Action dropItem = new Drop();
-        Action reaction = new ReactionChanges();
+        Action reaction = new CheckForChanged();
         gameWindow = new GameWindow(move, game, interact, backpackAction, dropItem, reaction);
         gameWindow.play();
         return null;

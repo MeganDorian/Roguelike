@@ -4,17 +4,18 @@ package org.itmo.mse.game.objects;
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.itmo.mse.constants.SpecialCharacters;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 public abstract class Object {
     @Setter
-    private TerminalRectangle position;
+    protected TerminalRectangle position;
     
     private final TextCharacter character;
     

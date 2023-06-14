@@ -17,7 +17,7 @@ public interface Proportions {
     double paddingStart = 0.05;
     int backpackSize = 9;
     double legendaryItem = 0.05;
-    double cowardlyMob = 0.33;
+    double shyMob = 0.33;
     double passiveMob = 0.33;
     double upMobDamage = 1.1;
     double upTenthMobDamage = 1.5;

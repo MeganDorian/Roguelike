@@ -1,6 +1,11 @@
 package org.itmo.mse.generation;
 
 import com.googlecode.lanterna.TextCharacter;
+import lombok.experimental.UtilityClass;
+import org.itmo.mse.constants.Direction;
+import org.itmo.mse.constants.SpecialCharacters;
+import org.itmo.mse.utils.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,10 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import lombok.experimental.UtilityClass;
-import org.itmo.mse.constants.Direction;
-import org.itmo.mse.constants.SpecialCharacters;
-import org.itmo.mse.utils.FileUtils;
 
 @UtilityClass
 public class MapGeneration extends Generation {
@@ -32,15 +33,8 @@ public class MapGeneration extends Generation {
     
     /**
      * Generates map with the set parameters
-     *
-     * @param mapWight
-     * @param mapHeight
-     * @param numberMobs
-     * @param numberItems
-     * @throws IOException
      */
-    public void generate(int mapWight, int mapHeight, int numberMobs, int numberItems)
-        throws IOException {
+    public void generate(int mapWight, int mapHeight, int numberMobs, int numberItems) throws IOException {
         generateWall(mapWight, mapHeight);
         generateObject(numberMobs, mapWight, mapHeight, SpecialCharacters.MOB);
         generateObject(numberItems, mapWight, mapHeight, SpecialCharacters.ITEM);
@@ -51,8 +45,8 @@ public class MapGeneration extends Generation {
     /**
      * Builds walls on the map
      */
-    public void generateWall(int mapWight, int mapHeight)  {
-        if(mapHeight != oldMapHeight || mapWight != oldMapWight) {
+    public void generateWall(int mapWight, int mapHeight) {
+        if (mapHeight != oldMapHeight || mapWight != oldMapWight) {
             generateRoomParameters(mapWight, mapHeight);
             oldMapHeight = mapHeight;
             oldMapWight = mapWight;
@@ -88,7 +82,6 @@ public class MapGeneration extends Generation {
      *
      * @param a -- first number
      * @param b -- second number
-     *
      * @return -- greatest common divisor
      */
     private int gcd(int a, int b) {
@@ -156,9 +149,9 @@ public class MapGeneration extends Generation {
                     }
                 }
                 //making sure there is no dubbing of items and mobs when sizing up
-                if((y >= map[0].length - 1 || x >= map.length - 1) &&
-                   (map[xForGet][yForGet] != SpecialCharacters.SPACE.getCharacterString().charAt(0) &&
-                    map[xForGet][yForGet] != SpecialCharacters.WALL.getCharacterString().charAt(0))) {
+                if ((y >= map[0].length - 1 || x >= map.length - 1) &&
+                    (map[xForGet][yForGet] != SpecialCharacters.SPACE.getCharacterString().charAt(0) &&
+                     map[xForGet][yForGet] != SpecialCharacters.WALL.getCharacterString().charAt(0))) {
                     fileForWrite.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
                 } else {
                     fileForWrite.write(map[xForGet][yForGet]);
@@ -169,11 +162,9 @@ public class MapGeneration extends Generation {
     }
     
     /**
-     * Generates y to randomly position the entrance
-     * and exit to the level, taking into account
+     * Generates y to randomly position the entrance and exit to the level, taking into account
      * the fit of the map to the required dimensions
      *
-     * @param mapHeight
      * @return y
      */
     private int getY(int mapHeight) {
@@ -204,13 +195,11 @@ public class MapGeneration extends Generation {
         map[1][yIn] = SpecialCharacters.PLAYER.getCharacterString().charAt(0);
         do {
             yOut = getY(mapHeight);
-            if (map[mapWight - resizeWight - 2][yOut] ==
-                SpecialCharacters.WALL.getCharacterString().charAt(0)) {
+            if (map[mapWight - resizeWight - 2][yOut] == SpecialCharacters.WALL.getCharacterString().charAt(0)) {
                 yOut = 0;
             }
         } while (yOut == 0);
-        map[mapWight - resizeWight - 1][yOut]
-            = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+        map[mapWight - resizeWight - 1][yOut] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
     }
     
     /**
@@ -241,7 +230,7 @@ public class MapGeneration extends Generation {
             // pick a random unconnected room
             final int roomIndexInList = rand.nextInt(remainingRooms.size());
             final int roomIndex = remainingRooms.get(roomIndexInList);
-            final int[] room = new int[] {roomIndex % xRoom, roomIndex / xRoom};
+            final int[] room = new int[]{roomIndex % xRoom, roomIndex / xRoom};
             if (connected[room[0]][room[1]]) {
                 remainingRooms.remove(roomIndexInList);
             } else {
@@ -297,39 +286,37 @@ public class MapGeneration extends Generation {
             }
         }
         // Drill the connecting holes
+        int dx;
+        int dy;
         for (int x = 0; x < neighbor.length; x++) {
             for (int y = 0; y < neighbor[x].length; y++) {
                 switch (neighbor[x][y]) {
                     case UP:
-                        int dx = x * (size + 1);
-                        int dy = y * (size + 1);
+                        dx = x * (size + 1);
+                        dy = y * (size + 1);
                         for (int i = 1; i < (size + 1); i++) {
-                            map[dx + i][dy] =
-                                SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx + i][dy] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case LEFT:
                         dx = x * (size + 1);
                         dy = y * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx][dy + i] =
-                                SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx][dy + i] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case RIGHT:
                         dx = (x + 1) * (size + 1);
                         dy = (y) * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx][dy + i] =
-                                SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx][dy + i] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case DOWN:
                         dx = (x) * (size + 1);
                         dy = (y + 1) * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx + i][dy] =
-                                SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx + i][dy] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
                         }
                     default:
                 }

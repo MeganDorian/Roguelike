@@ -2,12 +2,13 @@ package org.itmo.mse.game.objects;
 
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.itmo.mse.constants.ItemCharacteristic;
 import org.itmo.mse.constants.ItemClass;
 import org.itmo.mse.constants.ItemType;
+
+import java.util.List;
 
 @Getter
 public class Item extends Object {
@@ -22,9 +23,8 @@ public class Item extends Object {
     @Setter
     private int value;
     
-    public Item(TerminalRectangle position, TextCharacter character, String name,
-                ItemCharacteristic characteristic, ItemType type, ItemClass itemClass,
-                String description, int value) {
+    public Item(TerminalRectangle position, TextCharacter character, String name, ItemCharacteristic characteristic,
+                ItemType type, ItemClass itemClass, String description, int value) {
         super(position, character, name);
         this.description = description;
         this.itemCharacteristic = characteristic;
@@ -45,11 +45,10 @@ public class Item extends Object {
     /**
      * Get info about item
      *
-     * @return info
+     * @return list of lines which includes full information about item to print
      */
     @Override
     public List<String> getInfo() {
-        return List.of(getName(), description, itemCharacteristic.name(),
-                       (itemClass != null ? itemClass.name() : ""));
+        return List.of(getName(), description, itemCharacteristic.name(), (itemClass != null ? itemClass.name() : ""));
     }
 }

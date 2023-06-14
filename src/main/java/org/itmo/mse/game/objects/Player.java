@@ -1,11 +1,6 @@
 package org.itmo.mse.game.objects;
 
-import static org.itmo.mse.constants.ObjectNames.emptyHands;
-import static org.itmo.mse.constants.ObjectNames.noArmor;
-import static org.itmo.mse.generation.ItemGeneration.generateItem;
-
 import com.googlecode.lanterna.TerminalRectangle;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.itmo.mse.constants.ItemCharacteristic;
@@ -13,6 +8,12 @@ import org.itmo.mse.constants.ItemType;
 import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectItemType;
+
+import java.util.List;
+
+import static org.itmo.mse.constants.ObjectNames.emptyHands;
+import static org.itmo.mse.constants.ObjectNames.noArmor;
+import static org.itmo.mse.generation.ItemGeneration.generateItem;
 
 @Getter
 @Setter
@@ -24,11 +25,9 @@ public class Player extends Object {
     
     private int health = 2;
     private int maxHealth = 10;
-    private Item weapon =
-        new Item(null, null, emptyHands, ItemCharacteristic.USUAL, ItemType.WEAPON, null, "", 1);
+    private Item weapon = new Item(null, null, emptyHands, ItemCharacteristic.USUAL, ItemType.WEAPON, null, "", 1);
     
-    private Item armor =
-        new Item(null, null, noArmor, ItemCharacteristic.USUAL, ItemType.ARMOR, null, "", 0);
+    private Item armor = new Item(null, null, noArmor, ItemCharacteristic.USUAL, ItemType.ARMOR, null, "", 0);
     
     private final Backpack backpack = new Backpack();
     
@@ -44,10 +43,11 @@ public class Player extends Object {
     }
     
     public Player(Player state) {
-        super(new TerminalRectangle(state.getPosition().x, state.getPosition().y,
-            state.getPosition().width, state.getPosition().height), state.getCharacter(),
-            state.getName());
-        for (Item i: state.backpack.getItems()) {
+        super(new TerminalRectangle(state.getPosition().x,
+                                    state.getPosition().y,
+                                    state.getPosition().width,
+                                    state.getPosition().height), state.getCharacter(), state.getName());
+        for (Item i : state.backpack.getItems()) {
             this.backpack.getItems().add(i);
         }
         this.level = state.getLevel();
@@ -67,10 +67,17 @@ public class Player extends Object {
      */
     @Override
     public List<String> getInfo() {
-        return List.of(getName(), "", "LVL: " + level, "XP: " + experience, "HP: " + health,
-                       "ATTACK: " + weapon.getValue() +
+        return List.of(getName(),
+                       "",
+                       "LVL: " + level,
+                       "XP: " + experience,
+                       "HP: " + health,
+                       "ATTACK: " +
+                       weapon.getValue() +
                        (weapon.getItemClass() != null ? " " + weapon.getItemClass() : ""),
-                       "ARMOR: " + armor.getValue() + " " +
+                       "ARMOR: " +
+                       armor.getValue() +
+                       " " +
                        (armor.getItemClass() != null ? " " + armor.getItemClass() : ""));
     }
 }

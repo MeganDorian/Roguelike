@@ -1,35 +1,25 @@
 package org.itmo.mse.game;
 
-import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
-import static org.itmo.mse.constants.ObjectNames.noArmor;
-import static org.itmo.mse.constants.Proportions.backpackSize;
-
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
-import org.itmo.mse.constants.Direction;
-import org.itmo.mse.constants.ItemCharacteristic;
-import org.itmo.mse.constants.ItemType;
-import org.itmo.mse.constants.ObjectEffect;
-import org.itmo.mse.constants.ObjectNames;
-import org.itmo.mse.constants.Proportions;
+import org.itmo.mse.constants.*;
 import org.itmo.mse.game.actions.Action;
 import org.itmo.mse.game.actions.Damage;
-import org.itmo.mse.constants.Proportions;
-import org.itmo.mse.constants.Specifications;
 import org.itmo.mse.game.objects.Item;
-import org.itmo.mse.game.objects.Mob;
 import org.itmo.mse.game.objects.Object;
 import org.itmo.mse.game.objects.Player;
 import org.itmo.mse.game.objects.map.Map;
+import org.itmo.mse.game.objects.mob.Mob;
 import org.itmo.mse.utils.Checker;
+
+import java.util.*;
+import java.util.stream.Stream;
+
+import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
+import static org.itmo.mse.constants.ObjectNames.noArmor;
+import static org.itmo.mse.constants.Proportions.backpackSize;
 
 @Getter
 public class Game {
@@ -37,6 +27,7 @@ public class Game {
     
     private Mob mobUnderPlayer;
     
+    @Setter
     private int dungeonLevel = 1;
     
     private long timeUnderPlayer = 0;
@@ -53,7 +44,7 @@ public class Game {
     @Setter
     private Player player;
     
-    private Timer timerForDamage;
+    private final Timer timerForDamage;
     
     public Game() {
         player = new Player(new TerminalRectangle(0, 0, 0, 0));
@@ -68,11 +59,15 @@ public class Game {
         this.dungeonLevel = state.dungeonLevel;
         this.isBackpackOpened = state.isBackpackOpened;
         this.backpackItemsInRow = state.backpackItemsInRow;
-        if(this.levelMap == null && state.levelMap != null) {
-            this.levelMap =
-                Map.builder().start(state.levelMap.getStart()).exit(state.levelMap.getExit())
-                .border(state.levelMap.getPosition()).walls(state.levelMap.getWalls())
-                .things(state.levelMap.getItems()).mobs(state.levelMap.getMobs()).build();
+        if (this.levelMap == null && state.levelMap != null) {
+            this.levelMap = Map.builder()
+                               .start(state.levelMap.getStart())
+                               .exit(state.levelMap.getExit())
+                               .border(state.levelMap.getPosition())
+                               .walls(state.levelMap.getWalls())
+                               .things(state.levelMap.getItems())
+                               .mobs(state.levelMap.getMobs())
+                               .build();
         }
         this.player = new Player(state.player);
         this.timeUnderPlayer = state.timeUnderPlayer;
@@ -87,7 +82,7 @@ public class Game {
     public List<String> updatePlayerPosition(Direction direction, TextGraphics graphics) {
         TerminalRectangle playerPosition = player.getPosition();
         TerminalRectangle newPosition = Checker.getNextPosition(direction, playerPosition);
-        if (Checker.isWallNearby(newPosition, levelMap.getWalls())) {
+        if (Checker.isWallAtPosition(newPosition, levelMap.getWalls())) {
             newPosition = playerPosition;
         }
         
@@ -105,27 +100,23 @@ public class Game {
             dungeonLevel++;
             double upMobHealthy;
             double upMobDamage;
-            if(dungeonLevel % 10 == 0){
+            if (dungeonLevel % 10 == 0) {
                 upMobHealthy = Proportions.upTenthMobHealthy;
                 upMobDamage = Proportions.upTenthMobDamage;
             } else {
                 upMobHealthy = Proportions.upMobHealthy;
                 upMobDamage = Proportions.upMobDamage;
             }
-            Specifications.lowerMobHealthy =
-                (int) Math.ceil(Specifications.lowerMobHealthy * upMobHealthy);
-            Specifications.upperMobHealthy =
-                (int) Math.ceil(Specifications.upperMobHealthy * upMobHealthy);
-            Specifications.lowerMobDamage =
-                (int) Math.ceil(Specifications.lowerMobDamage * upMobDamage);
-            Specifications.upperMobDamage =
-                (int) Math.ceil(Specifications.upperMobDamage * upMobDamage);
-            Specifications.defaultExperienceCowardlyMob =
-                (int) Math.ceil(Specifications.defaultExperienceCowardlyMob * Proportions.upMobExperience);
-            Specifications.defaultExperiencePassiveMob =
-                (int) Math.ceil(Specifications.defaultExperiencePassiveMob * Proportions.upMobExperience);
-            Specifications.defaultExperienceAggressiveMob =
-                (int) Math.ceil(Specifications.defaultExperienceAggressiveMob * Proportions.upMobExperience);
+            MobSpecifications.lowerMobHealthy = (int) Math.ceil(MobSpecifications.lowerMobHealthy * upMobHealthy);
+            MobSpecifications.upperMobHealthy = (int) Math.ceil(MobSpecifications.upperMobHealthy * upMobHealthy);
+            MobSpecifications.lowerMobDamage = (int) Math.ceil(MobSpecifications.lowerMobDamage * upMobDamage);
+            MobSpecifications.upperMobDamage = (int) Math.ceil(MobSpecifications.upperMobDamage * upMobDamage);
+            MobSpecifications.defaultExperienceShyMob = (int) Math.ceil(MobSpecifications.defaultExperienceShyMob *
+                                                                        Proportions.upMobExperience);
+            MobSpecifications.defaultExperiencePassiveMob = (int) Math.ceil(MobSpecifications.defaultExperiencePassiveMob *
+                                                                            Proportions.upMobExperience);
+            MobSpecifications.defaultExperienceAggressiveMob =
+                    (int) Math.ceil(MobSpecifications.defaultExperienceAggressiveMob * Proportions.upMobExperience);
             return null;
         }
         
@@ -138,8 +129,7 @@ public class Game {
      */
     private List<String> playerOnItem(TerminalRectangle newPosition, TextGraphics graphics) {
         // if player will stand on the item save this item
-        Optional<? extends Object> itemOnNewPosition =
-            Checker.isObjectAtPosition(newPosition, levelMap.getItems());
+        Optional<? extends Object> itemOnNewPosition = Checker.isObjectAtPosition(newPosition, levelMap.getItems());
         if (itemOnNewPosition.isPresent()) {
             timeUnderPlayer = System.currentTimeMillis();
             objectUnderPlayer = (Item) itemOnNewPosition.get();
@@ -156,8 +146,7 @@ public class Game {
      */
     private List<String> playerOnMob(TerminalRectangle newPosition, TextGraphics graphics) {
         // if player will stand on the item save this item
-        Optional<? extends Object> itemOnNewPosition =
-            Checker.isObjectAtPosition(newPosition, levelMap.getMobs());
+        Optional<? extends Object> itemOnNewPosition = Checker.isObjectAtPosition(newPosition, levelMap.getMobs());
         if (itemOnNewPosition.isPresent()) {
             mobUnderPlayer = (Mob) itemOnNewPosition.get();
             List<String> info = itemOnNewPosition.get().getInfo();
@@ -172,6 +161,7 @@ public class Game {
     
     /**
      * Picks up item from map and puts it in backpack
+     *
      * @return information about item or notification of overfilling the backpack
      */
     public List<String> pickupItem() {
@@ -204,8 +194,7 @@ public class Game {
             selectedItem--;
         } else if (direction == Direction.UP && selectedItem - backpackItemsInRow >= 0) {
             selectedItem -= backpackItemsInRow;
-        } else if (direction == Direction.DOWN &&
-                   selectedItem + backpackItemsInRow < player.getBackpack().size()) {
+        } else if (direction == Direction.DOWN && selectedItem + backpackItemsInRow < player.getBackpack().size()) {
             selectedItem += backpackItemsInRow;
         }
         player.getBackpack().setSelectedItemIndex(selectedItem);
@@ -223,7 +212,7 @@ public class Game {
             case WEAPON -> applyWeapon(item, selectedItem);
         }
         player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
-        if(player.getBackpack().size() == 0) {
+        if (player.getBackpack().size() == 0) {
             isBackpackOpened = false;
         }
     }
@@ -233,7 +222,8 @@ public class Game {
      */
     private void applyMedicalAid(Item item) {
         int addHealth = (int) (player.getMaxHealth() *
-                               (item.getItemCharacteristic() == USUAL ? ObjectEffect.usualAid :
+                               (item.getItemCharacteristic() == USUAL ?
+                                ObjectEffect.usualAid :
                                 ObjectEffect.legendaryAid)) + player.getHealth();
         player.setHealth(Math.min(addHealth, player.getMaxHealth()));
         player.getBackpack().getItems().remove(item);
@@ -309,7 +299,7 @@ public class Game {
         }
         levelMap.getItems().add(item);
         player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
-        if(player.getBackpack().size() == 0) {
+        if (player.getBackpack().size() == 0) {
             isBackpackOpened = false;
         }
     }
@@ -319,22 +309,25 @@ public class Game {
      * a mob for a certain amount of time
      */
     public void causingDamage() {
-        if(mobUnderPlayer != null && !isBackpackOpened) {
-            if(System.currentTimeMillis() - timeUnderPlayer >= 1000) {
+        if (mobUnderPlayer != null && !isBackpackOpened) {
+            if (System.currentTimeMillis() - timeUnderPlayer >= 1000) {
                 mobUnderPlayer.setHealth(mobUnderPlayer.getHealth() - player.getWeapon().getValue());
-                if(player.getArmor().getValue() > mobUnderPlayer.getDamage()) {
-                    player.getArmor().setValue(player.getArmor().getValue()
-                                               - mobUnderPlayer.getDamage());
+                if (player.getArmor().getValue() > mobUnderPlayer.getDamage()) {
+                    player.getArmor().setValue(player.getArmor().getValue() - mobUnderPlayer.getDamage());
                 } else {
-                    player.setHealth(player.getHealth() - mobUnderPlayer.getDamage()
-                                     + player.getArmor().getValue());
-                    player.setArmor(new Item(null, null, noArmor,
-                        ItemCharacteristic.USUAL, ItemType.ARMOR, null,
-                        "", 0));
+                    player.setHealth(player.getHealth() - mobUnderPlayer.getDamage() + player.getArmor().getValue());
+                    player.setArmor(new Item(null,
+                                             null,
+                                             noArmor,
+                                             ItemCharacteristic.USUAL,
+                                             ItemType.ARMOR,
+                                             null,
+                                             "",
+                                             0));
                 }
                 timeUnderPlayer = System.currentTimeMillis();
             }
-            if(player.getHealth() <= 0) {
+            if (player.getHealth() <= 0) {
                 restart();
             } else {
                 if (mobUnderPlayer.getHealth() <= 0) {
@@ -347,15 +340,18 @@ public class Game {
         }
     }
     
+    /**
+     * Increases player experience
+     */
     public void addExperience(int experience) {
         player.setExperience(player.getExperience() + experience);
         while (player.getExperience() >= player.getExperienceForNextLevel()) {
             player.setExperience(player.getExperience() - player.getExperienceForNextLevel());
             player.setLevel(player.getLevel() + 1);
             double proportionLevelEx;
-            if(player.getLevel() % 100 == 99) {
+            if (player.getLevel() % 100 == 99) {
                 proportionLevelEx = Proportions.newHundredthLevelEx;
-            } else if(player.getLevel() % 10 == 9) {
+            } else if (player.getLevel() % 10 == 9) {
                 proportionLevelEx = Proportions.newTenthLevelEx;
             } else {
                 proportionLevelEx = Proportions.newLevelEx;
@@ -363,7 +359,7 @@ public class Game {
             player.setExperienceForNextLevel((int) (player.getExperienceForNextLevel() * proportionLevelEx));
             player.setMaxHealth((int) (player.getMaxHealth() * Proportions.maxHealth));
             player.setHealth(player.getMaxHealth());
-        };
+        }
     }
     
     /**
@@ -375,26 +371,19 @@ public class Game {
     private Optional<TerminalRectangle> getNearestFreePlace() {
         TerminalRectangle playerPosition = player.getPosition();
         return Stream.of(playerPosition,
-                         new TerminalRectangle(playerPosition.x + 1, playerPosition.y,
-                                               playerPosition.width, playerPosition.height),
-                         new TerminalRectangle(playerPosition.x - 1, playerPosition.y,
-                                               playerPosition.width, playerPosition.height),
-                         new TerminalRectangle(playerPosition.x, playerPosition.y - 1,
-                                               playerPosition.width, playerPosition.height),
-                         new TerminalRectangle(playerPosition.x, playerPosition.y + 1,
-                                               playerPosition.width, playerPosition.height),
-                         new TerminalRectangle(playerPosition.x + 1, playerPosition.y + 1,
-                                               playerPosition.width, playerPosition.height),
-                         new TerminalRectangle(playerPosition.x + 1, playerPosition.y - 1,
-                                               playerPosition.width, playerPosition.height),
-                         new TerminalRectangle(playerPosition.x - 1, playerPosition.y + 1,
-                                               playerPosition.width, playerPosition.height),
-                         new TerminalRectangle(playerPosition.x - 1, playerPosition.y - 1,
-                                               playerPosition.width, playerPosition.height)).filter(
-                         position -> !Checker.isWallNearby(position, levelMap.getWalls()) &&
-                                     Checker.isObjectAtPosition(position, levelMap.getItems()).isEmpty() &&
-                                     Checker.isObjectAtPosition(position, levelMap.getMobs()).isEmpty())
-                     .findFirst().or(() -> Optional.of(playerPosition));
+                         Checker.getNextPosition(Direction.RIGHT, playerPosition),
+                         Checker.getNextPosition(Direction.LEFT, playerPosition),
+                         Checker.getNextPosition(Direction.UP, playerPosition),
+                         Checker.getNextPosition(Direction.DOWN, playerPosition),
+                         Checker.getNextPosition(Direction.DOWN_RIGHT, playerPosition),
+                         Checker.getNextPosition(Direction.DOWN_LEFT, playerPosition),
+                         Checker.getNextPosition(Direction.UP_RIGHT, playerPosition),
+                         Checker.getNextPosition(Direction.UP_LEFT, playerPosition))
+                     .filter(position -> !Checker.isWallAtPosition(position, levelMap.getWalls()) &&
+                                         Checker.isObjectAtPosition(position, levelMap.getItems()).isEmpty() &&
+                                         Checker.isObjectAtPosition(position, levelMap.getMobs()).isEmpty())
+                     .findFirst()
+                     .or(() -> Optional.of(playerPosition));
     }
     
     public void restart() {
@@ -408,8 +397,11 @@ public class Game {
         player = new Player(new TerminalRectangle(0, 0, 0, 0));
     }
     
-    public void setLevelAfterRestart() {
-        dungeonLevel = 1;
+    /**
+     * Makes all alive mobs to make action if they see player
+     */
+    public void makeAllMobsAlive() {
+        levelMap.getMobs().forEach(mob -> mob.makeAction(player.getPosition(), levelMap.getWalls()));
     }
     
 }

@@ -1,10 +1,11 @@
 package org.itmo.mse;
 
-import java.io.IOException;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.actions.Action;
 import org.itmo.mse.game.actions.StartGame;
 import org.itmo.mse.ui.windows.MainWindow;
+
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {

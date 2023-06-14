@@ -1,11 +1,12 @@
 package org.itmo.mse.game.objects;
 
-import static org.itmo.mse.constants.Proportions.backpackSize;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
+
+import static org.itmo.mse.constants.Proportions.backpackSize;
 
 @Getter
 public class Backpack {
@@ -17,6 +18,7 @@ public class Backpack {
     
     /**
      * Get the number of items in the backpack
+     *
      * @return number of items
      */
     public int size() {

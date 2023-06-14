@@ -3,22 +3,20 @@ package org.itmo.mse.ui.windows;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.itmo.mse.constants.Change;
 import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
 import org.itmo.mse.game.Game;
 import org.itmo.mse.game.actions.Action;
+import org.itmo.mse.game.actions.CheckForChanged;
 import org.itmo.mse.game.actions.Move;
-import org.itmo.mse.game.actions.ReactionChanges;
 import org.itmo.mse.generation.MapGeneration;
 import org.itmo.mse.ui.Printer;
 import org.itmo.mse.utils.map.MapLoader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameWindow extends Window {
@@ -39,30 +37,25 @@ public class GameWindow extends Window {
         this.backpackAction = backpackAction;
         this.dropItem = dropItem;
         this.reaction = reaction;
-        ((ReactionChanges) reaction).setOldGameObject(new Game(game));
+        ((CheckForChanged) reaction).setOldGameObject(new Game(game));
         screen.clear();
         screen.refresh();
         printLevel();
     }
     
     /**
-     * Loads the level and prints it
-     * The first level is static
-     * the others are randomly generated
-     *
-     * @throws IOException
-     * @throws IncorrectMapFormatException
+     * Loads the level and prints it. The first level is static the others are randomly generated
      */
     private void printLevel() throws IOException, IncorrectMapFormatException {
         List<String> info = new ArrayList<>();
         if (game.getDungeonLevel() == 1) {
             // load tutorial level from file
             loadLevelFromFile("first_lvl", true);
-        } else if(game.getDungeonLevel() == -1){
+        } else if (game.getDungeonLevel() == -1) {
             //after death
             screen.clear();
             loadLevelFromFile("first_lvl", true);
-            game.setLevelAfterRestart();
+            game.setDungeonLevel(1);
             info.add("You died x.x");
             info.add("Try again");
         } else {
@@ -84,25 +77,15 @@ public class GameWindow extends Window {
     }
     
     /**
-     * Loads a level from a file
-     * If level one, it reads from the resource folder,
+     * Loads a level from a file <br> If level one, it reads from the resource folder,
      * otherwise it takes the file with the name given
-     *
-     * @param fileName
-     * @param isFirst
-     * @throws IOException
-     * @throws IncorrectMapFormatException
      */
     private void loadLevelFromFile(String fileName, boolean isFirst) throws IOException, IncorrectMapFormatException {
         game.setLevelMap(MapLoader.loadFromFile(fileName, isFirst, game.getPlayer()));
     }
     
     /**
-     * Tracks user presses during play
-     * and reacts according to the pressed button
-     *
-     * @throws IOException
-     * @throws IncorrectMapFormatException
+     * Tracks user presses during play and reacts according to the pressed button
      */
     public void play() throws IOException, IncorrectMapFormatException {
         while (true) {
@@ -111,7 +94,7 @@ public class GameWindow extends Window {
             List<String> changes = null;
             if (input == null && game.getDungeonLevel() != -1 && changes == null) {
                 changes = reaction.execute(textGraphics);
-                if(!changes.isEmpty()) {
+                if (!changes.isEmpty()) {
                     reprint(changes, null);
                 }
                 changes = null;
@@ -125,10 +108,15 @@ public class GameWindow extends Window {
                     terminal.close();
                     game.getTimerForDamage().cancel();
                     return;
-                } else if (pressedKey == KeyType.ArrowDown || pressedKey == KeyType.ArrowUp ||
-                           pressedKey == KeyType.ArrowLeft || pressedKey == KeyType.ArrowRight) {
+                } else if (pressedKey == KeyType.ArrowDown ||
+                           pressedKey == KeyType.ArrowUp ||
+                           pressedKey == KeyType.ArrowLeft ||
+                           pressedKey == KeyType.ArrowRight) {
                     move.setDirection(pressedKey);
                     info = move.execute(textGraphics);
+                    if (game.getLevelMap() != null) {
+                        game.makeAllMobsAlive();
+                    }
                 } else if (input.getCharacter() != null) {
                     if (input.getCharacter().equals('e') ) {
                         info = interact.execute(textGraphics);
@@ -147,8 +135,7 @@ public class GameWindow extends Window {
         }
     }
     
-    public void reprint(List<String> changes, List<String> info)
-        throws IncorrectMapFormatException, IOException {
+    public void reprint(List<String> changes, List<String> info) throws IncorrectMapFormatException, IOException {
         if (changes.contains(Change.DUNGEON_LEVEL.name())) {
             printLevel();
         } else {
@@ -162,9 +149,10 @@ public class GameWindow extends Window {
                 printObject(game.getPlayer());
             }
             if (changes.contains(Change.SELECTED_INDEX_ITEM.name()) ||
-                changes.contains(Change.BACKPACK_OPENED_TRUE.name()) || changes.contains(Change.ADD_REMOVE_ITEM.name())) {
-                TextCharacter color = game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM :
-                                      SpecialCharacters.SPACE;
+                changes.contains(Change.BACKPACK_OPENED_TRUE.name()) ||
+                changes.contains(Change.ADD_REMOVE_ITEM.name())) {
+                TextCharacter color =
+                        game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
                 int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
                 backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
                 backpackPrinter.printBackpack(game);

@@ -3,13 +3,14 @@ package org.itmo.mse.game.objects.map;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import java.util.List;
 import lombok.Getter;
 import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.game.objects.Item;
-import org.itmo.mse.game.objects.Mob;
 import org.itmo.mse.game.objects.Object;
+import org.itmo.mse.game.objects.mob.Mob;
+
+import java.util.List;
 
 @Getter
 public class Map extends Object {
@@ -23,8 +24,8 @@ public class Map extends Object {
     private final TerminalPosition exit;
     private final TerminalPosition start;
     
-    private Map(TerminalRectangle border, List<Wall> walls, List<Mob> mobs, List<Item> items,
-                TerminalPosition exit, TerminalPosition start) {
+    private Map(TerminalRectangle border, List<Wall> walls, List<Mob> mobs, List<Item> items, TerminalPosition exit,
+                TerminalPosition start) {
         super(border, SpecialCharacters.WALL, ObjectNames.map);
         this.walls = walls;
         this.mobs = mobs;
@@ -66,9 +67,6 @@ public class Map extends Object {
         
         /**
          * Set walls
-         *
-         * @param walls
-         * @return
          */
         public MapBuilder walls(List<Wall> walls) {
             this.walls = walls;
@@ -77,9 +75,6 @@ public class Map extends Object {
         
         /**
          * Set mobs
-         *
-         * @param mobs
-         * @return
          */
         public MapBuilder mobs(List<Mob> mobs) {
             this.mobs = mobs;
@@ -88,8 +83,6 @@ public class Map extends Object {
         
         /**
          * Set items
-         * @param items
-         * @return
          */
         public MapBuilder things(List<Item> items) {
             this.items = items;
@@ -97,10 +90,7 @@ public class Map extends Object {
         }
         
         /**
-         *  Set border
-         *
-         * @param position
-         * @return
+         * Set border
          */
         public MapBuilder border(TerminalRectangle position) {
             this.position = position;
@@ -109,9 +99,6 @@ public class Map extends Object {
         
         /**
          * Set exit
-         *
-         * @param exit
-         * @return
          */
         public MapBuilder exit(TerminalPosition exit) {
             this.exit = exit;
@@ -120,9 +107,6 @@ public class Map extends Object {
         
         /**
          * Set start
-         *
-         * @param start
-         * @return
          */
         public MapBuilder start(TerminalPosition start) {
             this.start = start;
@@ -131,7 +115,6 @@ public class Map extends Object {
         
         /**
          * Build map with the set parameters
-         * @return
          */
         public Map build() {
             return new Map(position, walls, mobs, items, exit, start);
