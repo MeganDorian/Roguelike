@@ -1,5 +1,7 @@
 package org.itmo.mse.generation;
 
+import static org.itmo.mse.constants.SpecialCharacters.*;
+
 import com.googlecode.lanterna.TextCharacter;
 import lombok.experimental.UtilityClass;
 import org.itmo.mse.constants.Direction;
@@ -9,7 +11,6 @@ import org.itmo.mse.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +19,6 @@ import java.util.List;
 import lombok.experimental.UtilityClass;
 import org.itmo.mse.constants.Direction;
 import org.itmo.mse.constants.Proportions;
-import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.utils.FileUtils;
 
 @UtilityClass
@@ -26,39 +26,51 @@ public class MapGeneration extends Generation {
     
     public String fileName = "new_level";
     
+    //default value
     private int xRoom = 17;
     private int yRoom = 4;
     private int size = 6;
     
-    private int mapWight = 120;
-    private int mapHeight = 30;
-    
-    private int oldMapWight = 120;
-    private int oldMapHeight = 30;
-    
     private int resizeWight = 0;
     private int resizeHeight = 1;
-    private char[][] map;
     private int numberMobs = Proportions.numberMobs;
     private int numberItems = Proportions.numberItems;
     
+    //actual values
+    private int mapWight = 120;
+    private int mapHeight = 30;
+    private char[][] map;
+    
+    
+    //old values
+    private int oldMapWight = 120;
+    private int oldMapHeight = 30;
+    
     /**
      * Generates map with the set parameters
+     *
+     * @throws IOException - if unable to write to file
      */
     private void generate() throws IOException {
-        generateWall(mapWight, mapHeight);
-        generateObject(numberMobs, mapWight, mapHeight, SpecialCharacters.MOB);
-        generateObject(numberItems, mapWight, mapHeight, SpecialCharacters.ITEM);
-        inputAndOutputGeneration(mapWight, mapHeight);
-        writeWallInFile();
+        //generate map
+        generateWall();
+        generateObject(numberMobs, MOB);
+        generateObject(numberItems, ITEM);
+        inputAndOutputGeneration();
+       
+        //write to file
+        writeMapInFile();
+        
+        //forget map
+        map = null;
     }
     
     /**
      * Builds walls on the map
      */
-    public void generateWall(int mapWight, int mapHeight) {
-        if (mapHeight != oldMapHeight || mapWight != oldMapWight) {
-            generateRoomParameters(mapWight, mapHeight);
+    public void generateWall()  {
+        if(mapHeight != oldMapHeight || mapWight != oldMapWight) {
+            generateRoomParameters();
             oldMapHeight = mapHeight;
             oldMapWight = mapWight;
         }
@@ -71,7 +83,7 @@ public class MapGeneration extends Generation {
      * @param number -- the number of objects on the map
      * @param symbol -- symbol of object
      */
-    private void generateObject(int number, int mapWight, int mapHeight, TextCharacter symbol) {
+    private void generateObject(int number, TextCharacter symbol) {
         int rangeW = mapWight - resizeWight;
         int rangeH = mapHeight - resizeHeight;
         boolean setObject;
@@ -80,7 +92,7 @@ public class MapGeneration extends Generation {
             while (!setObject) {
                 int positionX = rand.nextInt(rangeW);
                 int positionY = rand.nextInt(rangeH);
-                if (map[positionX][positionY] == SpecialCharacters.SPACE.getCharacterString().charAt(0)) {
+                if (map[positionX][positionY] == SPACE.getCharacterString().charAt(0)) {
                     map[positionX][positionY] = symbol.getCharacterString().charAt(0);
                     setObject = true;
                 }
@@ -102,7 +114,7 @@ public class MapGeneration extends Generation {
     /**
      * Generates parameters for the map according to the set dimensions
      */
-    private void generateRoomParameters(int mapWight, int mapHeight) {
+    private void generateRoomParameters() {
         int halfWight = mapWight / 2;
         int halfHeight = mapHeight / 2;
         int wight = mapWight;
@@ -123,18 +135,20 @@ public class MapGeneration extends Generation {
             } while (forChange >= halfHeight);
             wight--;
         } while (wight >= halfWight);
+        
         //set default or build big, or throw exception?
         xRoom = 17;
         yRoom = 4;
         size = 6;
         resizeWight = 0;
-        resizeHeight = 0;
+        resizeHeight = 1;
     }
     
     /**
      * Writes the generated map to file
      */
-    private void writeWallInFile() throws IOException {
+    @SuppressWarnings("all")
+    private void writeMapInFile() throws IOException {
         File file = new File(fileName);
         if (file.exists()) {
             file.delete();
@@ -159,17 +173,20 @@ public class MapGeneration extends Generation {
                         xForGet = map.length - 2;
                     }
                 }
+                
                 //making sure there is no dubbing of items and mobs when sizing up
-                if ((y >= map[0].length - 1 || x >= map.length - 1) &&
-                    (map[xForGet][yForGet] != SpecialCharacters.SPACE.getCharacterString().charAt(0) &&
-                     map[xForGet][yForGet] != SpecialCharacters.WALL.getCharacterString().charAt(0))) {
-                    fileForWrite.write(SpecialCharacters.SPACE.getCharacterString().charAt(0));
+                if((y >= map[0].length - 1 || x >= map.length - 1) &&
+                   (map[xForGet][yForGet] != SPACE.getCharacterString().charAt(0) &&
+                    map[xForGet][yForGet] != WALL.getCharacterString().charAt(0))) {
+                    fileForWrite.write(SPACE.getCharacterString().charAt(0));
                 } else {
                     fileForWrite.write(map[xForGet][yForGet]);
                 }
             }
+            
             fileForWrite.write("\n".getBytes(StandardCharsets.UTF_8));
         }
+        fileForWrite.close();
     }
     
     /**
@@ -178,7 +195,8 @@ public class MapGeneration extends Generation {
      *
      * @return y
      */
-    private int getY(int mapHeight) {
+    @SuppressWarnings("all")
+    private int getY() {
         int y = rand.nextInt(mapHeight);
         if (y >= map[0].length - 1) {
             if (y == map[0].length + resizeHeight - 1) {
@@ -193,24 +211,26 @@ public class MapGeneration extends Generation {
     /**
      * Generates a random input and output on the map
      */
-    private void inputAndOutputGeneration(int mapWight, int mapHeight) {
+    private void inputAndOutputGeneration() {
         int yIn;
         int yOut;
         do {
-            yIn = getY(mapHeight);
-            if (map[1][yIn] == SpecialCharacters.WALL.getCharacterString().charAt(0)) {
+            yIn = getY();
+            if (map[1][yIn] == WALL.getCharacterString().charAt(0)) {
                 yIn = 0;
             }
         } while (yIn == 0);
-        map[0][yIn] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
-        map[1][yIn] = SpecialCharacters.PLAYER.getCharacterString().charAt(0);
+        map[0][yIn] = SPACE.getCharacterString().charAt(0);
+        map[1][yIn] = PLAYER.getCharacterString().charAt(0);
         do {
-            yOut = getY(mapHeight);
-            if (map[mapWight - resizeWight - 2][yOut] == SpecialCharacters.WALL.getCharacterString().charAt(0)) {
+            yOut = getY();
+            if (map[mapWight - resizeWight - 2][yOut] ==
+                WALL.getCharacterString().charAt(0)) {
                 yOut = 0;
             }
         } while (yOut == 0);
-        map[mapWight - resizeWight - 1][yOut] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+        map[mapWight - resizeWight - 1][yOut]
+            = SPACE.getCharacterString().charAt(0);
     }
     
     /**
@@ -218,6 +238,7 @@ public class MapGeneration extends Generation {
      * Guaranteed that there will be a passage
      * from the entrance to the level to the exit
      */
+    @SuppressWarnings("all")
     private void generateRooms() {
         boolean[][] connected = new boolean[xRoom][yRoom];
         Direction[][] neighbor = new Direction[xRoom][yRoom];
@@ -232,11 +253,13 @@ public class MapGeneration extends Generation {
         final int startY = rand.nextInt(yRoom);
         connected[startX][startY] = true;
         neighbor[startX][startY] = Direction.START;
+        
         // Build a list of rooms remaining to be connected.
         final List<Integer> remainingRooms = new ArrayList<>();
         for (int i = 0; i < xRoom * yRoom; i++) {
             remainingRooms.add(i);
         }
+        
         while (!remainingRooms.isEmpty()) {
             // pick a random unconnected room
             final int roomIndexInList = rand.nextInt(remainingRooms.size());
@@ -285,15 +308,15 @@ public class MapGeneration extends Generation {
         map = new char[xRoom * size + xRoom + 1][yRoom * size + yRoom + 1];
         // Build all ground
         for (char[] chars : map) {
-            Arrays.fill(chars, SpecialCharacters.SPACE.getCharacterString().charAt(0));
+            Arrays.fill(chars, SPACE.getCharacterString().charAt(0));
         }
         // Build wall grid
         for (int x = 0; x < map.length; x += size + 1) {
-            Arrays.fill(map[x], SpecialCharacters.WALL.getCharacterString().charAt(0));
+            Arrays.fill(map[x], WALL.getCharacterString().charAt(0));
         }
         for (int x = 0; x < map.length; x++) {
             for (int y = 0; y < map[x].length; y += size + 1) {
-                map[x][y] = SpecialCharacters.WALL.getCharacterString().charAt(0);
+                map[x][y] = WALL.getCharacterString().charAt(0);
             }
         }
         // Drill the connecting holes
@@ -306,28 +329,32 @@ public class MapGeneration extends Generation {
                         dx = x * (size + 1);
                         dy = y * (size + 1);
                         for (int i = 1; i < (size + 1); i++) {
-                            map[dx + i][dy] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx + i][dy] =
+                                SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case LEFT:
                         dx = x * (size + 1);
                         dy = y * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx][dy + i] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx][dy + i] =
+                                SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case RIGHT:
                         dx = (x + 1) * (size + 1);
                         dy = (y) * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx][dy + i] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx][dy + i] =
+                                SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case DOWN:
                         dx = (x) * (size + 1);
                         dy = (y + 1) * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx + i][dy] = SpecialCharacters.SPACE.getCharacterString().charAt(0);
+                            map[dx + i][dy] =
+                                SPACE.getCharacterString().charAt(0);
                         }
                     default:
                 }
@@ -340,48 +367,81 @@ public class MapGeneration extends Generation {
     }
     
     public class MapGenerationBuilder {
-        //где-то тут фабрика мобов
         
         /**
-         * Генерирует стены с предыдущими заданными параметрами
-         * @return билдер
+         * Sets the default map parameters
+         *
+         * @return MapGenerationBuilder for further construction
          */
-        public MapGenerationBuilder walls() throws IOException {
+        public MapGenerationBuilder walls() {
+            xRoom = 17;
+            yRoom = 4;
+            size = 6;
+            resizeWight = 0;
+            resizeHeight = 1;
             return this;
         }
         
         /**
-         * Генерирует стены в соответствии с установленными параметрами размера карты
-         * Исходя из размеров карты подбирает параметры генерации
-         * Если параметры для генерации подобрать не удалось, то устанавливает дефолтные
-         * @return
+         * Sets new dimensions for map generation
+         *
+         * @param wight - map width to generate
+         * @param height - map height to generate
+         * @return MapGenerationBuilder for further construction
          */
-        public MapGenerationBuilder walls(int wight, int height) throws IOException {
+        public MapGenerationBuilder walls(int wight, int height) {
             mapWight = wight;
             mapHeight = height;
             return this;
         }
         
+        /**
+         * Sets the default number of mobs
+         *
+         * @return MapGenerationBuilder for further construction
+         */
         public MapGenerationBuilder mobs() {
             numberMobs = Proportions.numberMobs;
             return this;
         }
         
+        /**
+         * Sets the number of mobs
+         *
+         * @param num - number of mobs
+         * @return MapGenerationBuilder for further construction
+         */
         public MapGenerationBuilder mobs(int num) {
             numberMobs = num;
             return this;
         }
         
+        /**
+         * Sets the default number of items
+         *
+         * @return MapGenerationBuilder for further construction
+         */
         public MapGenerationBuilder items() {
             numberItems = Proportions.numberItems;
             return this;
         }
         
+        /**
+         * Sets the number of items
+         *
+         * @param num - number of items
+         * @return MapGenerationBuilder for further construction
+         */
         public MapGenerationBuilder items(int num) {
             numberItems = num;
             return this;
         }
         
+        /**
+         * Builds a map from the given parameters and writes it to a file
+         *
+         * @throws IOException - if unable to write to file
+         */
         public void build() throws IOException {
             generate();
         }
