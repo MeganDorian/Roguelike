@@ -1,11 +1,9 @@
 package org.itmo.mse.generation;
 
-import static org.itmo.mse.constants.SpecialCharacters.*;
-
 import com.googlecode.lanterna.TextCharacter;
 import lombok.experimental.UtilityClass;
 import org.itmo.mse.constants.Direction;
-import org.itmo.mse.constants.SpecialCharacters;
+import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.utils.FileUtils;
 
 import java.io.File;
@@ -16,10 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import lombok.experimental.UtilityClass;
-import org.itmo.mse.constants.Direction;
-import org.itmo.mse.constants.Proportions;
-import org.itmo.mse.utils.FileUtils;
+
+import static org.itmo.mse.constants.SpecialCharacters.*;
 
 @UtilityClass
 public class MapGeneration extends Generation {
@@ -57,7 +53,7 @@ public class MapGeneration extends Generation {
         generateObject(numberMobs, MOB);
         generateObject(numberItems, ITEM);
         inputAndOutputGeneration();
-       
+        
         //write to file
         writeMapInFile();
         
@@ -68,8 +64,8 @@ public class MapGeneration extends Generation {
     /**
      * Builds walls on the map
      */
-    public void generateWall()  {
-        if(mapHeight != oldMapHeight || mapWight != oldMapWight) {
+    public void generateWall() {
+        if (mapHeight != oldMapHeight || mapWight != oldMapWight) {
             generateRoomParameters();
             oldMapHeight = mapHeight;
             oldMapWight = mapWight;
@@ -175,9 +171,9 @@ public class MapGeneration extends Generation {
                 }
                 
                 //making sure there is no dubbing of items and mobs when sizing up
-                if((y >= map[0].length - 1 || x >= map.length - 1) &&
-                   (map[xForGet][yForGet] != SPACE.getCharacterString().charAt(0) &&
-                    map[xForGet][yForGet] != WALL.getCharacterString().charAt(0))) {
+                if ((y >= map[0].length - 1 || x >= map.length - 1) &&
+                    (map[xForGet][yForGet] != SPACE.getCharacterString().charAt(0) &&
+                     map[xForGet][yForGet] != WALL.getCharacterString().charAt(0))) {
                     fileForWrite.write(SPACE.getCharacterString().charAt(0));
                 } else {
                     fileForWrite.write(map[xForGet][yForGet]);
@@ -195,7 +191,6 @@ public class MapGeneration extends Generation {
      *
      * @return y
      */
-    @SuppressWarnings("all")
     private int getY() {
         int y = rand.nextInt(mapHeight);
         if (y >= map[0].length - 1) {
@@ -224,21 +219,17 @@ public class MapGeneration extends Generation {
         map[1][yIn] = PLAYER.getCharacterString().charAt(0);
         do {
             yOut = getY();
-            if (map[mapWight - resizeWight - 2][yOut] ==
-                WALL.getCharacterString().charAt(0)) {
+            if (map[mapWight - resizeWight - 2][yOut] == WALL.getCharacterString().charAt(0)) {
                 yOut = 0;
             }
         } while (yOut == 0);
-        map[mapWight - resizeWight - 1][yOut]
-            = SPACE.getCharacterString().charAt(0);
+        map[mapWight - resizeWight - 1][yOut] = SPACE.getCharacterString().charAt(0);
     }
     
     /**
-     * Generate rooms and delete random walls
-     * Guaranteed that there will be a passage
-     * from the entrance to the level to the exit
+     * Generate rooms and delete random walls <br>
+     * Guaranteed that there will be a passage from the entrance to the level to the exit
      */
-    @SuppressWarnings("all")
     private void generateRooms() {
         boolean[][] connected = new boolean[xRoom][yRoom];
         Direction[][] neighbor = new Direction[xRoom][yRoom];
@@ -329,32 +320,28 @@ public class MapGeneration extends Generation {
                         dx = x * (size + 1);
                         dy = y * (size + 1);
                         for (int i = 1; i < (size + 1); i++) {
-                            map[dx + i][dy] =
-                                SPACE.getCharacterString().charAt(0);
+                            map[dx + i][dy] = SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case LEFT:
                         dx = x * (size + 1);
                         dy = y * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx][dy + i] =
-                                SPACE.getCharacterString().charAt(0);
+                            map[dx][dy + i] = SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case RIGHT:
                         dx = (x + 1) * (size + 1);
                         dy = (y) * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx][dy + i] =
-                                SPACE.getCharacterString().charAt(0);
+                            map[dx][dy + i] = SPACE.getCharacterString().charAt(0);
                         }
                         break;
                     case DOWN:
                         dx = (x) * (size + 1);
                         dy = (y + 1) * (size + 1);
                         for (int i = 1; i < size + 1; i++) {
-                            map[dx + i][dy] =
-                                SPACE.getCharacterString().charAt(0);
+                            map[dx + i][dy] = SPACE.getCharacterString().charAt(0);
                         }
                     default:
                 }
@@ -385,7 +372,7 @@ public class MapGeneration extends Generation {
         /**
          * Sets new dimensions for map generation
          *
-         * @param wight - map width to generate
+         * @param wight  - map width to generate
          * @param height - map height to generate
          * @return MapGenerationBuilder for further construction
          */

@@ -1,6 +1,7 @@
 package org.itmo.mse.generation;
 
 import com.googlecode.lanterna.TerminalRectangle;
+
 import java.util.Random;
 
 public abstract class Generation {

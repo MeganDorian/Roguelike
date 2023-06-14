@@ -17,7 +17,7 @@ public class Map extends Object {
     
     private final List<Wall> walls;
     
-    private List<Mob> mobs;
+    private final List<Mob> mobs;
     
     private final List<Item> items;
     

@@ -1,21 +1,15 @@
 package org.itmo.mse.generation;
 
-import static org.itmo.mse.constants.ItemCharacteristic.LEGENDARY;
-import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
-
 import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
-import java.util.List;
-import org.itmo.mse.constants.ItemCharacteristic;
-import org.itmo.mse.constants.ItemClass;
-import org.itmo.mse.constants.ItemType;
-import org.itmo.mse.constants.ObjectDescription;
-import org.itmo.mse.constants.ObjectEffect;
-import org.itmo.mse.constants.ObjectNames;
-import org.itmo.mse.constants.Proportions;
-import org.itmo.mse.constants.SpecialCharacters;
+import org.itmo.mse.constants.*;
 import org.itmo.mse.exceptions.IncorrectItemType;
 import org.itmo.mse.game.objects.Item;
+
+import java.util.List;
+
+import static org.itmo.mse.constants.ItemCharacteristic.LEGENDARY;
+import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
 
 public class ItemGeneration extends Generation {
     
@@ -23,9 +17,7 @@ public class ItemGeneration extends Generation {
      * Generates item parameters of a given type
      *
      * @param type -- type item from enum ItemType
-     *
      * @return random item of a given type
-     *
      * @throws IncorrectItemType -- if generation for the type passed is not specified
      */
     public static Item generateItem(ItemType type) throws IncorrectItemType {
@@ -101,15 +93,20 @@ public class ItemGeneration extends Generation {
             default -> throw new IncorrectItemType("Item type \"" + type + "\" not found!");
         }
         
-        return new Item(position, character, allNames.get(rand.nextInt(allNames.size())),
-                        characteristic, type, itemClass, description, value);
+        return new Item(position,
+                        character,
+                        allNames.get(rand.nextInt(allNames.size())),
+                        characteristic,
+                        type,
+                        itemClass,
+                        description,
+                        value);
     }
     
     /**
      * Generates item parameters
      *
      * @return random item
-     *
      * @throws IncorrectItemType -- if generation for the type passed is not specified
      */
     public static Item generateItem() throws IncorrectItemType {

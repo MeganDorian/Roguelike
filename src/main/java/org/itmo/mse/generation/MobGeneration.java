@@ -1,10 +1,10 @@
 package org.itmo.mse.generation;
 
 import com.googlecode.lanterna.TextCharacter;
+import org.itmo.mse.constants.MobSpecifications;
 import org.itmo.mse.constants.ObjectNames;
 import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
-import org.itmo.mse.constants.MobSpecifications;
 import org.itmo.mse.game.objects.mob.*;
 
 import java.util.List;
@@ -22,8 +22,9 @@ public class MobGeneration extends Generation {
         TextCharacter character;
         int damage = (int) (rand.nextDouble() * (MobSpecifications.upperMobDamage - MobSpecifications.lowerMobDamage) +
                             MobSpecifications.lowerMobDamage);
-        int health = (int) (rand.nextDouble() * (MobSpecifications.upperMobHealthy - MobSpecifications.lowerMobHealthy) +
-                            MobSpecifications.lowerMobHealthy);
+        int health =
+                (int) (rand.nextDouble() * (MobSpecifications.upperMobHealthy - MobSpecifications.lowerMobHealthy) +
+                       MobSpecifications.lowerMobHealthy);
         int experience;
         int generateRandomStrategy = rand.nextInt(100);
         if (generateRandomStrategy < Proportions.shyMob * 100) {
