@@ -18,8 +18,11 @@ public class Move implements Action {
     public List<String> execute(TextGraphics graphics) {
         if (!game.isBackpackOpened()) {
             TerminalRectangle oldPosition = game.getPlayer().getPosition();
-            graphics.drawRectangle(oldPosition.position, oldPosition.size, ' ');
-            return game.updatePlayerPosition(direction, graphics);
+            List<String> updateResult = game.updatePlayerPosition(direction, graphics);
+            if (!game.getPlayer().getPosition().equals(oldPosition)) {
+                graphics.drawRectangle(oldPosition.position, oldPosition.size, ' ');
+            }
+            return updateResult;
         } else {
             game.setSelectedItemInBackpack(direction);
             if (game.getPlayer().getBackpack().size() != 0) {

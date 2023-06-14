@@ -3,7 +3,7 @@ package org.itmo.mse.ui.windows;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import org.itmo.mse.constants.Change;
+import org.itmo.mse.constants.ChangeNames;
 import org.itmo.mse.constants.Proportions;
 import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectMapFormatException;
@@ -136,31 +136,31 @@ public class GameWindow extends Window {
     }
     
     public void reprint(List<String> changes, List<String> info) throws IncorrectMapFormatException, IOException {
-        if (changes.contains(Change.DUNGEON_LEVEL.name())) {
+        if (changes.contains(ChangeNames.DUNGEON_LEVEL)) {
             printLevel();
         } else {
             if (info != null) {
                 printObjectInfo(info);
             }
-            if (changes.contains(Change.DEATH_MOB.name())) {
+            if (changes.contains(ChangeNames.DEATH_MOB)) {
                 printObject(game.getLevelMap());
             }
-            if (changes.contains(Change.PLAYER_POSITION.name())) {
+            if (changes.contains(ChangeNames.PLAYER_POSITION)) {
                 printObject(game.getPlayer());
             }
-            if (changes.contains(Change.SELECTED_INDEX_ITEM.name()) ||
-                changes.contains(Change.BACKPACK_OPENED_TRUE.name()) ||
-                changes.contains(Change.ADD_REMOVE_ITEM.name())) {
+            if (changes.contains(ChangeNames.SELECTED_INDEX_ITEM) ||
+                changes.contains(ChangeNames.BACKPACK_OPENED_TRUE) ||
+                changes.contains(ChangeNames.ADD_REMOVE_ITEM)) {
                 TextCharacter color =
                         game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
                 int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
                 backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
                 backpackPrinter.printBackpack(game);
             }
-            if (changes.contains(Change.BACKPACK_OPENED_FALSE.name())) {
+            if (changes.contains(ChangeNames.BACKPACK_OPENED_FALSE)) {
                 backpackPrinter.printBackpack(game);
             }
-            if (changes.contains(Change.PLAYER_INFO.name())) {
+            if (changes.contains(ChangeNames.PLAYER_INFO)) {
                 playerPrinter.printPlayerInfo(game, startRow);
             }
             screen.refresh();
