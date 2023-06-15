@@ -15,6 +15,5 @@ public class ShyMobStrategy implements MobStrategy {
                                            mobPosition);
         }
         return mobPosition;
-        
     }
 }

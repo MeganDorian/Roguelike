@@ -29,14 +29,6 @@ public interface MobStrategy {
         
         Checker.Filter isWallInZone =
                 (Wall wall) -> wall.getPosition().x <= zone.xAndWidth && wall.getPosition().y <= zone.yAndHeight;
-        List<Wall> list = walls.stream().filter(wall -> {
-            TerminalRectangle position = wall.getPosition();
-            return isWallInZone.filter(wall) && Checker.isIntersect(position.position,
-                                                                    position.position.withRelativeColumn(position.width)
-                                                                                     .withRelativeRow(position.height),
-                                                                    mobPosition.position,
-                                                                    playerPosition.position);
-        }).toList();
         return walls.stream().anyMatch(wall -> {
             TerminalRectangle position = wall.getPosition();
             return isWallInZone.filter(wall) && Checker.isIntersect(position.position,

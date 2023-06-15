@@ -11,7 +11,7 @@ public class Damage extends TimerTask implements Action {
     
     @Override
     public void run() {
-        game.causingDamage();
+        game.performDamage();
     }
     
     @Override

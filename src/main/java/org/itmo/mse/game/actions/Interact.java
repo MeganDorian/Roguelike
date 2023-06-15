@@ -17,10 +17,7 @@ public class Interact implements Action {
         } else {
             List<String> info = new ArrayList<>();
             info.add("You used:");
-            info.addAll(game.getPlayer()
-                            .getBackpack()
-                            .get(game.getPlayer().getBackpack().getSelectedItemIndex())
-                            .getInfo());
+            info.addAll(game.getPlayer().getSelectedInBackpackItem().getInfo());
             game.applySelectedItem();
             return info;
         }

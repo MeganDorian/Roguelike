@@ -17,19 +17,16 @@ public class Move implements Action {
     @Override
     public List<String> execute(TextGraphics graphics) {
         if (!game.isBackpackOpened()) {
-            TerminalRectangle oldPosition = game.getPlayer().getPosition();
+            TerminalRectangle oldPosition = game.getPlayerPosition();
             List<String> updateResult = game.updatePlayerPosition(direction, graphics);
-            if (!game.getPlayer().getPosition().equals(oldPosition)) {
+            if (!game.getPlayerPosition().equals(oldPosition)) {
                 graphics.drawRectangle(oldPosition.position, oldPosition.size, ' ');
             }
             return updateResult;
         } else {
             game.setSelectedItemInBackpack(direction);
-            if (game.getPlayer().getBackpack().size() != 0) {
-                return game.getPlayer()
-                           .getBackpack()
-                           .get(game.getPlayer().getBackpack().getSelectedItemIndex())
-                           .getInfo();
+            if (game.getPlayer().getBackpackSize() != 0) {
+                return game.getPlayer().getSelectedInBackpackItem().getInfo();
             } else {
                 game.setBackpackOpened(false);
                 return List.of();

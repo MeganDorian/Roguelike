@@ -118,11 +118,11 @@ public class GameWindow extends Window {
                         game.makeAllMobsAlive();
                     }
                 } else if (input.getCharacter() != null) {
-                    if (input.getCharacter().equals('e') ) {
+                    if (input.getCharacter().equals('e')) {
                         info = interact.execute(textGraphics);
-                    } else if (input.getCharacter().equals('i') ) {
+                    } else if (input.getCharacter().equals('i')) {
                         info = backpackAction.execute(textGraphics);
-                    } else if (input.getCharacter().equals('x') ) {
+                    } else if (input.getCharacter().equals('x')) {
                         dropItem.execute(textGraphics);
                     }
                 }
@@ -153,7 +153,7 @@ public class GameWindow extends Window {
                 changes.contains(ChangeNames.ADD_REMOVE_ITEM)) {
                 TextCharacter color =
                         game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
-                int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
+                int selectedItemIndex = game.getPlayer().getSelectedItemIndex();
                 backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
                 backpackPrinter.printBackpack(game);
             }

@@ -38,6 +38,42 @@ public class MapLoader {
     private MobLoader mobLoader;
     
     /**
+     * Load map from file and return map object
+     */
+    public Map loadFromFile(String fileName, boolean isFirst, Player player)
+            throws IOException, IncorrectMapFormatException {
+        reset();
+        readMap(fileName, isFirst);
+        
+        player.setPosition(playerPosition);
+        
+        TerminalRectangle mapBorder = new TerminalRectangle(0, 0, width, height);
+        return Map.builder()
+                  .start(startPosition)
+                  .exit(exitPosition)
+                  .border(mapBorder)
+                  .walls(wallsLoader.getWalls()
+                                    .entrySet()
+                                    .stream()
+                                    .map(entry -> {
+                                        TerminalPosition wallStart = entry.getValue();
+                                        TerminalPosition wallEnd = entry.getKey();
+                                        int width = Math.abs(wallStart.getColumn() -
+                                                             wallEnd.getColumn()) + 1;
+                                        int height = Math.abs(wallStart.getRow() -
+                                                              wallEnd.getRow()) + 1;
+                                        return new Wall(new TerminalRectangle(wallStart.getColumn(),
+                                                                              wallStart.getRow(),
+                                                                              width,
+                                                                              height));
+                                    })
+                                    .collect(Collectors.toList()))
+                  .things(itemLoader.getItems())
+                  .mobs(mobLoader.getMobs())
+                  .build();
+    }
+    
+    /**
      * Resets the map
      */
     private void reset() {
@@ -47,6 +83,41 @@ public class MapLoader {
         wallsLoader = new WallsLoader();
         itemLoader = new ItemsLoader();
         mobLoader = new MobLoader();
+    }
+    
+    /**
+     * Read map from file. First level is static
+     */
+    private void readMap(String fileName, boolean isFirst) throws IOException, IncorrectMapFormatException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(isFirst ?
+                                                                              FileUtils.getFileFromResource(fileName) :
+                                                                              FileUtils.getFile(fileName)))) {
+            height = 0;
+            while (reader.ready()) {
+                String line = reader.readLine();
+                width = line.length();
+                processLine(line);
+                height++;
+            }
+        }
+        
+        if (exitPosition == null) {
+            throw new IncorrectMapFormatException("There is no exit from the level");
+        }
+        if (playerPosition == null) {
+            throw new IncorrectMapFormatException("There is no player position on the map");
+        }
+    }
+    
+    /**
+     * Performs string processing
+     */
+    private void processLine(String line) throws IncorrectMapFormatException {
+        exitPosition = checkExitStartPosition(line, width, exitPosition, "It can't be two exits on map");
+        startPosition = checkExitStartPosition(line, 1, startPosition, "It can't be two starts on map");
+        getPlayerPosition(line);
+        
+        searchForObjectsOnMap(line);
     }
     
     /**
@@ -93,78 +164,5 @@ public class MapLoader {
                 itemLoader.getItems(position);
             }
         }
-    }
-    
-    /**
-     * Performs string processing
-     */
-    private void processLine(String line) throws IncorrectMapFormatException {
-        exitPosition = checkExitStartPosition(line, width, exitPosition, "It can't be two exits on map");
-        startPosition = checkExitStartPosition(line, 1, startPosition, "It can't be two starts on map");
-        getPlayerPosition(line);
-        
-        searchForObjectsOnMap(line);
-    }
-    
-    /**
-     * Read map from file. First level is static
-     */
-    private void readMap(String fileName, boolean isFirst) throws IOException, IncorrectMapFormatException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(isFirst ?
-                                                                              FileUtils.getFileFromResource(fileName) :
-                                                                              FileUtils.getFile(fileName)))) {
-            height = 0;
-            while (reader.ready()) {
-                String line = reader.readLine();
-                width = line.length();
-                processLine(line);
-                height++;
-            }
-        }
-        
-        if (exitPosition == null) {
-            throw new IncorrectMapFormatException("There is no exit from the level");
-        }
-        if (playerPosition == null) {
-            throw new IncorrectMapFormatException("There is no player position on the map");
-        }
-    }
-    
-    /**
-     * Load map from file and return map object
-     */
-    public Map loadFromFile(String fileName, boolean isFirst, Player player)
-            throws IOException, IncorrectMapFormatException {
-        reset();
-        readMap(fileName, isFirst);
-        
-        player.setPosition(playerPosition);
-        
-        TerminalRectangle mapBorder = new TerminalRectangle(0, 0, width, height);
-        return Map.builder()
-                  .start(startPosition)
-                  .exit(exitPosition)
-                  .border(mapBorder)
-                  .walls(wallsLoader.getWalls()
-                                    .entrySet()
-                                    .stream()
-                                    .map(entry -> {
-                                        TerminalPosition wallStart = entry.getValue();
-                                        TerminalPosition wallEnd = entry.getKey();
-                                        int width = Math.abs(wallStart.getColumn() -
-                                                             wallEnd.getColumn()) +
-                                                    1;
-                                        int height = Math.abs(wallStart.getRow() -
-                                                              wallEnd.getRow()) +
-                                                     1;
-                                        return new Wall(new TerminalRectangle(wallStart.getColumn(),
-                                                                              wallStart.getRow(),
-                                                                              width,
-                                                                              height));
-                                    })
-                                    .collect(Collectors.toList()))
-                  .things(itemLoader.getItems())
-                  .mobs(mobLoader.getMobs())
-                  .build();
     }
 }

@@ -14,12 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public abstract class Object {
+    private final TextCharacter character;
+    private final String name;
     @Setter
     protected TerminalRectangle position;
-    
-    private final TextCharacter character;
-    
-    private final String name;
     
     /**
      * Prints object at his position

@@ -13,23 +13,19 @@ import static org.itmo.mse.constants.MobSpecifications.mobVisionDefaultValue;
 
 @Getter
 public class Mob extends Object {
+    private final int damage;
+    private final int experience;
     @Setter
     private TerminalRectangle visionRange;
-    
     @Setter
     private MobStrategy strategy;
-    
-    private final int damage;
-    
     @Setter
     private int health;
-    
-    private final int experience;
     
     
     public Mob(TerminalRectangle position, TextCharacter specialCharacters, String name, MobStrategy strategy,
                int damage, int health, int experience) {
-        super(position, specialCharacters, name);
+        super(specialCharacters, name, position);
         this.strategy = strategy;
         this.damage = damage;
         this.health = health;
@@ -38,16 +34,6 @@ public class Mob extends Object {
                                             position.y - mobVisionDefaultValue / 2,
                                             mobVisionDefaultValue + 1,
                                             mobVisionDefaultValue + 1);
-    }
-    
-    /**
-     * Get info about mob
-     *
-     * @return info
-     */
-    @Override
-    public List<String> getInfo() {
-        return List.of(getName(), "ATTACK: " + damage, "HP: " + health, "XP: " + experience);
     }
     
     @Override
@@ -68,6 +54,16 @@ public class Mob extends Object {
                                             position.y - mobVisionDefaultValue / 2,
                                             mobVisionDefaultValue + 1,
                                             mobVisionDefaultValue + 1);
+    }
+    
+    /**
+     * Get info about mob
+     *
+     * @return info
+     */
+    @Override
+    public List<String> getInfo() {
+        return List.of(getName(), "ATTACK: " + damage, "HP: " + health, "XP: " + experience);
     }
 
 //    @Override
