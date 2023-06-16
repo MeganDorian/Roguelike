@@ -37,7 +37,7 @@ public class Game {
     private Map levelMap;
     @Setter
     private Player player;
-    private ArrayList<String> changes;
+    private final ArrayList<String> changes;
     
     public Game() {
         player = new Player(new TerminalRectangle(0, 0, 0, 0));
@@ -60,7 +60,7 @@ public class Game {
                                .border(state.levelMap.getPosition())
                                .walls(state.levelMap.getWalls())
                                .things(state.levelMap.getItems())
-                               .mobs(new ArrayList<>(state.levelMap.getMobs().stream().map(Mob::clone).toList()))
+                               .mobs(state.levelMap.getMobs())
                                .build();
         }
         this.player = new Player(state.player);
@@ -410,7 +410,7 @@ public class Game {
      * Makes all alive mobs to make action if they see player
      */
     public void makeAllMobsAlive() {
-        ArrayList<Mob> oldMobs = new ArrayList<>(getMobs().stream().map(Mob::clone).toList());
+        ArrayList<Mob> oldMobs = new ArrayList<>(getMobs().stream().map(Mob::makeClone).toList());
         getMobs().forEach(mob -> mob.makeAction(player.getPosition(), levelMap.getWalls()));
         for (int i = 0; i < oldMobs.size(); i++) {
             if (!oldMobs.get(i).getPosition().equals(getMobs().get(i).getPosition())) {
