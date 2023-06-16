@@ -115,8 +115,8 @@ public class MapLoader {
      * Performs string processing
      */
     private void processLine(String line) throws IncorrectMapFormatException {
-        exitPosition = checkExitStartPosition(line, width-1, exitPosition, "It can't be two exits on map");
-        startPosition = checkExitStartPosition(line, 0, startPosition, "It can't be two starts on map");
+        exitPosition = checkExitStartPosition(line, width, exitPosition, "It can't be two exits on map");
+        startPosition = checkExitStartPosition(line, 1, startPosition, "It can't be two starts on map");
         getPlayerPosition(line);
         
         searchForObjectsOnMap(line);
@@ -127,7 +127,7 @@ public class MapLoader {
      */
     private TerminalPosition checkExitStartPosition(String line, int indexToSearch, TerminalPosition position,
                                                     String error) throws IncorrectMapFormatException {
-        if (line.charAt(indexToSearch) == SpecialCharacters.getSpaceChar()) {
+        if (line.charAt(indexToSearch - 1) == SpecialCharacters.getSpaceChar()) {
             if (position != null) {
                 throw new IncorrectMapFormatException(error);
             }

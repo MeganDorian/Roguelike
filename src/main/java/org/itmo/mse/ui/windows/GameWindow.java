@@ -37,7 +37,6 @@ public class GameWindow extends Window {
         this.backpackAction = backpackAction;
         this.dropItem = dropItem;
         this.reaction = reaction;
-        ((CheckForChanged) reaction).setOldGameObject(new Game(game));
         screen.clear();
         screen.refresh();
         printLevel();
