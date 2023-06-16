@@ -17,44 +17,38 @@ import org.itmo.mse.utils.Checker;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static org.itmo.mse.constants.ChangeNames.*;
 import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
 import static org.itmo.mse.constants.ObjectNames.noArmor;
 import static org.itmo.mse.constants.Proportions.backpackSize;
 
 @Getter
 public class Game {
-    private Item objectUnderPlayer;
-    
+    private final Timer timerForDamage;
+    private Item itemUnderPlayer;
     private Mob mobUnderPlayer;
-    
     @Setter
     private int dungeonLevel = 1;
-    
     private long timeUnderPlayer = 0;
-    
-    @Setter
     private boolean isBackpackOpened = false;
-    
     @Setter
     private int backpackItemsInRow = 3;
-    
     @Setter
     private Map levelMap;
-    
     @Setter
     private Player player;
-    
-    private final Timer timerForDamage;
+    private ArrayList<String> changes;
     
     public Game() {
         player = new Player(new TerminalRectangle(0, 0, 0, 0));
         timerForDamage = new Timer();
         Action damage = new Damage();
         timerForDamage.schedule((TimerTask) damage, 0, 1000);
+        changes = new ArrayList<>();
     }
     
     public Game(Game state) {
-        this.objectUnderPlayer = state.objectUnderPlayer;
+        this.itemUnderPlayer = state.itemUnderPlayer;
         this.mobUnderPlayer = state.mobUnderPlayer;
         this.dungeonLevel = state.dungeonLevel;
         this.isBackpackOpened = state.isBackpackOpened;
@@ -66,12 +60,13 @@ public class Game {
                                .border(state.levelMap.getPosition())
                                .walls(state.levelMap.getWalls())
                                .things(state.levelMap.getItems())
-                               .mobs(state.levelMap.getMobs())
+                               .mobs(new ArrayList<>(state.levelMap.getMobs().stream().map(Mob::clone).toList()))
                                .build();
         }
         this.player = new Player(state.player);
         this.timeUnderPlayer = state.timeUnderPlayer;
         this.timerForDamage = state.timerForDamage;
+        this.changes = new ArrayList<>();
     }
     
     /**
@@ -91,37 +86,43 @@ public class Game {
             info = playerOnMob(newPosition, graphics);
         }
         
-        // is newPosition == map start
         if (levelMap != null && newPosition.position.equals(levelMap.getStart())) {
             newPosition = playerPosition;
         }
         
         if (levelMap != null && newPosition.position.equals(levelMap.getExit())) {
-            dungeonLevel++;
-            double upMobHealthy;
-            double upMobDamage;
-            if (dungeonLevel % 10 == 0) {
-                upMobHealthy = Proportions.upTenthMobHealthy;
-                upMobDamage = Proportions.upTenthMobDamage;
-            } else {
-                upMobHealthy = Proportions.upMobHealthy;
-                upMobDamage = Proportions.upMobDamage;
-            }
-            MobSpecifications.lowerMobHealthy = (int) Math.ceil(MobSpecifications.lowerMobHealthy * upMobHealthy);
-            MobSpecifications.upperMobHealthy = (int) Math.ceil(MobSpecifications.upperMobHealthy * upMobHealthy);
-            MobSpecifications.lowerMobDamage = (int) Math.ceil(MobSpecifications.lowerMobDamage * upMobDamage);
-            MobSpecifications.upperMobDamage = (int) Math.ceil(MobSpecifications.upperMobDamage * upMobDamage);
-            MobSpecifications.defaultExperienceShyMob = (int) Math.ceil(MobSpecifications.defaultExperienceShyMob *
-                                                                        Proportions.upMobExperience);
-            MobSpecifications.defaultExperiencePassiveMob =
-                    (int) Math.ceil(MobSpecifications.defaultExperiencePassiveMob * Proportions.upMobExperience);
-            MobSpecifications.defaultExperienceAggressiveMob =
-                    (int) Math.ceil(MobSpecifications.defaultExperienceAggressiveMob * Proportions.upMobExperience);
-            return null;
+            return performExit();
         }
         
+        if (!newPosition.equals(player.getPosition())) {
+            changes.add(PLAYER_POSITION);
+        }
         player.setPosition(newPosition);
         return info;
+    }
+    
+    private List<String> performExit() {
+        dungeonLevel++;
+        double upMobHealthy;
+        double upMobDamage;
+        if (dungeonLevel % 10 == 0) {
+            upMobHealthy = Proportions.upTenthMobHealthy;
+            upMobDamage = Proportions.upTenthMobDamage;
+        } else {
+            upMobHealthy = Proportions.upMobHealthy;
+            upMobDamage = Proportions.upMobDamage;
+        }
+        MobSpecifications.lowerMobHealthy = (int) Math.ceil(MobSpecifications.lowerMobHealthy * upMobHealthy);
+        MobSpecifications.upperMobHealthy = (int) Math.ceil(MobSpecifications.upperMobHealthy * upMobHealthy);
+        MobSpecifications.lowerMobDamage = (int) Math.ceil(MobSpecifications.lowerMobDamage * upMobDamage);
+        MobSpecifications.upperMobDamage = (int) Math.ceil(MobSpecifications.upperMobDamage * upMobDamage);
+        MobSpecifications.defaultExperienceShyMob = (int) Math.ceil(MobSpecifications.defaultExperienceShyMob *
+                                                                    Proportions.upMobExperience);
+        MobSpecifications.defaultExperiencePassiveMob = (int) Math.ceil(MobSpecifications.defaultExperiencePassiveMob *
+                                                                        Proportions.upMobExperience);
+        MobSpecifications.defaultExperienceAggressiveMob =
+                (int) Math.ceil(MobSpecifications.defaultExperienceAggressiveMob * Proportions.upMobExperience);
+        return List.of();
     }
     
     /**
@@ -131,12 +132,11 @@ public class Game {
         // if player will stand on the item save this item
         Optional<? extends Object> itemOnNewPosition = Checker.isObjectAtPosition(newPosition, levelMap.getItems());
         if (itemOnNewPosition.isPresent()) {
-            timeUnderPlayer = System.currentTimeMillis();
-            objectUnderPlayer = (Item) itemOnNewPosition.get();
+            itemUnderPlayer = (Item) itemOnNewPosition.get();
             return itemOnNewPosition.get().getInfo();
-        } else if (objectUnderPlayer != null) {
-            objectUnderPlayer.print(graphics);
-            objectUnderPlayer = null;
+        } else if (itemUnderPlayer != null) {
+            itemUnderPlayer.print(graphics);
+            itemUnderPlayer = null;
         }
         return List.of();
     }
@@ -148,9 +148,10 @@ public class Game {
         // if player will stand on the item save this item
         Optional<? extends Object> itemOnNewPosition = Checker.isObjectAtPosition(newPosition, levelMap.getMobs());
         if (itemOnNewPosition.isPresent()) {
+            timeUnderPlayer = System.currentTimeMillis();
             mobUnderPlayer = (Mob) itemOnNewPosition.get();
             List<String> info = itemOnNewPosition.get().getInfo();
-            causingDamage();
+            performDamage();
             return info;
         } else if (mobUnderPlayer != null) {
             mobUnderPlayer.print(graphics);
@@ -160,23 +161,97 @@ public class Game {
     }
     
     /**
+     * The method deals damage if the user stands on
+     * a mob for a certain amount of time
+     */
+    public void performDamage() {
+        if (mobUnderPlayer != null && !isBackpackOpened) {
+            if (System.currentTimeMillis() - timeUnderPlayer >= 1000) {
+                mobUnderPlayer.setHealth(mobUnderPlayer.getHealth() - player.getWeaponValue());
+                if (player.getArmorValue() > mobUnderPlayer.getDamage()) {
+                    player.setArmorValue(player.getArmorValue() - mobUnderPlayer.getDamage());
+                } else {
+                    player.setHealth(player.getHealth() - mobUnderPlayer.getDamage() + player.getArmorValue());
+                    player.setArmor(new Item(null,
+                                             null,
+                                             noArmor,
+                                             ItemCharacteristic.USUAL,
+                                             ItemType.ARMOR,
+                                             null,
+                                             "",
+                                             0));
+                }
+                timeUnderPlayer = System.currentTimeMillis();
+                changes.add(MOB_CHANGED);
+                changes.add(PLAYER_INFO);
+            }
+            if (player.getHealth() <= 0) {
+                restart();
+            } else {
+                if (mobUnderPlayer.getHealth() <= 0) {
+                    levelMap.removeMob(mobUnderPlayer);
+                    addExperience(mobUnderPlayer.getExperience());
+                    mobUnderPlayer = null;
+                    timeUnderPlayer = 0;
+                }
+            }
+        }
+    }
+    
+    public void restart() {
+        itemUnderPlayer = null;
+        mobUnderPlayer = null;
+        dungeonLevel = -1;
+        timeUnderPlayer = 0;
+        isBackpackOpened = false;
+        backpackItemsInRow = 3;
+        levelMap = null;
+        player = new Player(new TerminalRectangle(0, 0, 0, 0));
+        changes.clear();
+    }
+    
+    /**
+     * Increases player experience
+     */
+    public void addExperience(int experience) {
+        player.setExperience(player.getExperience() + experience);
+        while (player.getExperience() >= player.getExperienceForNextLevel()) {
+            player.setExperience(player.getExperience() - player.getExperienceForNextLevel());
+            player.setLevel(player.getLevel() + 1);
+            double proportionLevelEx;
+            if (player.getLevel() % 100 == 99) {
+                proportionLevelEx = Proportions.newHundredthLevelEx;
+            } else if (player.getLevel() % 10 == 9) {
+                proportionLevelEx = Proportions.newTenthLevelEx;
+            } else {
+                proportionLevelEx = Proportions.newLevelEx;
+            }
+            player.setExperienceForNextLevel((int) (player.getExperienceForNextLevel() * proportionLevelEx));
+            player.setMaxHealth((int) (player.getMaxHealth() * Proportions.maxHealth));
+            player.setHealth(player.getMaxHealth());
+        }
+        changes.add(PLAYER_INFO);
+    }
+    
+    /**
      * Picks up item from map and puts it in backpack
      *
      * @return information about item or notification of overfilling the backpack
      */
     public List<String> pickupItem() {
-        if (objectUnderPlayer != null) {
+        if (itemUnderPlayer != null) {
             // store it in backpack if its enough space in it
-            if (player.getBackpack().size() == backpackSize) {
+            if (player.getBackpackSize() == backpackSize) {
                 return List.of("Your backpack is full!");
             }
             
-            levelMap.getItems().remove(objectUnderPlayer);
-            player.getBackpack().getItems().add(objectUnderPlayer);
+            levelMap.getItems().remove(itemUnderPlayer);
+            player.addToBackpack(itemUnderPlayer);
             List<String> pickedItemInfo = new ArrayList<>();
             pickedItemInfo.add("You picked up :");
-            pickedItemInfo.addAll(objectUnderPlayer.getInfo());
-            objectUnderPlayer = null;
+            pickedItemInfo.addAll(itemUnderPlayer.getInfo());
+            itemUnderPlayer = null;
+            changes.add(ADD_REMOVE_ITEM);
             return pickedItemInfo;
         }
         return List.of();
@@ -187,34 +262,37 @@ public class Game {
      * (up, down, left or right)
      */
     public void setSelectedItemInBackpack(Direction direction) {
-        int selectedItem = player.getBackpack().getSelectedItemIndex();
-        if (direction == Direction.RIGHT && selectedItem + 1 < player.getBackpack().size()) {
+        int selectedItem = player.getSelectedItemIndex();
+        if (direction == Direction.RIGHT && selectedItem + 1 < player.getBackpackSize()) {
             selectedItem++;
         } else if (direction == Direction.LEFT && selectedItem != 0) {
             selectedItem--;
         } else if (direction == Direction.UP && selectedItem - backpackItemsInRow >= 0) {
             selectedItem -= backpackItemsInRow;
-        } else if (direction == Direction.DOWN && selectedItem + backpackItemsInRow < player.getBackpack().size()) {
+        } else if (direction == Direction.DOWN && selectedItem + backpackItemsInRow < player.getBackpackSize()) {
             selectedItem += backpackItemsInRow;
         }
-        player.getBackpack().setSelectedItemIndex(selectedItem);
+        player.setSelectedItemIndex(selectedItem);
+        changes.add(SELECTED_INDEX_ITEM);
     }
     
     /**
      * Applies selected item in the backpack
      */
     public void applySelectedItem() {
-        int selectedItem = player.getBackpack().getSelectedItemIndex();
-        Item item = player.getBackpack().get(selectedItem);
+        int selectedItem = player.getSelectedItemIndex();
+        Item item = player.getSelectedInBackpackItem();
         switch (item.getItemType()) {
             case MEDICAL_AID -> applyMedicalAid(item);
             case ARMOR -> applyArmor(item, selectedItem);
             case WEAPON -> applyWeapon(item, selectedItem);
         }
-        player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
-        if (player.getBackpack().size() == 0) {
+        player.setSelectedItemIndex(Math.max(0, selectedItem - 1));
+        if (player.getBackpackSize() == 0) {
             isBackpackOpened = false;
         }
+        changes.add(PLAYER_INFO);
+        changes.add(ADD_REMOVE_ITEM);
     }
     
     /**
@@ -226,9 +304,8 @@ public class Game {
                                 ObjectEffect.usualAid :
                                 ObjectEffect.legendaryAid)) + player.getHealth();
         player.setHealth(Math.min(addHealth, player.getMaxHealth()));
-        player.getBackpack().getItems().remove(item);
+        player.removeFromBackpack(item);
     }
-    
     
     /**
      * If equipped armor class == armor to put on class, then armor will be stacked with the
@@ -241,12 +318,12 @@ public class Game {
         if (item.getItemClass() == equippedArmor.getItemClass()) {
             addArmor = equippedArmor.getValue() + increaseValueBasedOnItemClass(item);
             equippedArmor.setValue(addArmor);
-            player.getBackpack().getItems().remove(item);
+            player.removeFromBackpack(item);
             player.setArmor(equippedArmor);
         } else {
-            player.getBackpack().getItems().remove(item);
+            player.removeFromBackpack(item);
             if (!equippedArmor.getName().equals(ObjectNames.noArmor)) {
-                player.getBackpack().getItems().add(selectedItem, equippedArmor);
+                player.addToBackpack(selectedItem, equippedArmor);
             }
             player.setArmor(item);
         }
@@ -265,12 +342,12 @@ public class Game {
             if (!equippedWeapon.getName().equals(ObjectNames.emptyHands)) {
                 addWeapon += equippedWeapon.getValue();
             }
-            player.getBackpack().getItems().remove(item);
-            player.getWeapon().setValue(addWeapon);
+            player.removeFromBackpack(item);
+            player.setWeaponValue(addWeapon);
         } else {
-            player.getBackpack().getItems().remove(item);
+            player.removeFromBackpack(item);
             if (!equippedWeapon.getName().equals(ObjectNames.emptyHands)) {
-                player.getBackpack().getItems().add(selectedItem, equippedWeapon);
+                player.addToBackpack(selectedItem, equippedWeapon);
             }
             player.setWeapon(item);
         }
@@ -289,55 +366,20 @@ public class Game {
      * searches for the free place near the player
      */
     public void dropItemFromBackpack() {
-        int selectedItem = player.getBackpack().getSelectedItemIndex();
-        Item item = player.getBackpack().get(selectedItem);
-        player.getBackpack().getItems().remove(item);
+        Item item = player.getSelectedInBackpackItem();
+        player.removeFromBackpack(item);
         TerminalRectangle freePosition = getNearestFreePlace().get();
         item.setPosition(freePosition);
         if (freePosition.equals(player.getPosition())) {
-            objectUnderPlayer = item;
+            itemUnderPlayer = item;
         }
-        levelMap.getItems().add(item);
-        player.getBackpack().setSelectedItemIndex(Math.max(0, selectedItem - 1));
-        if (player.getBackpack().size() == 0) {
+        levelMap.addItem(item);
+        int selectedItem = player.getSelectedItemIndex();
+        player.setSelectedItemIndex(Math.max(0, selectedItem - 1));
+        if (player.getBackpackSize() == 0) {
             isBackpackOpened = false;
         }
-    }
-    
-    /**
-     * The method deals damage if the user stands on
-     * a mob for a certain amount of time
-     */
-    public void causingDamage() {
-        if (mobUnderPlayer != null && !isBackpackOpened) {
-            if (System.currentTimeMillis() - timeUnderPlayer >= 1000) {
-                mobUnderPlayer.setHealth(mobUnderPlayer.getHealth() - player.getWeapon().getValue());
-                if (player.getArmor().getValue() > mobUnderPlayer.getDamage()) {
-                    player.getArmor().setValue(player.getArmor().getValue() - mobUnderPlayer.getDamage());
-                } else {
-                    player.setHealth(player.getHealth() - mobUnderPlayer.getDamage() + player.getArmor().getValue());
-                    player.setArmor(new Item(null,
-                                             null,
-                                             noArmor,
-                                             ItemCharacteristic.USUAL,
-                                             ItemType.ARMOR,
-                                             null,
-                                             "",
-                                             0));
-                }
-                timeUnderPlayer = System.currentTimeMillis();
-            }
-            if (player.getHealth() <= 0) {
-                restart();
-            } else {
-                if (mobUnderPlayer.getHealth() <= 0) {
-                    levelMap.getMobs().remove(mobUnderPlayer);
-                    
-                    mobUnderPlayer = null;
-                    timeUnderPlayer = 0;
-                }
-            }
-        }
+        changes.add(ADD_REMOVE_ITEM);
     }
     
     /**
@@ -364,22 +406,41 @@ public class Game {
                      .or(() -> Optional.of(playerPosition));
     }
     
-    public void restart() {
-        objectUnderPlayer = null;
-        mobUnderPlayer = null;
-        dungeonLevel = -1;
-        timeUnderPlayer = 0;
-        isBackpackOpened = false;
-        backpackItemsInRow = 3;
-        levelMap = null;
-        player = new Player(new TerminalRectangle(0, 0, 0, 0));
-    }
-    
     /**
      * Makes all alive mobs to make action if they see player
      */
     public void makeAllMobsAlive() {
-        levelMap.getMobs().forEach(mob -> mob.makeAction(player.getPosition(), levelMap.getWalls()));
+        ArrayList<Mob> oldMobs = new ArrayList<>(getMobs().stream().map(Mob::clone).toList());
+        getMobs().forEach(mob -> mob.makeAction(player.getPosition(), levelMap.getWalls()));
+        for (int i = 0; i < oldMobs.size(); i++) {
+            if (!oldMobs.get(i).getPosition().equals(getMobs().get(i).getPosition())) {
+                changes.add(MOB_CHANGED);
+                oldMobs.clear();
+                break;
+            }
+        }
     }
     
+    public TerminalRectangle getPlayerPosition() {
+        return player.getPosition();
+    }
+    
+    public List<Mob> getMobs() {
+        return levelMap.getMobs();
+    }
+    
+    public List<Item> getItems() {
+        return levelMap.getItems();
+    }
+    
+    public List<String> getChangesAndClear() {
+        ArrayList<String> newChanges = new ArrayList<>(changes);
+        changes.clear();
+        return newChanges;
+    }
+    
+    public void setBackpackOpened(boolean value) {
+        changes.add(value ? BACKPACK_OPENED_TRUE : BACKPACK_OPENED_FALSE);
+        isBackpackOpened = value;
+    }
 }

@@ -7,6 +7,6 @@ import org.itmo.mse.game.objects.Object;
 
 public class Wall extends Object {
     public Wall(TerminalRectangle position) {
-        super(position, SpecialCharacters.WALL, ObjectNames.wall);
+        super(SpecialCharacters.WALL, ObjectNames.wall, position);
     }
 }

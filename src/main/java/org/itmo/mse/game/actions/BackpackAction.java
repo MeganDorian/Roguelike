@@ -11,7 +11,7 @@ public class BackpackAction implements Action {
      */
     @Override
     public List<String> execute(TextGraphics graphics) {
-        if (game.getPlayer().getBackpack().size() == 0) {
+        if (game.getPlayer().getBackpackSize() == 0) {
             if (!game.isBackpackOpened()) {
                 return List.of("Your backpack is empty");
             }
@@ -19,8 +19,7 @@ public class BackpackAction implements Action {
             return List.of();
         }
         game.setBackpackOpened(!game.isBackpackOpened());
-        game.getPlayer().getBackpack().setSelectedItemIndex(0);
-        int selectedItem = game.getPlayer().getBackpack().getSelectedItemIndex();
-        return game.isBackpackOpened() ? game.getPlayer().getBackpack().get(selectedItem).getInfo() : List.of();
+        game.getPlayer().setSelectedItemIndex(0);
+        return game.isBackpackOpened() ? game.getPlayer().getSelectedInBackpackItem().getInfo() : List.of();
     }
 }

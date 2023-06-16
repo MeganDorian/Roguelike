@@ -12,6 +12,15 @@ public class WallsLoader {
     private final HashMap<TerminalPosition, TerminalPosition> walls = new HashMap<>();
     
     /**
+     * Add new wall to the list or increase already added wall
+     */
+    public void getWalls(TerminalRectangle position, int i, int height) {
+        if (!addVerticalWall(position.position, i) && !addHorizontalWall(position.position, height)) {
+            walls.put(position.position, position.position);
+        }
+    }
+    
+    /**
      * Analyses the transmitted column for the presence of vertical walls and adds them to the list
      *
      * @return is exists vertical wall
@@ -41,14 +50,5 @@ public class WallsLoader {
             return true;
         }
         return false;
-    }
-    
-    /**
-     * Add new wall to the list or increase already added wall
-     */
-    public void getWalls(TerminalRectangle position, int i, int height) {
-        if (!addVerticalWall(position.position, i) && !addHorizontalWall(position.position, height)) {
-            walls.put(position.position, position.position);
-        }
     }
 }

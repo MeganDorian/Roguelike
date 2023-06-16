@@ -26,13 +26,6 @@ public class Checker {
     }
     
     /**
-     * Returns true if there wall at the position
-     */
-    public boolean isWallAtPosition(TerminalRectangle position, List<Wall> walls) {
-        return walls.stream().anyMatch(wall -> Checker.checkIsIntersect(wall, position));
-    }
-    
-    /**
      * Returns true if position is "inside" the object
      */
     public boolean checkIsIntersect(Object object, TerminalRectangle position) {
@@ -47,6 +40,13 @@ public class Checker {
      */
     public boolean isBetween(int left, int value, int right) {
         return left <= value && right > value;
+    }
+    
+    /**
+     * Returns true if there wall at the position
+     */
+    public boolean isWallAtPosition(TerminalRectangle position, List<Wall> walls) {
+        return walls.stream().anyMatch(wall -> Checker.checkIsIntersect(wall, position));
     }
     
     /**
@@ -97,11 +97,6 @@ public class Checker {
                 return Direction.EMPTY;
             }
         }
-    }
-    
-    @FunctionalInterface
-    public interface Filter {
-        boolean filter(Wall wall);
     }
     
     /**
@@ -156,5 +151,10 @@ public class Checker {
                                          r.getColumn()) &&
                q.getRow() <= Math.max(p.getRow(), r.getRow()) &&
                q.getRow() >= Math.min(p.getRow(), r.getRow());
+    }
+    
+    @FunctionalInterface
+    public interface Filter {
+        boolean filter(Wall wall);
     }
 }

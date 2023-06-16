@@ -144,10 +144,7 @@ public class GameWindow extends Window {
             if (info != null) {
                 printObjectInfo(info);
             }
-            if (changes.contains(ChangeNames.DEATH_MOB)) {
-                printObject(game.getLevelMap());
-            }
-            if (changes.contains(ChangeNames.DEATH_MOB)) {
+            if (changes.contains(ChangeNames.MOB_CHANGED)) {
                 printObject(game.getLevelMap());
             }
             if (changes.contains(ChangeNames.PLAYER_POSITION)) {
@@ -158,7 +155,7 @@ public class GameWindow extends Window {
                 changes.contains(ChangeNames.ADD_REMOVE_ITEM)) {
                 TextCharacter color =
                         game.isBackpackOpened() ? SpecialCharacters.SELECTED_ITEM : SpecialCharacters.SPACE;
-                int selectedItemIndex = game.getPlayer().getBackpack().getSelectedItemIndex();
+                int selectedItemIndex = game.getPlayer().getSelectedItemIndex();
                 backpackPrinter.printSelectBackpackItem(selectedItemIndex, color);
                 backpackPrinter.printBackpack(game);
             }

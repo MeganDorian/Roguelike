@@ -16,22 +16,27 @@ import java.util.List;
 public class Map extends Object {
     
     private final List<Wall> walls;
-    
-    private List<Mob> mobs;
-    
     private final List<Item> items;
-    
     private final TerminalPosition exit;
     private final TerminalPosition start;
+    private final List<Mob> mobs;
     
     private Map(TerminalRectangle border, List<Wall> walls, List<Mob> mobs, List<Item> items, TerminalPosition exit,
                 TerminalPosition start) {
-        super(border, SpecialCharacters.WALL, ObjectNames.map);
+        super(SpecialCharacters.WALL, ObjectNames.map, border);
         this.walls = walls;
         this.mobs = mobs;
         this.items = items;
         this.exit = exit;
         this.start = start;
+    }
+    
+    public void removeMob(Mob mob) {
+        mobs.remove(mob);
+    }
+    
+    public void addItem(Item item) {
+        items.add(item);
     }
     
     public static MapBuilder builder() {
@@ -45,6 +50,7 @@ public class Map extends Object {
      */
     @Override
     public void print(TextGraphics graphics) {
+        graphics.fillRectangle(position.position, position.size, SpecialCharacters.SPACE);
         walls.forEach(wall -> wall.print(graphics));
         items.forEach(item -> item.print(graphics));
         mobs.forEach(mob -> mob.print(graphics));

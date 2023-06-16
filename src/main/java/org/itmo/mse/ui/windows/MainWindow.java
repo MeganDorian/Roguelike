@@ -24,11 +24,9 @@ import static org.itmo.mse.constants.Proportions.paddingStart;
 
 public class MainWindow extends Window {
     
-    private TerminalPosition pressLineStartPosition;
-    
     private final Action startGame;
-    
     private final String start = "press enter to start game";
+    private TerminalPosition pressLineStartPosition;
     
     /**
      * Prints game logo
@@ -38,26 +36,6 @@ public class MainWindow extends Window {
         screen.clear();
         checkScreenSize();
         printLogo();
-    }
-    
-    /**
-     * Waiting for Enter to start the game or ESC to close
-     */
-    public void startGame() throws IOException, InterruptedException, IncorrectMapFormatException {
-        while (true) {
-            enterPressed();
-            KeyStroke input = screen.pollInput();
-            if (input == null) {
-                continue;
-            }
-            switch (input.getKeyType()) {
-                case Enter:
-                    startGame.execute(textGraphics);
-                case Escape:
-                    terminal.close();
-                    return;
-            }
-        }
     }
     
     /**
@@ -74,16 +52,6 @@ public class MainWindow extends Window {
             Thread.sleep(1000);
         }
         screen.clear();
-    }
-    
-    /**
-     * Imitates blinking of line {@link #start}
-     */
-    private void enterPressed() throws IOException, InterruptedException {
-        eraseAtPosition(pressLineStartPosition, start.length());
-        Thread.sleep(1000);
-        printStringAtPosition(start, pressLineStartPosition);
-        Thread.sleep(1000);
     }
     
     /**
@@ -137,5 +105,35 @@ public class MainWindow extends Window {
             }
             image.setCharacterAt(i, j, TextCharacter.fromCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.RED)[0]);
         }
+    }
+    
+    /**
+     * Waiting for Enter to start the game or ESC to close
+     */
+    public void startGame() throws IOException, InterruptedException, IncorrectMapFormatException {
+        while (true) {
+            enterPressed();
+            KeyStroke input = screen.pollInput();
+            if (input == null) {
+                continue;
+            }
+            switch (input.getKeyType()) {
+                case Enter:
+                    startGame.execute(textGraphics);
+                case Escape:
+                    terminal.close();
+                    return;
+            }
+        }
+    }
+    
+    /**
+     * Imitates blinking of line {@link #start}
+     */
+    private void enterPressed() throws IOException, InterruptedException {
+        eraseAtPosition(pressLineStartPosition, start.length());
+        Thread.sleep(1000);
+        printStringAtPosition(start, pressLineStartPosition);
+        Thread.sleep(1000);
     }
 }

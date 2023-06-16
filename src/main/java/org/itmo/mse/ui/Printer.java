@@ -17,14 +17,10 @@ import static org.itmo.mse.constants.Proportions.helpHeight;
 
 
 public abstract class Printer {
-    protected final int startRow = 1;
-    
     protected static Terminal terminal;
-    
     protected static TerminalScreen screen;
-    
     protected static TextGraphics textGraphics = null;
-    
+    protected final int startRow = 1;
     protected final BackpackPrinter backpackPrinter;
     
     protected final PlayerPrinter playerPrinter;
@@ -33,6 +29,14 @@ public abstract class Printer {
         textGraphics = screen.newTextGraphics();
         backpackPrinter = new BackpackPrinter(textGraphics);
         playerPrinter = new PlayerPrinter(textGraphics);
+    }
+    
+    /**
+     * Erases a set position (sets a system-defined character in a set position)
+     */
+    public static void eraseAtPosition(TerminalPosition position, int length) throws IOException {
+        textGraphics.drawLine(position, position.withRelativeColumn(length - 1), SpecialCharacters.SPACE);
+        screen.refresh();
     }
     
     /**
@@ -48,14 +52,6 @@ public abstract class Printer {
      */
     protected void printStringAtPosition(String string, TerminalPosition position) throws IOException {
         textGraphics.putString(position, string);
-        screen.refresh();
-    }
-    
-    /**
-     * Erases a set position (sets a system-defined character in a set position)
-     */
-    public static void eraseAtPosition(TerminalPosition position, int length) throws IOException {
-        textGraphics.drawLine(position, position.withRelativeColumn(length - 1), SpecialCharacters.SPACE);
         screen.refresh();
     }
     
@@ -82,6 +78,14 @@ public abstract class Printer {
         }
     }
     
+    /**
+     * Gets the current terminal size
+     *
+     * @return terminal size
+     */
+    protected static TerminalSize getSize() throws IOException {
+        return terminal.getTerminalSize();
+    }
     
     /**
      * Prints object info under the backpack in the right
@@ -97,14 +101,5 @@ public abstract class Printer {
             infoBlockPosition = infoBlockPosition.withRelativeRow(1);
         }
         screen.refresh();
-    }
-    
-    /**
-     * Gets the current terminal size
-     *
-     * @return terminal size
-     */
-    protected static TerminalSize getSize() throws IOException {
-        return terminal.getTerminalSize();
     }
 }
