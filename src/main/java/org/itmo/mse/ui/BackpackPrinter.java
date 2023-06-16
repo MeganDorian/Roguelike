@@ -61,17 +61,6 @@ public class BackpackPrinter {
     }
     
     /**
-     * Lights up the selected item in the backpack
-     */
-    public void printSelectBackpackItem(int item, TextCharacter color) {
-        textGraphics.fillRectangle(new TerminalPosition(column, row),
-                                   new TerminalSize(width, height - infoBlock.height),
-                                   SpecialCharacters.SPACE);
-        TerminalRectangle selectedItem = backpackCells.get(item);
-        textGraphics.fillRectangle(selectedItem.position, selectedItem.size, color);
-    }
-    
-    /**
      * Prints the backpack cells
      */
     private void printBackpackCells(Game game) throws IOException {
@@ -107,5 +96,16 @@ public class BackpackPrinter {
                                                      .withRelativeRow(item.height / 2);
             textGraphics.drawLine(position, position, backpack.get(i).getCharacter());
         }
+    }
+    
+    /**
+     * Lights up the selected item in the backpack
+     */
+    public void printSelectBackpackItem(int item, TextCharacter color) {
+        textGraphics.fillRectangle(new TerminalPosition(column, row),
+                                   new TerminalSize(width, height - infoBlock.height),
+                                   SpecialCharacters.SPACE);
+        TerminalRectangle selectedItem = backpackCells.get(item);
+        textGraphics.fillRectangle(selectedItem.position, selectedItem.size, color);
     }
 }

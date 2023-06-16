@@ -1,6 +1,7 @@
 package org.itmo.mse.game.objects.mob;
 
 import com.googlecode.lanterna.TerminalRectangle;
+import org.itmo.mse.constants.Direction;
 import org.itmo.mse.game.objects.map.Wall;
 import org.itmo.mse.utils.Checker;
 
@@ -11,10 +12,10 @@ public class ShyMobStrategy implements MobStrategy {
     public TerminalRectangle execute(TerminalRectangle mobVision, TerminalRectangle mobPosition,
                                      TerminalRectangle playerPosition, List<Wall> walls) {
         if (isPlayerInVisionRange(mobVision, mobPosition, playerPosition, walls)) {
-            return Checker.getNextPosition(Checker.getObjectsRelativePosition(playerPosition, mobPosition),
-                                           mobPosition);
+            Direction direction = Checker.getObjectsRelativePosition(playerPosition, mobPosition);
+            Direction nextDirection = getRandomDirection(direction, walls, mobPosition);
+            return Checker.getNextPosition(nextDirection, mobPosition);
         }
         return mobPosition;
-        
     }
 }

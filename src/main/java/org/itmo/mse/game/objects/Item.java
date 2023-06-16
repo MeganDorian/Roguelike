@@ -25,7 +25,7 @@ public class Item extends Object {
     
     public Item(TerminalRectangle position, TextCharacter character, String name, ItemCharacteristic characteristic,
                 ItemType type, ItemClass itemClass, String description, int value) {
-        super(position, character, name);
+        super(character, name, position);
         this.description = description;
         this.itemCharacteristic = characteristic;
         this.itemType = type;
@@ -34,7 +34,7 @@ public class Item extends Object {
     }
     
     public Item(Item state) {
-        super(state.getPosition(), state.getCharacter(), state.getName());
+        super(state.getCharacter(), state.getName(), state.getPosition());
         this.description = state.description;
         this.itemCharacteristic = state.itemCharacteristic;
         this.itemType = state.itemType;
