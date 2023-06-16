@@ -1,10 +1,14 @@
 package org.itmo.mse.game.objects.mob;
 
 import com.googlecode.lanterna.TerminalRectangle;
+import org.itmo.mse.constants.Direction;
 import org.itmo.mse.game.objects.map.Wall;
 import org.itmo.mse.utils.Checker;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public interface MobStrategy {
     
@@ -37,5 +41,60 @@ public interface MobStrategy {
                                                                     mobPosition.position,
                                                                     playerPosition.position);
         });
+    }
+    
+    default List<Direction> getPossibleDirectionsToMove(Direction direction, List<Wall> walls,
+                                                        TerminalRectangle mobPosition) {
+        Set<Direction> possibleDirections = new HashSet<>();
+        
+        if (direction != Direction.DOWN && direction != Direction.DOWN_LEFT && direction != Direction.DOWN_RIGHT) {
+            possibleDirections = checkPositionAndAddIfFree(Direction.UP, mobPosition, walls, possibleDirections);
+        }
+        
+        if (direction != Direction.RIGHT && direction != Direction.UP_RIGHT && direction != Direction.DOWN_RIGHT) {
+            possibleDirections = checkPositionAndAddIfFree(Direction.LEFT, mobPosition, walls, possibleDirections);
+        }
+        
+        if (direction != Direction.RIGHT && direction != Direction.DOWN && direction != Direction.DOWN_RIGHT) {
+            possibleDirections = checkPositionAndAddIfFree(Direction.UP_LEFT, mobPosition, walls, possibleDirections);
+        }
+        
+        if (direction != Direction.LEFT && direction != Direction.DOWN && direction != Direction.DOWN_LEFT) {
+            possibleDirections = checkPositionAndAddIfFree(Direction.UP_RIGHT, mobPosition, walls, possibleDirections);
+        }
+        
+        if (direction != Direction.LEFT && direction != Direction.UP_LEFT && direction != Direction.DOWN_LEFT) {
+            possibleDirections = checkPositionAndAddIfFree(Direction.RIGHT, mobPosition, walls, possibleDirections);
+        }
+        
+        if (direction != Direction.UP && direction != Direction.UP_LEFT && direction != Direction.UP_RIGHT) {
+            possibleDirections = checkPositionAndAddIfFree(Direction.DOWN, mobPosition, walls, possibleDirections);
+        }
+        
+        if (direction != Direction.UP && direction != Direction.UP_RIGHT && direction != Direction.RIGHT) {
+            possibleDirections = checkPositionAndAddIfFree(Direction.DOWN_LEFT, mobPosition, walls, possibleDirections);
+        }
+        
+        if (direction != Direction.UP && direction != Direction.UP_LEFT && direction != Direction.LEFT) {
+            possibleDirections = checkPositionAndAddIfFree(Direction.DOWN_RIGHT,
+                                                           mobPosition,
+                                                           walls,
+                                                           possibleDirections);
+        }
+        return possibleDirections.stream().toList();
+    }
+    
+    default Direction getRandomDirection(Direction direction, List<Wall> walls, TerminalRectangle mobPosition) {
+        List<Direction> directions = getPossibleDirectionsToMove(direction, walls, mobPosition);
+        Random random = new Random();
+        return directions.get(random.nextInt(directions.size()));
+    }
+    
+    default Set<Direction> checkPositionAndAddIfFree(Direction direction, TerminalRectangle mobPosition,
+                                                     List<Wall> walls, Set<Direction> directions) {
+        if (!Checker.isWallAtPosition(Checker.getNextPosition(direction, mobPosition), walls)) {
+            directions.add(direction);
+        }
+        return directions;
     }
 }

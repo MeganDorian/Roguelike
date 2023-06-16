@@ -142,7 +142,7 @@ public class GameWindow extends Window {
             if (info != null) {
                 printObjectInfo(info);
             }
-            if (changes.contains(ChangeNames.DEATH_MOB)) {
+            if (changes.contains(ChangeNames.MOB_CHANGED)) {
                 printObject(game.getLevelMap());
             }
             if (changes.contains(ChangeNames.PLAYER_POSITION)) {

@@ -8,5 +8,5 @@ public interface ChangeNames {
     String PLAYER_INFO = "player info changed";
     String SELECTED_INDEX_ITEM = "selected item in backpack changed";
     String ADD_REMOVE_ITEM = "backpack items changed";
-    String DEATH_MOB = "mob changed";
+    String MOB_CHANGED = "mob changed";
 }

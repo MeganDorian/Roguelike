@@ -17,6 +17,7 @@ import org.itmo.mse.utils.Checker;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static org.itmo.mse.constants.ChangeNames.*;
 import static org.itmo.mse.constants.ItemCharacteristic.USUAL;
 import static org.itmo.mse.constants.ObjectNames.noArmor;
 import static org.itmo.mse.constants.Proportions.backpackSize;
@@ -29,7 +30,6 @@ public class Game {
     @Setter
     private int dungeonLevel = 1;
     private long timeUnderPlayer = 0;
-    @Setter
     private boolean isBackpackOpened = false;
     @Setter
     private int backpackItemsInRow = 3;
@@ -37,12 +37,14 @@ public class Game {
     private Map levelMap;
     @Setter
     private Player player;
+    private ArrayList<String> changes;
     
     public Game() {
         player = new Player(new TerminalRectangle(0, 0, 0, 0));
         timerForDamage = new Timer();
         Action damage = new Damage();
         timerForDamage.schedule((TimerTask) damage, 0, 1000);
+        changes = new ArrayList<>();
     }
     
     public Game(Game state) {
@@ -58,12 +60,13 @@ public class Game {
                                .border(state.levelMap.getPosition())
                                .walls(state.levelMap.getWalls())
                                .things(state.levelMap.getItems())
-                               .mobs(state.levelMap.getMobs())
+                               .mobs(new ArrayList<>(state.levelMap.getMobs().stream().map(Mob::clone).toList()))
                                .build();
         }
         this.player = new Player(state.player);
         this.timeUnderPlayer = state.timeUnderPlayer;
         this.timerForDamage = state.timerForDamage;
+        this.changes = new ArrayList<>();
     }
     
     /**
@@ -91,6 +94,9 @@ public class Game {
             return performExit();
         }
         
+        if (!newPosition.equals(player.getPosition())) {
+            changes.add(PLAYER_POSITION);
+        }
         player.setPosition(newPosition);
         return info;
     }
@@ -176,6 +182,8 @@ public class Game {
                                              0));
                 }
                 timeUnderPlayer = System.currentTimeMillis();
+                changes.add(MOB_CHANGED);
+                changes.add(PLAYER_INFO);
             }
             if (player.getHealth() <= 0) {
                 restart();
@@ -199,6 +207,7 @@ public class Game {
         backpackItemsInRow = 3;
         levelMap = null;
         player = new Player(new TerminalRectangle(0, 0, 0, 0));
+        changes.clear();
     }
     
     /**
@@ -221,6 +230,7 @@ public class Game {
             player.setMaxHealth((int) (player.getMaxHealth() * Proportions.maxHealth));
             player.setHealth(player.getMaxHealth());
         }
+        changes.add(PLAYER_INFO);
     }
     
     /**
@@ -241,6 +251,7 @@ public class Game {
             pickedItemInfo.add("You picked up :");
             pickedItemInfo.addAll(itemUnderPlayer.getInfo());
             itemUnderPlayer = null;
+            changes.add(ADD_REMOVE_ITEM);
             return pickedItemInfo;
         }
         return List.of();
@@ -262,6 +273,7 @@ public class Game {
             selectedItem += backpackItemsInRow;
         }
         player.setSelectedItemIndex(selectedItem);
+        changes.add(SELECTED_INDEX_ITEM);
     }
     
     /**
@@ -279,6 +291,8 @@ public class Game {
         if (player.getBackpackSize() == 0) {
             isBackpackOpened = false;
         }
+        changes.add(PLAYER_INFO);
+        changes.add(ADD_REMOVE_ITEM);
     }
     
     /**
@@ -365,6 +379,7 @@ public class Game {
         if (player.getBackpackSize() == 0) {
             isBackpackOpened = false;
         }
+        changes.add(ADD_REMOVE_ITEM);
     }
     
     /**
@@ -395,7 +410,15 @@ public class Game {
      * Makes all alive mobs to make action if they see player
      */
     public void makeAllMobsAlive() {
-        levelMap.getMobs().forEach(mob -> mob.makeAction(player.getPosition(), levelMap.getWalls()));
+        ArrayList<Mob> oldMobs = new ArrayList<>(getMobs().stream().map(Mob::clone).toList());
+        getMobs().forEach(mob -> mob.makeAction(player.getPosition(), levelMap.getWalls()));
+        for (int i = 0; i < oldMobs.size(); i++) {
+            if (!oldMobs.get(i).getPosition().equals(getMobs().get(i).getPosition())) {
+                changes.add(MOB_CHANGED);
+                oldMobs.clear();
+                break;
+            }
+        }
     }
     
     public TerminalRectangle getPlayerPosition() {
@@ -406,4 +429,18 @@ public class Game {
         return levelMap.getMobs();
     }
     
+    public List<Item> getItems() {
+        return levelMap.getItems();
+    }
+    
+    public List<String> getChangesAndClear() {
+        ArrayList<String> newChanges = new ArrayList<>(changes);
+        changes.clear();
+        return newChanges;
+    }
+    
+    public void setBackpackOpened(boolean value) {
+        changes.add(value ? BACKPACK_OPENED_TRUE : BACKPACK_OPENED_FALSE);
+        isBackpackOpened = value;
+    }
 }

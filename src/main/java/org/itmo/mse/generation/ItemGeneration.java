@@ -131,7 +131,7 @@ public class ItemGeneration extends Generation {
             value = ObjectEffect.medium;
         }
         return new Item(position,
-                        SpecialCharacters.ARMOR,
+                        SpecialCharacters.WEAPON,
                         allNames.get(rand.nextInt(allNames.size())),
                         characteristic,
                         type,
@@ -147,7 +147,7 @@ public class ItemGeneration extends Generation {
         } else {
             return new Item(position,
                             SpecialCharacters.WEAPON,
-                            ObjectNames.legendaryWeapon.get(rand.nextInt(ObjectNames.legendaryAids.size())),
+                            ObjectNames.legendaryWeapon.get(rand.nextInt(ObjectNames.legendaryWeapon.size())),
                             characteristic,
                             type,
                             ItemClass.HEAVY,

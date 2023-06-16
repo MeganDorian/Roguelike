@@ -50,6 +50,7 @@ public class Map extends Object {
      */
     @Override
     public void print(TextGraphics graphics) {
+        graphics.fillRectangle(position.position, position.size, SpecialCharacters.SPACE);
         walls.forEach(wall -> wall.print(graphics));
         items.forEach(item -> item.print(graphics));
         mobs.forEach(mob -> mob.print(graphics));

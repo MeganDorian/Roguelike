@@ -59,9 +59,11 @@ public class MapLoader {
                                         TerminalPosition wallStart = entry.getValue();
                                         TerminalPosition wallEnd = entry.getKey();
                                         int width = Math.abs(wallStart.getColumn() -
-                                                             wallEnd.getColumn()) + 1;
+                                                             wallEnd.getColumn()) +
+                                                    1;
                                         int height = Math.abs(wallStart.getRow() -
-                                                              wallEnd.getRow()) + 1;
+                                                              wallEnd.getRow()) +
+                                                     1;
                                         return new Wall(new TerminalRectangle(wallStart.getColumn(),
                                                                               wallStart.getRow(),
                                                                               width,
@@ -113,8 +115,8 @@ public class MapLoader {
      * Performs string processing
      */
     private void processLine(String line) throws IncorrectMapFormatException {
-        exitPosition = checkExitStartPosition(line, width, exitPosition, "It can't be two exits on map");
-        startPosition = checkExitStartPosition(line, 1, startPosition, "It can't be two starts on map");
+        exitPosition = checkExitStartPosition(line, width-1, exitPosition, "It can't be two exits on map");
+        startPosition = checkExitStartPosition(line, 0, startPosition, "It can't be two starts on map");
         getPlayerPosition(line);
         
         searchForObjectsOnMap(line);
@@ -125,7 +127,7 @@ public class MapLoader {
      */
     private TerminalPosition checkExitStartPosition(String line, int indexToSearch, TerminalPosition position,
                                                     String error) throws IncorrectMapFormatException {
-        if (line.charAt(indexToSearch - 1) == SpecialCharacters.getSpaceChar()) {
+        if (line.charAt(indexToSearch) == SpecialCharacters.getSpaceChar()) {
             if (position != null) {
                 throw new IncorrectMapFormatException(error);
             }

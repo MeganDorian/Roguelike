@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyType;
 import org.itmo.mse.constants.Direction;
+import org.itmo.mse.utils.Checker;
 
 import java.util.List;
 
@@ -19,7 +20,9 @@ public class Move implements Action {
         if (!game.isBackpackOpened()) {
             TerminalRectangle oldPosition = game.getPlayerPosition();
             List<String> updateResult = game.updatePlayerPosition(direction, graphics);
-            if (!game.getPlayerPosition().equals(oldPosition)) {
+            if (!game.getPlayerPosition().equals(oldPosition) && Checker.isObjectAtPosition(oldPosition,
+                                                                                            game.getItems())
+                                                                        .isEmpty()) {
                 graphics.drawRectangle(oldPosition.position, oldPosition.size, ' ');
             }
             return updateResult;
