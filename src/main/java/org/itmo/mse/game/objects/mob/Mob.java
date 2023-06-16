@@ -12,7 +12,7 @@ import java.util.List;
 import static org.itmo.mse.constants.MobSpecifications.mobVisionDefaultValue;
 
 @Getter
-public class Mob extends Object {
+public class Mob extends Object implements Prototype {
     private final int damage;
     private final int experience;
     @Setter
@@ -37,7 +37,7 @@ public class Mob extends Object {
     }
     
     @Override
-    public Mob clone() {
+    public Mob makeClone() {
         Mob mob = new Mob(getPosition(), getCharacter(), getName(), strategy, damage, health, experience);
         mob.visionRange = visionRange;
         return mob;
