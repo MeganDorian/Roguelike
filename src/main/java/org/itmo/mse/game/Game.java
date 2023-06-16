@@ -122,6 +122,7 @@ public class Game {
                                                                         Proportions.upMobExperience);
         MobSpecifications.defaultExperienceAggressiveMob =
                 (int) Math.ceil(MobSpecifications.defaultExperienceAggressiveMob * Proportions.upMobExperience);
+        changes.add(DUNGEON_LEVEL);
         return List.of();
     }
     
