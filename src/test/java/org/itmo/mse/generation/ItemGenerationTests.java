@@ -16,11 +16,9 @@ import org.itmo.mse.constants.SpecialCharacters;
 import org.itmo.mse.exceptions.IncorrectItemType;
 import org.itmo.mse.game.objects.Item;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 
 public class ItemGenerationTests {
     
-    @Test
     @RepeatedTest(10)
     public void generateItemWithoutParameters() throws IncorrectItemType {
         Item item = ItemGeneration.generateItem();
