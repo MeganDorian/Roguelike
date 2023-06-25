@@ -108,7 +108,7 @@ public class ItemGeneration extends Generation {
         }
         return new Item(position,
                         SpecialCharacters.ARMOR,
-                        ObjectNames.legendaryArmor.get(rand.nextInt(allNames.size())),
+                        ObjectNames.legendaryArmor.get(rand.nextInt(ObjectNames.legendaryArmor.size())),
                         characteristic,
                         type,
                         ItemClass.HEAVY,
